@@ -21,21 +21,24 @@ steps: &steps
 name: Python tests
 on: [push, pull_request]
 jobs:
-  runs-on: macos-latest
+  macos:
+    runs-on: macos-latest
     strategy:
       max-parallel: 5
       matrix:
         python-version: [2.7, 3.6, 3.7, 3.8]  # 3.5,
     steps:
       <<: *steps
-  runs-on: ubuntu-latest
+  ubuntu:
+    runs-on: ubuntu-latest
     strategy:
       max-parallel: 5
       matrix:
         python-version: [2.7, 3.6, 3.7, 3.8]  # 3.5,
     steps:
       <<: *steps
-  runs-on: windows-latest
+  windows:
+    runs-on: windows-latest
     strategy:
       max-parallel: 5
       matrix:
