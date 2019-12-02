@@ -45,7 +45,10 @@ def UnixifyPath(path):
 # else the 'gyp' library will not be found
 path = UnixifyPath(sys.argv[0])
 sys.path.insert(0, os.path.join(os.path.dirname(path), "pylib"))
-import gyp  # noqa: E402
+try:
+    import gyp  # noqa: E402
+except ImportError:
+    from .pylib import gyp
 
 if __name__ == "__main__":
     sys.exit(gyp.script_main())
