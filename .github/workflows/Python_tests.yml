@@ -1,14 +1,18 @@
-name: Python Tests
-on: [push, pull_request]
+# TODO: Enable os: windows-latest
+# TODO: Enable python-version: 3.5
+# TODO: Enable pytest --doctest-modules
+
+name: Python_tests
+on: [push]
 jobs:
-  run-tests:
-    name: Run Tests
+  Python_tests:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       max-parallel: 15
       matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
-        python-version: [2.7, 3.6, 3.7, 3.8] # 3.5,
+        os: [macos-latest, ubuntu-latest]  # , windows-latest]
+        python-version: [2.7, 3.6, 3.7, 3.8]  # 3.5,
     steps:
       - uses: actions/checkout@v1
       - name: Set up Python ${{ matrix.python-version }}
@@ -27,4 +31,6 @@ jobs:
           flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
       - name: Test with pytest
         run: pytest
-        continue-on-error: true
+      # - name: Run doctests with pytest
+      #   pytest --doctest-modules
+ 
