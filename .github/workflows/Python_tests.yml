@@ -1,3 +1,4 @@
+# TODO: Enable os: windows-latest
 # TODO: Enable python-version: 3.5
 # TODO: Enable pytest --doctest-modules
 
