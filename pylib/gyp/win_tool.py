@@ -198,16 +198,18 @@ class WinTool(object):
       our_manifest = '%(out)s.manifest' % variables
       # Load and normalize the manifests. mt.exe sometimes removes whitespace,
       # and sometimes doesn't unfortunately.
-      with open(our_manifest, 'rb') as our_f:
-        with open(assert_manifest, 'rb') as assert_f:
+      with open(our_manifest, 'r') as our_f:
+        with open(assert_manifest, 'r') as assert_f:
           our_data = our_f.read().translate(None, string.whitespace)
           assert_data = assert_f.read().translate(None, string.whitespace)
       if our_data != assert_data:
         os.unlink(out)
         def dump(filename):
-          sys.stderr.write('%s\n-----\n' % filename)
-          with open(filename, 'rb') as f:
-            sys.stderr.write(f.read() + '\n-----\n')
+          print(filename, file=sys.stderr)
+          print('-----', file=sys.stderr)
+          with open(filename, 'r') as f:
+            print(f.read(), file=sys.stderr)
+            print('-----', file=sys.stderr)
         dump(intermediate_manifest)
         dump(our_manifest)
         dump(assert_manifest)
@@ -238,7 +240,7 @@ class WinTool(object):
     |args| is tuple containing path to resource file, path to manifest file
     and resource name which can be "1" (for executables) or "2" (for DLLs)."""
     manifest_path, resource_path, resource_name = args
-    with open(resource_path, 'wb') as output:
+    with open(resource_path, 'w') as output:
       output.write('#include <windows.h>\n%s RT_MANIFEST "%s"' % (
         resource_name,
         os.path.abspath(manifest_path).replace('\\', '/')))

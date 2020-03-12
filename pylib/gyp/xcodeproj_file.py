@@ -445,7 +445,7 @@ class XCObject(object):
       # is 160 bits.  Instead of throwing out 64 bits of the digest, xor them
       # into the portion that gets used.
       assert hash.digest_size % 4 == 0
-      digest_int_count = hash.digest_size / 4
+      digest_int_count = hash.digest_size // 4
       digest_ints = struct.unpack('>' + 'I' * digest_int_count, hash.digest())
       id_ints = [0, 0, 0]
       for index in range(0, digest_int_count):
@@ -599,7 +599,7 @@ class XCObject(object):
       comment = value.Comment()
     elif isinstance(value, str):
       printable += self._EncodeString(value)
-    elif isinstance(value, unicode):
+    elif isinstance(value, basestring):
       printable += self._EncodeString(value.encode('utf-8'))
     elif isinstance(value, int):
       printable += str(value)
@@ -762,7 +762,7 @@ class XCObject(object):
                 ' must be list, not ' + value.__class__.__name__)
         for item in value:
           if not isinstance(item, property_type) and \
-             not (item.__class__ == unicode and property_type == str):
+             not (isinstance(item, basestring) and property_type == str):
             # Accept unicode where str is specified.  str is treated as
             # UTF-8-encoded.
             raise TypeError(
@@ -770,7 +770,7 @@ class XCObject(object):
                   ' must be ' + property_type.__name__ + ', not ' + \
                   item.__class__.__name__)
       elif not isinstance(value, property_type) and \
-           not (value.__class__ == unicode and property_type == str):
+           not (isinstance(value, basestring) and property_type == str):
         # Accept unicode where str is specified.  str is treated as
         # UTF-8-encoded.
         raise TypeError(
@@ -1421,8 +1421,8 @@ class XCFileLikeElement(XCHierarchicalElement):
     xche = self
     while xche != None and isinstance(xche, XCHierarchicalElement):
       xche_hashables = xche.Hashables()
-      for index in range(0, len(xche_hashables)):
-        hashables.insert(index, xche_hashables[index])
+      for index, xche_hashable in enumerate(xche_hashables):
+        hashables.insert(index, xche_hashable)
       xche = xche.parent
     return hashables
 
@@ -2463,8 +2463,7 @@ class PBXNativeTarget(XCTarget):
       # The headers phase should come before the resources, sources, and
       # frameworks phases, if any.
       insert_at = len(self._properties['buildPhases'])
-      for index in range(0, len(self._properties['buildPhases'])):
-        phase = self._properties['buildPhases'][index]
+      for index, phase in enumerate(self._properties['buildPhases']):
         if isinstance(phase, PBXResourcesBuildPhase) or \
            isinstance(phase, PBXSourcesBuildPhase) or \
            isinstance(phase, PBXFrameworksBuildPhase):
@@ -2484,8 +2483,7 @@ class PBXNativeTarget(XCTarget):
       # The resources phase should come before the sources and frameworks
       # phases, if any.
       insert_at = len(self._properties['buildPhases'])
-      for index in range(0, len(self._properties['buildPhases'])):
-        phase = self._properties['buildPhases'][index]
+      for index, phase in enumerate(self._properties['buildPhases']):
         if isinstance(phase, PBXSourcesBuildPhase) or \
            isinstance(phase, PBXFrameworksBuildPhase):
           insert_at = index

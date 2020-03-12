@@ -18,7 +18,6 @@ import os
 import plistlib
 import re
 import shutil
-import string
 import struct
 import subprocess
 import sys
@@ -157,9 +156,11 @@ class MacTool(object):
         header = fp.read(3)
       except Exception:
         return None
-    if header.startswith(("\xFE\xFF", "\xFF\xFE")):
+    if header.startswith(b"\xFE\xFF"):
       return "UTF-16"
-    elif header.startswith("\xEF\xBB\xBF"):
+    elif header.startswith(b"\xFF\xFE"):
+      return "UTF-16"
+    elif header.startswith(b"\xEF\xBB\xBF"):
       return "UTF-8"
     else:
       return None
@@ -173,7 +174,7 @@ class MacTool(object):
     # Insert synthesized key/value pairs (e.g. BuildMachineOSBuild).
     plist = plistlib.readPlistFromString(lines)
     if keys:
-      plist = dict(plist.items() + json.loads(keys[0]).items())
+      plist.update(json.loads(keys[0]))
     lines = plistlib.writePlistToString(plist)
 
     # Go through all the environment variables and replace them as variables in
@@ -184,7 +185,7 @@ class MacTool(object):
         continue
       evar = '${%s}' % key
       evalue = os.environ[key]
-      lines = string.replace(lines, evar, evalue)
+      lines = lines.replace(lines, evar, evalue)
 
       # Xcode supports various suffices on environment variables, which are
       # all undocumented. :rfc1034identifier is used in the standard project
@@ -194,11 +195,11 @@ class MacTool(object):
       # in a URL either -- oops, hence :rfc1034identifier was born.
       evar = '${%s:identifier}' % key
       evalue = IDENT_RE.sub('_', os.environ[key])
-      lines = string.replace(lines, evar, evalue)
+      lines = lines.replace(lines, evar, evalue)
 
       evar = '${%s:rfc1034identifier}' % key
       evalue = IDENT_RE.sub('-', os.environ[key])
-      lines = string.replace(lines, evar, evalue)
+      lines = lines.replace(lines, evar, evalue)
 
     # Remove any keys with values that haven't been replaced.
     lines = lines.splitlines()

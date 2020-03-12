@@ -38,6 +38,12 @@ import subprocess
 import gyp.common
 import gyp.xcode_emulation
 
+try:
+  # maketrans moved to str in python3.
+  _maketrans = string.maketrans
+except NameError:
+  _maketrans = str.maketrans
+
 generator_default_variables = {
   'EXECUTABLE_PREFIX': '',
   'EXECUTABLE_SUFFIX': '',
@@ -240,10 +246,7 @@ def StringToCMakeTargetName(a):
   Invalid for make: ':'
   Invalid for unknown reasons but cause failures: '.'
   """
-  try:
-      return a.translate(str.maketrans(' /():."', '_______'))
-  except AttributeError:
-      return a.translate(string.maketrans(' /():."', '_______'))
+  return a.translate(_maketrans(' /():."', '_______'))
 
 
 def WriteActions(target_name, actions, extra_sources, extra_deps,
@@ -1235,7 +1238,7 @@ def GenerateOutput(target_list, target_dicts, data, params):
     GenerateOutputForConfig(target_list, target_dicts, data,
                             params, user_config)
   else:
-    config_names = target_dicts[target_list[0]]['configurations'].keys()
+    config_names = target_dicts[target_list[0]]['configurations']
     if params['parallel']:
       try:
         pool = multiprocessing.Pool(len(config_names))

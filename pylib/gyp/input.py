@@ -1028,9 +1028,9 @@ def ExpandVariables(input, phase, variables, build_file):
 
   # Convert all strings that are canonically-represented integers into integers.
   if type(output) is list:
-    for index in range(0, len(output)):
-      if IsStrCanonicalInt(output[index]):
-        output[index] = int(output[index])
+    for index, outstr in enumerate(output):
+      if IsStrCanonicalInt(outstr):
+        output[index] = int(outstr)
   elif IsStrCanonicalInt(output):
     output = int(output)
 
@@ -1386,9 +1386,9 @@ def QualifyDependencies(targets):
     toolset = target_dict['toolset']
     for dependency_key in all_dependency_sections:
       dependencies = target_dict.get(dependency_key, [])
-      for index in range(0, len(dependencies)):
+      for index, dep in enumerate(dependencies):
         dep_file, dep_target, dep_toolset = gyp.common.ResolveTarget(
-            target_build_file, dependencies[index], toolset)
+            target_build_file, dep, toolset)
         if not multiple_toolsets:
           # Ignore toolset specification in the dependency if it is specified.
           dep_toolset = toolset
@@ -1835,7 +1835,7 @@ def BuildDependencyList(targets):
     if not root_node.dependents:
       # If all targets have dependencies, add the first target as a dependent
       # of root_node so that the cycle can be discovered from root_node.
-      target = targets.keys()[0]
+      target = next(iter(targets))
       target_node = dependency_nodes[target]
       target_node.dependencies.append(root_node)
       root_node.dependents.append(target_node)
@@ -1898,7 +1898,7 @@ def VerifyNoGYPFileCircularDependencies(targets):
     if not root_node.dependents:
       # If all files have dependencies, add the first file as a dependent
       # of root_node so that the cycle can be discovered from root_node.
-      file_node = dependency_nodes.values()[0]
+      file_node = next(iter(dependency_nodes.values()))
       file_node.dependencies.append(root_node)
       root_node.dependents.append(file_node)
     cycles = []
@@ -2295,10 +2295,9 @@ def SetUpConfigurations(target, target_dict):
         merged_configurations[configuration])
 
   # Now drop all the abstract ones.
-  for configuration in list(target_dict['configurations']):
-    old_configuration_dict = target_dict['configurations'][configuration]
-    if old_configuration_dict.get('abstract'):
-      del target_dict['configurations'][configuration]
+  configs = target_dict['configurations']
+  target_dict['configurations'] = \
+      {k: v for k, v in configs.items() if not v.get('abstract')}
 
   # Now that all of the target's configurations have been built, go through
   # the target dict's keys and remove everything that's been moved into a
@@ -2406,8 +2405,8 @@ def ProcessListFiltersInDict(name, the_dict):
     exclude_key = list_key + '!'
     if exclude_key in the_dict:
       for exclude_item in the_dict[exclude_key]:
-        for index in range(0, len(the_list)):
-          if exclude_item == the_list[index]:
+        for index, list_item in enumerate(the_list):
+          if exclude_item == list_item:
             # This item matches the exclude_item, so set its action to 0
             # (exclude).
             list_actions[index] = 0
@@ -2432,8 +2431,7 @@ def ProcessListFiltersInDict(name, the_dict):
           raise ValueError('Unrecognized action ' + action + ' in ' + name + \
                            ' key ' + regex_key)
 
-        for index in range(0, len(the_list)):
-          list_item = the_list[index]
+        for index, list_item in enumerate(the_list):
           if list_actions[index] == action_value:
             # Even if the regex matches, nothing will change so continue (regex
             # searches are expensive).
@@ -2672,8 +2670,7 @@ def TurnIntIntoStrInDict(the_dict):
 def TurnIntIntoStrInList(the_list):
   """Given list the_list, recursively converts all integers into strings.
   """
-  for index in range(0, len(the_list)):
-    item = the_list[index]
+  for index, item in enumerate(the_list):
     if type(item) is int:
       the_list[index] = str(item)
     elif type(item) is dict:

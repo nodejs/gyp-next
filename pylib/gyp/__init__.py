@@ -532,7 +532,7 @@ def gyp_main(args):
     generator.GenerateOutput(flat_list, targets, data, params)
 
     if options.configs:
-      valid_configs = targets[flat_list[0]]['configurations'].keys()
+      valid_configs = targets[flat_list[0]]['configurations']
       for conf in options.configs:
         if conf not in valid_configs:
           raise GypError('Invalid config specified via --build: %s' % conf)

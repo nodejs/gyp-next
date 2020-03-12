@@ -821,7 +821,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
           gyp.xcode_emulation.MacPrefixHeader(
               self.xcode_settings, lambda p: Sourceify(self.Absolutify(p)),
               self.Pchify))
-      sources = list(filter(Compilable, all_sources))
+      sources = [x for x in all_sources if Compilable(x)]
       if sources:
         self.WriteLn(SHARED_HEADER_SUFFIX_RULES_COMMENT1)
         extensions = set([os.path.splitext(s)[1] for s in sources])
@@ -1314,7 +1314,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
 
     # If there are any object files in our input file list, link them into our
     # output.
-    extra_link_deps += list(filter(Linkable, sources))
+    extra_link_deps += [source for source in sources if Linkable(source)]
 
     self.WriteLn()
 
@@ -1547,9 +1547,9 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
       # Postbuilds expect to be run in the gyp file's directory, so insert an
       # implicit postbuild to cd to there.
       postbuilds.insert(0, gyp.common.EncodePOSIXShellList(['cd', self.path]))
-      for i in range(len(postbuilds)):
-        if not postbuilds[i].startswith('$'):
-          postbuilds[i] = EscapeShellArgument(postbuilds[i])
+      for i, postbuild in enumerate(postbuilds):
+        if not postbuild.startswith('$'):
+          postbuilds[i] = EscapeShellArgument(postbuild)
       self.WriteLn('%s: builddir := $(abs_builddir)' % QuoteSpaces(self.output))
       self.WriteLn('%s: POSTBUILDS := %s' % (
           QuoteSpaces(self.output), ' '.join(postbuilds)))
