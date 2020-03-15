@@ -1774,7 +1774,7 @@ def GetDefaultConcurrentLinks():
 
     # VS 2015 uses 20% more working set than VS 2013 and can consume all RAM
     # on a 64 GB machine.
-    mem_limit = max(1, stat.ullTotalPhys / (5 * (2 ** 30)))  # total / 5GB
+    mem_limit = max(1, stat.ullTotalPhys // (5 * (2 ** 30)))  # total / 5GB
     hard_cap = max(1, int(os.environ.get('GYP_LINK_CONCURRENCY_MAX', 2**32)))
     return min(mem_limit, hard_cap)
   elif sys.platform.startswith('linux'):
@@ -1786,14 +1786,14 @@ def GetDefaultConcurrentLinks():
           if not match:
             continue
           # Allow 8Gb per link on Linux because Gold is quite memory hungry
-          return max(1, int(match.group(1)) / (8 * (2 ** 20)))
+          return max(1, int(match.group(1)) // (8 * (2 ** 20)))
     return 1
   elif sys.platform == 'darwin':
     try:
       avail_bytes = int(subprocess.check_output(['sysctl', '-n', 'hw.memsize']))
       # A static library debug build of Chromium's unit_tests takes ~2.7GB, so
       # 4GB per ld process allows for some more bloat.
-      return max(1, avail_bytes / (4 * (2 ** 30)))  # total / 4GB
+      return max(1, avail_bytes // (4 * (2 ** 30)))  # total / 4GB
     except:
       return 1
   else:
@@ -2483,7 +2483,7 @@ def GenerateOutput(target_list, target_dicts, data, params):
     GenerateOutputForConfig(target_list, target_dicts, data, params,
                             user_config)
   else:
-    config_names = target_dicts[target_list[0]]['configurations'].keys()
+    config_names = target_dicts[target_list[0]]['configurations']
     if params['parallel']:
       try:
         pool = multiprocessing.Pool(len(config_names))

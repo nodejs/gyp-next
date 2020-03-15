@@ -424,7 +424,7 @@ def GenerateOutput(target_list, target_dicts, data, params):
     GenerateOutputForConfig(target_list, target_dicts, data, params,
                             user_config)
   else:
-    config_names = target_dicts[target_list[0]]['configurations'].keys()
+    config_names = target_dicts[target_list[0]]['configurations']
     for config_name in config_names:
       GenerateOutputForConfig(target_list, target_dicts, data, params,
                               config_name)

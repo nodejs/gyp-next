@@ -490,7 +490,7 @@ class MsvsSettings(object):
       # https://msdn.microsoft.com/en-us/library/dn502518.aspx
       cflags.append('/FS')
     # ninja handles parallelism by itself, don't have the compiler do it too.
-    cflags = filter(lambda x: not x.startswith('/MP'), cflags)
+    cflags = [x for x in cflags if not x.startswith('/MP')]
     return cflags
 
   def _GetPchFlags(self, config, extension):
@@ -660,19 +660,17 @@ class MsvsSettings(object):
 
     # If the base address is not specifically controlled, DYNAMICBASE should
     # be on by default.
-    base_flags = filter(lambda x: 'DYNAMICBASE' in x or x == '/FIXED',
-                        ldflags)
-    if not base_flags:
+    if not any('DYNAMICBASE' in flag or flag == '/FIXED' for flag in ldflags):
       ldflags.append('/DYNAMICBASE')
 
     # If the NXCOMPAT flag has not been specified, default to on. Despite the
     # documentation that says this only defaults to on when the subsystem is
     # Vista or greater (which applies to the linker), the IDE defaults it on
     # unless it's explicitly off.
-    if not filter(lambda x: 'NXCOMPAT' in x, ldflags):
+    if not any('NXCOMPAT' in flag for flag in ldflags):
       ldflags.append('/NXCOMPAT')
 
-    have_def_file = filter(lambda x: x.startswith('/DEF:'), ldflags)
+    have_def_file = any(flag.startswith('/DEF:') for flag in ldflags)
     manifest_flags, intermediate_manifest, manifest_files = \
         self._GetLdManifestFlags(config, manifest_base_name, gyp_to_build_path,
                                  is_executable and not have_def_file, build_dir)
@@ -1071,7 +1069,7 @@ def GenerateEnvironmentFiles(toplevel_build_dir, generator_flags,
       env['INCLUDE'] = ';'.join(system_includes)
 
     env_block = _FormatAsEnvironmentBlock(env)
-    f = open_out(os.path.join(toplevel_build_dir, 'environment.' + arch), 'wb')
+    f = open_out(os.path.join(toplevel_build_dir, 'environment.' + arch), 'w')
     f.write(env_block)
     f.close()
 
@@ -1095,7 +1093,7 @@ def VerifyMissingSources(sources, build_dir, generator_flags, gyp_to_ninja):
   if int(generator_flags.get('msvs_error_on_missing_sources', 0)):
     no_specials = filter(lambda x: '$' not in x, sources)
     relative = [os.path.join(build_dir, gyp_to_ninja(s)) for s in no_specials]
-    missing = filter(lambda x: not os.path.exists(x), relative)
+    missing = [x for x in relative if not os.path.exists(x)]
     if missing:
       # They'll look like out\Release\..\..\stuff\things.cc, so normalize the
       # path for a slightly less crazy looking output.
