@@ -18,29 +18,30 @@ class TestPrefixesAndSuffixes(unittest.TestCase):
         # correctly handle variable expansion.
         if sys.platform.startswith('win'):
             writer = ninja.NinjaWriter('foo', 'wee', '.', '.', 'build.ninja', '.',
-                'build.ninja', 'win')
-            spec = { 'target_name': 'wee' }
+                                       'build.ninja', 'win')
+            spec = {'target_name': 'wee'}
             self.assertTrue(writer.ComputeOutputFileName(spec, 'executable').
-                endswith('.exe'))
+                            endswith('.exe'))
             self.assertTrue(writer.ComputeOutputFileName(spec, 'shared_library').
-                endswith('.dll'))
+                            endswith('.dll'))
             self.assertTrue(writer.ComputeOutputFileName(spec, 'static_library').
-                endswith('.lib'))
+                            endswith('.lib'))
 
     def test_BinaryNamesLinux(self):
         writer = ninja.NinjaWriter('foo', 'wee', '.', '.', 'build.ninja', '.',
-            'build.ninja', 'linux')
-        spec = { 'target_name': 'wee' }
+                                   'build.ninja', 'linux')
+        spec = {'target_name': 'wee'}
         self.assertTrue('.' not in writer.ComputeOutputFileName(spec,
                                                                 'executable'))
         self.assertTrue(writer.ComputeOutputFileName(spec, 'shared_library').
-            startswith('lib'))
+                        startswith('lib'))
         self.assertTrue(writer.ComputeOutputFileName(spec, 'static_library').
-            startswith('lib'))
+                        startswith('lib'))
         self.assertTrue(writer.ComputeOutputFileName(spec, 'shared_library').
-            endswith('.so'))
+                        endswith('.so'))
         self.assertTrue(writer.ComputeOutputFileName(spec, 'static_library').
-            endswith('.a'))
+                        endswith('.a'))
+
 
 if __name__ == '__main__':
     unittest.main()

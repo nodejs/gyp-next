@@ -7,7 +7,7 @@
 import gyp.common
 import gyp.easy_xml as easy_xml
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 class Tool(object):
@@ -31,6 +31,7 @@ class Tool(object):
         """
         return ['Tool', self._attrs]
 
+
 class Filter(object):
     """Visual Studio filter - that is, a virtual folder."""
 
@@ -45,7 +46,7 @@ class Filter(object):
         self.contents = list(contents or [])
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 class Writer(object):
@@ -118,7 +119,6 @@ class Writer(object):
                 else:
                     specification.append(Tool(t)._GetSpecification())
         return specification
-
 
     def AddConfig(self, name, attrs=None, tools=None):
         """Adds a configuration to the project.
@@ -197,7 +197,7 @@ class Writer(object):
              'ProjectGUID': self.guid,
              'RootNamespace': self.name,
              'Keyword': 'Win32Proj'
-            },
+             },
             self.platform_section,
             self.tool_files_section,
             self.configurations_section,

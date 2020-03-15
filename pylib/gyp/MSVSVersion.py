@@ -78,7 +78,6 @@ class VisualStudioVersion(object):
         of a user override."""
         return self.default_toolset
 
-
     def _SetupScriptInternal(self, target_arch):
         """Returns a command (with arguments) to be used to set up the
         environment."""
@@ -93,8 +92,8 @@ class VisualStudioVersion(object):
             return [setup_path, '/' + target_arch]
 
         is_host_arch_x64 = (
-          os.environ.get('PROCESSOR_ARCHITECTURE') == 'AMD64' or
-          os.environ.get('PROCESSOR_ARCHITEW6432') == 'AMD64'
+            os.environ.get('PROCESSOR_ARCHITECTURE') == 'AMD64' or
+            os.environ.get('PROCESSOR_ARCHITEW6432') == 'AMD64'
         )
 
         # For VS2017 (and newer) it's fairly easy
@@ -443,12 +442,12 @@ def _DetectVisualStudioVersions(versions_to_check, force_express):
             if not force_express and os.path.exists(full_path):
                 # Add this one.
                 versions.append(_CreateVersion(version_to_year[version],
-                    os.path.join(path, '..', '..')))
+                                               os.path.join(path, '..', '..')))
             # Check for express.
             elif glob.glob(express_path):
                 # Add this one.
                 versions.append(_CreateVersion(version_to_year[version] + 'e',
-                    os.path.join(path, '..', '..')))
+                                               os.path.join(path, '..', '..')))
 
         # The old method above does not work when only SDK is installed.
         keys = [r'HKLM\Software\Microsoft\VisualStudio\SxS\VC7',
@@ -465,7 +464,7 @@ def _DetectVisualStudioVersions(versions_to_check, force_express):
                     versions.append(_CreateVersion('2017', path))
             elif version != '14.0':  # There is no Express edition for 2015.
                 versions.append(_CreateVersion(version_to_year[version] + 'e',
-                    os.path.join(path, '..'), sdk_based=True))
+                                               os.path.join(path, '..'), sdk_based=True))
 
     return versions
 
@@ -482,20 +481,20 @@ def SelectVisualStudioVersion(version='auto', allow_fallback=True):
     if version == 'auto':
         version = os.environ.get('GYP_MSVS_VERSION', 'auto')
     version_map = {
-      'auto': ('16.0', '15.0', '14.0', '12.0', '10.0', '9.0', '8.0', '11.0'),
-      '2005': ('8.0',),
-      '2005e': ('8.0',),
-      '2008': ('9.0',),
-      '2008e': ('9.0',),
-      '2010': ('10.0',),
-      '2010e': ('10.0',),
-      '2012': ('11.0',),
-      '2012e': ('11.0',),
-      '2013': ('12.0',),
-      '2013e': ('12.0',),
-      '2015': ('14.0',),
-      '2017': ('15.0',),
-      '2019': ('16.0',),
+        'auto': ('16.0', '15.0', '14.0', '12.0', '10.0', '9.0', '8.0', '11.0'),
+        '2005': ('8.0',),
+        '2005e': ('8.0',),
+        '2008': ('9.0',),
+        '2008e': ('9.0',),
+        '2010': ('10.0',),
+        '2010e': ('10.0',),
+        '2012': ('11.0',),
+        '2012e': ('11.0',),
+        '2013': ('12.0',),
+        '2013e': ('12.0',),
+        '2015': ('14.0',),
+        '2017': ('15.0',),
+        '2019': ('16.0',),
     }
     override_path = os.environ.get('GYP_MSVS_OVERRIDE_PATH')
     if override_path:

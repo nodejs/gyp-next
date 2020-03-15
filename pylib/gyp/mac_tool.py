@@ -104,7 +104,7 @@ class MacTool(object):
                 ])
 
         args.extend(['--output-format', 'human-readable-text', '--compile', dest,
-            source])
+                     source])
 
         ibtool_section_re = re.compile(r'/\*.*\*/')
         ibtool_re = re.compile(r'.*note:.*is clipping its content')
@@ -246,7 +246,7 @@ class MacTool(object):
     def ExecFlock(self, lockfile, *cmd_list):
         """Emulates the most basic behavior of Linux's flock(1)."""
         # Rely on exception handling to report errors.
-        fd = os.open(lockfile, os.O_RDONLY|os.O_NOCTTY|os.O_CREAT, 0o666)
+        fd = os.open(lockfile, os.O_RDONLY | os.O_NOCTTY | os.O_CREAT, 0o666)
         fcntl.flock(fd, fcntl.LOCK_EX)
         return subprocess.call(cmd_list)
 
@@ -363,8 +363,8 @@ class MacTool(object):
         catalogs does not contains imageset.
         """
         command_line = [
-          'xcrun', 'actool', '--output-format', 'human-readable-text',
-          '--compress-pngs', '--notices', '--warnings', '--errors',
+            'xcrun', 'actool', '--output-format', 'human-readable-text',
+            '--compress-pngs', '--notices', '--warnings', '--errors',
         ]
         is_iphone_target = 'IPHONEOS_DEPLOYMENT_TARGET' in os.environ
         if is_iphone_target:
@@ -578,8 +578,8 @@ class MacTool(object):
           Dictionary of substitutions to apply when generating Entitlements.plist.
         """
         return {
-          'CFBundleIdentifier': bundle_identifier,
-          'AppIdentifierPrefix': app_identifier_prefix,
+            'CFBundleIdentifier': bundle_identifier,
+            'AppIdentifierPrefix': app_identifier_prefix,
         }
 
     def _GetCFBundleIdentifier(self):
@@ -650,8 +650,10 @@ class MacTool(object):
             return {k: self._ExpandVariables(data[k], substitutions) for k in data}
         return data
 
+
 def NextGreaterPowerOf2(x):
     return 2**(x).bit_length()
+
 
 def WriteHmap(output_name, filelist):
     """Generates a header map based on |filelist|.
@@ -701,7 +703,7 @@ def WriteHmap(output_name, filelist):
                 len(os.path.dirname(path) + os.sep) + 1
             next_offset = suffix_offset + len(os.path.basename(path)) + 1
             out.write(struct.pack('<LLL', key_offset,
-                      prefix_offset, suffix_offset))
+                                  prefix_offset, suffix_offset))
 
     # Pad byte since next offset starts at 1.
     out.write(struct.pack('<x'))
@@ -717,6 +719,7 @@ def WriteHmap(output_name, filelist):
             path = os.path.basename(path)
             out.write(struct.pack('<%ds' % len(path), path))
             out.write(struct.pack('<s', '\0'))
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))

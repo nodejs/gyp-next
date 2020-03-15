@@ -135,6 +135,7 @@ def _GetDomainAndUserName():
         cached_username = username
     return (cached_domain, cached_username)
 
+
 fixpath_prefix = None
 
 
@@ -207,7 +208,8 @@ def _ConvertSourcesToFilterHierarchy(sources, prefix=None, excluded=None,
       [MSVSProject.Filter('a', contents=['joe\\a\\bob1.c']),
        MSVSProject.Filter('b', contents=['joe\\b\\bob2.c'])]
     """
-    if not prefix: prefix = []
+    if not prefix:
+        prefix = []
     result = []
     excluded_result = []
     folders = OrderedDict()
@@ -253,7 +255,8 @@ def _ConvertSourcesToFilterHierarchy(sources, prefix=None, excluded=None,
 
 
 def _ToolAppend(tools, tool_name, setting, value, only_if_unset=False):
-    if not value: return
+    if not value:
+        return
     _ToolSetOrAppend(tools, tool_name, setting, value, only_if_unset)
 
 
@@ -270,7 +273,8 @@ def _ToolSetOrAppend(tools, tool_name, setting, value, only_if_unset=False):
     if 'CompileAsWinRT' == setting:
         return
     if tool.get(setting):
-        if only_if_unset: return
+        if only_if_unset:
+            return
         if type(tool[setting]) == list and type(value) == list:
             tool[setting] += value
         else:
@@ -310,8 +314,8 @@ def _ConfigWindowsTargetPlatformVersion(config_data, version):
     vers = [config_ver] if config_ver else version.compatible_sdks
     for ver in vers:
         for key in [
-          r'HKLM\Software\Microsoft\Microsoft SDKs\Windows\%s',
-          r'HKLM\Software\Wow6432Node\Microsoft\Microsoft SDKs\Windows\%s']:
+            r'HKLM\Software\Microsoft\Microsoft SDKs\Windows\%s',
+                r'HKLM\Software\Wow6432Node\Microsoft\Microsoft SDKs\Windows\%s']:
             sdk_dir = MSVSVersion._RegistryGetValue(
                 key % ver, 'InstallationFolder')
             if not sdk_dir:
@@ -319,7 +323,7 @@ def _ConfigWindowsTargetPlatformVersion(config_data, version):
             version = MSVSVersion._RegistryGetValue(
                 key % ver, 'ProductVersion') or ''
             # Find a matching entry in sdk_dir\include.
-            expected_sdk_dir=r'%s\include' % sdk_dir
+            expected_sdk_dir = r'%s\include' % sdk_dir
             names = sorted([x for x in (os.listdir(expected_sdk_dir)
                                         if os.path.isdir(expected_sdk_dir)
                                         else []
@@ -337,10 +341,10 @@ def _BuildCommandLineForRuleRaw(spec, cmd, cygwin_shell, has_input_path,
 
     if [x for x in cmd if '$(InputDir)' in x]:
         input_dir_preamble = (
-          'set INPUTDIR=$(InputDir)\n'
-          'if NOT DEFINED INPUTDIR set INPUTDIR=.\\\n'
-          'set INPUTDIR=%INPUTDIR:~0,-1%\n'
-          )
+            'set INPUTDIR=$(InputDir)\n'
+            'if NOT DEFINED INPUTDIR set INPUTDIR=.\\\n'
+            'set INPUTDIR=%INPUTDIR:~0,-1%\n'
+        )
     else:
         input_dir_preamble = ''
 
@@ -479,7 +483,7 @@ def _AddCustomBuildToolForMSVS(p, spec, primary_input,
          'AdditionalDependencies': ';'.join(inputs),
          'Outputs': ';'.join(outputs),
          'CommandLine': cmd,
-        })
+         })
     # Add to the properties of primary input for each config.
     for config_name, c_data in spec['configurations'].items():
         p.AddFileConfig(_FixPath(primary_input),
@@ -689,7 +693,7 @@ def _GenerateExternalRules(rules, output_dir, spec,
                    inputs=_FixPaths(all_inputs),
                    outputs=_FixPaths(all_outputs),
                    description='Running external rules for %s' %
-                       spec['target_name'],
+                   spec['target_name'],
                    command=cmd)
 
 
@@ -788,7 +792,7 @@ def _EscapeVCProjCommandLineArgListItem(s):
         # the item to the end of the list does works, but that's only possible if
         # there's only one such item. Let's just warn the user.
         print('Warning: MSVS may misinterpret the odd number of ' +
-                              'quotes in ' + s, file=sys.stderr)
+              'quotes in ' + s, file=sys.stderr)
     return s
 
 
@@ -826,7 +830,7 @@ def _EscapeMSBuildSpecialCharacters(s):
         ';': '%3B',
         '?': '%3F',
         '*': '%2A'
-        }
+    }
     result = ''.join([escape_dictionary.get(c, c) for c in s])
     return result
 
@@ -1137,7 +1141,7 @@ def _GetMSVSConfigurationType(spec, build_file):
             'static_library': '4',  # .lib
             'windows_driver': '5',  # .sys
             'none': '10',  # Utility type
-            }[spec['type']]
+        }[spec['type']]
     except KeyError:
         if spec.get('type'):
             raise GypError('Target type %s is not a valid target type for '
@@ -1413,7 +1417,7 @@ def _ConvertToolsToExpectedForm(tools):
             if type(value) == list:
                 if ((tool == 'VCLinkerTool' and
                      setting == 'AdditionalDependencies') or
-                    setting == 'AdditionalOptions'):
+                        setting == 'AdditionalOptions'):
                     settings_fixed[setting] = ' '.join(value)
                 else:
                     settings_fixed[setting] = ';'.join(value)
@@ -1513,7 +1517,7 @@ def _PrepareListOfSources(spec, generator_flags, gyp_file):
 
 
 def _AdjustSourcesAndConvertToFilterHierarchy(
-    spec, options, gyp_dir, sources, excluded_sources, list_excluded, version):
+        spec, options, gyp_dir, sources, excluded_sources, list_excluded, version):
     """Adjusts the list of sources and excluded sources.
 
     Also converts the sets to lists.
@@ -1557,7 +1561,7 @@ def _AdjustSourcesAndConvertToFilterHierarchy(
     # such as ../../src/modules/module1 etc.
     if version.UsesVcxproj():
         while all([isinstance(s, MSVSProject.Filter) for s in sources]) \
-            and len(set([s.name for s in sources])) == 1:
+                and len(set([s.name for s in sources])) == 1:
             assert all([len(s.contents) == 1 for s in sources])
             sources = [s.contents[0] for s in sources]
     else:
@@ -1660,6 +1664,7 @@ def _HandlePreCompiledHeaders(p, sources, spec):
                 extensions_excluded_from_precompile = ['.cc', '.cpp', '.cxx']
             else:
                 extensions_excluded_from_precompile = ['.c']
+
     def DisableForSourceTree(source_tree):
         for source in source_tree:
             if isinstance(source, MSVSProject.Filter):
@@ -1795,7 +1800,7 @@ def _CollapseSingles(parent, node):
     # such projects up one level.
     if (type(node) == dict and
         len(node) == 1 and
-        next(iter(node)) == parent + '.vcproj'):
+            next(iter(node)) == parent + '.vcproj'):
         return node[next(iter(node))]
     if type(node) != dict:
         return node
@@ -1939,18 +1944,18 @@ def _InitNinjaFlavor(params, target_list, target_dicts):
                 configuration)
         if not spec.get('msvs_external_builder_build_cmd'):
             spec['msvs_external_builder_build_cmd'] = [
-              path_to_ninja,
-              '-C',
-              '$(OutDir)',
-              '$(ProjectName)',
+                path_to_ninja,
+                '-C',
+                '$(OutDir)',
+                '$(ProjectName)',
             ]
         if not spec.get('msvs_external_builder_clean_cmd'):
             spec['msvs_external_builder_clean_cmd'] = [
-              path_to_ninja,
-              '-C',
-              '$(OutDir)',
-              '-tclean',
-              '$(ProjectName)',
+                path_to_ninja,
+                '-C',
+                '$(OutDir)',
+                '-tclean',
+                '$(ProjectName)',
             ]
 
 
@@ -1973,7 +1978,7 @@ def CalculateVariables(default_variables, params):
     # process), it is also necessary to check PROCESSOR_ARCITEW6432 (which
     # contains the actual word size of the system when running thru WOW64).
     if (os.environ.get('PROCESSOR_ARCHITECTURE', '').find('64') >= 0 or
-        os.environ.get('PROCESSOR_ARCHITEW6432', '').find('64') >= 0):
+            os.environ.get('PROCESSOR_ARCHITEW6432', '').find('64') >= 0):
         default_variables['MSVS_OS_BITS'] = 64
     else:
         default_variables['MSVS_OS_BITS'] = 32
@@ -2014,6 +2019,7 @@ def CalculateGeneratorInputInfo(params):
             'qualified_out_dir': qualified_out_dir,
         }
 
+
 def GenerateOutput(target_list, target_dicts, data, params):
     """Generate .sln and .vcproj files.
 
@@ -2039,7 +2045,7 @@ def GenerateOutput(target_list, target_dicts, data, params):
     # Optionally use the large PDB workaround for targets marked with
     # 'msvs_large_pdb': 1.
     (target_list, target_dicts) = MSVSUtil.InsertLargePdbShims(
-          target_list, target_dicts, generator_default_variables)
+        target_list, target_dicts, generator_default_variables)
 
     # Optionally configure each spec to use ninja as the external builder.
     if params.get('flavor') == 'ninja':
@@ -2118,10 +2124,10 @@ def _GenerateMSBuildFiltersFile(filters_path, source_files,
         content = ['Project',
                    {'ToolsVersion': '4.0',
                     'xmlns': 'http://schemas.microsoft.com/developer/msbuild/2003'
-                   },
+                    },
                    ['ItemGroup'] + filter_group,
                    ['ItemGroup'] + source_group
-                  ]
+                   ]
         easy_xml.WriteXmlIfChanged(
             content, filters_path, pretty=True, win32=True)
     elif os.path.exists(filters_path):
@@ -2321,24 +2327,24 @@ def _GenerateMSBuildRulePropsFile(props_path, msbuild_rules):
              {'Condition': "'$(%s)' == '' and '$(%s)' == '' and "
               "'$(ConfigurationType)' != 'Makefile'" % (rule.before_targets,
                                                         rule.after_targets)
-             },
+              },
              [rule.before_targets, 'Midl'],
              [rule.after_targets, 'CustomBuild'],
-            ],
+             ],
             ['PropertyGroup',
              [rule.depends_on,
               {'Condition': "'$(ConfigurationType)' != 'Makefile'"},
               '_SelectedFiles;$(%s)' % rule.depends_on
+              ],
              ],
-            ],
             ['ItemDefinitionGroup',
              [rule.rule_name,
               ['CommandLineTemplate', rule.command],
               ['Outputs', rule.outputs],
               ['ExecutionDescription', rule.description],
               ['AdditionalDependencies', rule.additional_dependencies],
-             ],
-            ]
+              ],
+             ]
         ])
     easy_xml.WriteXmlIfChanged(content, props_path, pretty=True, win32=True)
 
@@ -2347,20 +2353,20 @@ def _GenerateMSBuildRuleTargetsFile(targets_path, msbuild_rules):
     """Generate the .targets file."""
     content = ['Project',
                {'xmlns': 'http://schemas.microsoft.com/developer/msbuild/2003'
-               }
-              ]
+                }
+               ]
     item_group = [
         'ItemGroup',
         ['PropertyPageSchema',
          {'Include': '$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml'}
-        ]
-      ]
+         ]
+    ]
     for rule in msbuild_rules:
         item_group.append(
             ['AvailableItemName',
              {'Include': rule.rule_name},
              ['Targets', rule.target_name],
-            ])
+             ])
     content.append(item_group)
 
     for rule in msbuild_rules:
@@ -2369,9 +2375,9 @@ def _GenerateMSBuildRuleTargetsFile(targets_path, msbuild_rules):
              {'TaskName': rule.rule_name,
               'TaskFactory': 'XamlTaskFactory',
               'AssemblyName': 'Microsoft.Build.Tasks.v4.0'
-             },
+              },
              ['Task', '$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml'],
-            ])
+             ])
     for rule in msbuild_rules:
         rule_name = rule.rule_name
         target_outputs = '%%(%s.Outputs)' % rule_name
@@ -2388,8 +2394,8 @@ def _GenerateMSBuildRuleTargetsFile(targets_path, msbuild_rules):
             [rule_name,
              {'Remove': '@(%s)' % rule_name,
               'Condition': "'%(Identity)' != '@(SelectedFiles)'"
-             }
-            ]
+              }
+             ]
         ]
         inputs_section = [
             'ItemGroup',
@@ -2403,16 +2409,16 @@ def _GenerateMSBuildRuleTargetsFile(targets_path, msbuild_rules):
               'Condition': ("'%%(%s.Outputs)' != '' and "
                             "'%%(%s.ExcludedFromBuild)' != 'true'" %
                             (rule_name, rule_name))
-             },
+              },
              ['Source', "@(%s, '|')" % rule_name],
              ['Inputs', "@(%s -> '%%(Fullpath)', ';')" % rule.inputs],
-            ],
+             ],
         ]
         message_section = [
             'Message',
             {'Importance': 'High',
              'Text': '%%(%s.ExecutionDescription)' % rule_name
-            }
+             }
         ]
         write_tlog_section = [
             'WriteLinesToFile',
@@ -2421,7 +2427,7 @@ def _GenerateMSBuildRuleTargetsFile(targets_path, msbuild_rules):
              'File': '$(IntDir)$(ProjectName).write.1.tlog',
              'Lines': "^%%(%s.Source);@(%s->'%%(Fullpath)')" % (rule.tlog,
                                                                 rule.tlog)
-            }
+             }
         ]
         read_tlog_section = [
             'WriteLinesToFile',
@@ -2429,7 +2435,7 @@ def _GenerateMSBuildRuleTargetsFile(targets_path, msbuild_rules):
              "'true'" % (rule.tlog, rule.tlog),
              'File': '$(IntDir)$(ProjectName).read.1.tlog',
              'Lines': "^%%(%s.Source);%%(%s.Inputs)" % (rule.tlog, rule.tlog)
-            }
+             }
         ]
         command_and_input_section = [
             rule_name,
@@ -2441,7 +2447,7 @@ def _GenerateMSBuildRuleTargetsFile(targets_path, msbuild_rules):
              'CommandLineTemplate': '%%(%s.CommandLineTemplate)' % rule_name,
              'AdditionalOptions': '%%(%s.AdditionalOptions)' % rule_name,
              'Inputs': rule_inputs
-            }
+             }
         ]
         content.extend([
             ['Target',
@@ -2453,7 +2459,7 @@ def _GenerateMSBuildRuleTargetsFile(targets_path, msbuild_rules):
                                                 rule.compute_output),
               'Outputs': target_outputs,
               'Inputs': target_inputs
-             },
+              },
              remove_section,
              inputs_section,
              logging_section,
@@ -2461,50 +2467,50 @@ def _GenerateMSBuildRuleTargetsFile(targets_path, msbuild_rules):
              write_tlog_section,
              read_tlog_section,
              command_and_input_section,
-            ],
+             ],
             ['PropertyGroup',
              ['ComputeLinkInputsTargets',
               '$(ComputeLinkInputsTargets);',
               '%s;' % rule.compute_output
-             ],
+              ],
              ['ComputeLibInputsTargets',
               '$(ComputeLibInputsTargets);',
               '%s;' % rule.compute_output
+              ],
              ],
-            ],
             ['Target',
              {'Name': rule.compute_output,
               'Condition': "'@(%s)' != ''" % rule_name
-             },
+              },
              ['ItemGroup',
               [rule.dirs_to_make,
                {'Condition': "'@(%s)' != '' and "
                 "'%%(%s.ExcludedFromBuild)' != 'true'" % (rule_name, rule_name),
                 'Include': '%%(%s.Outputs)' % rule_name
-               }
-              ],
+                }
+               ],
               ['Link',
                {'Include': '%%(%s.Identity)' % rule.dirs_to_make,
                 'Condition': extension_condition
-               }
-              ],
+                }
+               ],
               ['Lib',
                {'Include': '%%(%s.Identity)' % rule.dirs_to_make,
                 'Condition': extension_condition
-               }
-              ],
+                }
+               ],
               ['ImpLib',
                {'Include': '%%(%s.Identity)' % rule.dirs_to_make,
                 'Condition': extension_condition
-               }
+                }
+               ],
               ],
-             ],
              ['MakeDir',
               {'Directories': ("@(%s->'%%(RootDir)%%(Directory)')" %
                                rule.dirs_to_make)
-              }
-             ]
-            ],
+               }
+              ]
+             ],
         ])
     easy_xml.WriteXmlIfChanged(content, targets_path, pretty=True, win32=True)
 
@@ -2519,7 +2525,7 @@ def _GenerateMSBuildRuleXmlFile(xml_path, msbuild_rules):
          'xmlns:sys': 'clr-namespace:System;assembly=mscorlib',
          'xmlns:transformCallback':
          'Microsoft.Cpp.Dev10.ConvertPropertyCallback'
-        }
+         }
     ]
     for rule in msbuild_rules:
         content.extend([
@@ -2528,161 +2534,161 @@ def _GenerateMSBuildRuleXmlFile(xml_path, msbuild_rules):
               'PageTemplate': 'tool',
               'DisplayName': rule.display_name,
               'Order': '200'
-             },
+              },
              ['Rule.DataSource',
               ['DataSource',
                {'Persistence': 'ProjectFile',
                 'ItemType': rule.rule_name
-               }
-              ]
-             ],
+                }
+               ]
+              ],
              ['Rule.Categories',
               ['Category',
                {'Name': 'General'},
                ['Category.DisplayName',
                 ['sys:String', 'General'],
+                ],
                ],
-              ],
               ['Category',
                {'Name': 'Command Line',
                 'Subtype': 'CommandLine'
-               },
+                },
                ['Category.DisplayName',
                 ['sys:String', 'Command Line'],
+                ],
                ],
               ],
-             ],
              ['StringListProperty',
               {'Name': 'Inputs',
                'Category': 'Command Line',
                'IsRequired': 'true',
                'Switch': ' '
-              },
+               },
               ['StringListProperty.DataSource',
                ['DataSource',
                 {'Persistence': 'ProjectFile',
                  'ItemType': rule.rule_name,
                  'SourceType': 'Item'
-                }
-               ]
+                 }
+                ]
+               ],
               ],
-             ],
              ['StringProperty',
               {'Name': 'CommandLineTemplate',
                'DisplayName': 'Command Line',
                'Visible': 'False',
                'IncludeInCommandLine': 'False'
-              }
-             ],
+               }
+              ],
              ['DynamicEnumProperty',
               {'Name': rule.before_targets,
                'Category': 'General',
                'EnumProvider': 'Targets',
                'IncludeInCommandLine': 'False'
-              },
+               },
               ['DynamicEnumProperty.DisplayName',
                ['sys:String', 'Execute Before'],
-              ],
+               ],
               ['DynamicEnumProperty.Description',
                ['sys:String', 'Specifies the targets for the build customization'
                 ' to run before.'
+                ],
                ],
-              ],
               ['DynamicEnumProperty.ProviderSettings',
                ['NameValuePair',
                 {'Name': 'Exclude',
                  'Value': '^%s|^Compute' % rule.before_targets
-                }
-               ]
-              ],
+                 }
+                ]
+               ],
               ['DynamicEnumProperty.DataSource',
                ['DataSource',
                 {'Persistence': 'ProjectFile',
                  'HasConfigurationCondition': 'true'
-                }
-               ]
+                 }
+                ]
+               ],
               ],
-             ],
              ['DynamicEnumProperty',
               {'Name': rule.after_targets,
                'Category': 'General',
                'EnumProvider': 'Targets',
                'IncludeInCommandLine': 'False'
-              },
+               },
               ['DynamicEnumProperty.DisplayName',
                ['sys:String', 'Execute After'],
-              ],
+               ],
               ['DynamicEnumProperty.Description',
                ['sys:String', ('Specifies the targets for the build customization'
                                ' to run after.')
+                ],
                ],
-              ],
               ['DynamicEnumProperty.ProviderSettings',
                ['NameValuePair',
                 {'Name': 'Exclude',
                  'Value': '^%s|^Compute' % rule.after_targets
-                }
-               ]
-              ],
+                 }
+                ]
+               ],
               ['DynamicEnumProperty.DataSource',
                ['DataSource',
                 {'Persistence': 'ProjectFile',
                  'ItemType': '',
                  'HasConfigurationCondition': 'true'
-                }
-               ]
+                 }
+                ]
+               ],
               ],
-             ],
              ['StringListProperty',
               {'Name': 'Outputs',
                'DisplayName': 'Outputs',
                'Visible': 'False',
                'IncludeInCommandLine': 'False'
-              }
-             ],
+               }
+              ],
              ['StringProperty',
               {'Name': 'ExecutionDescription',
                'DisplayName': 'Execution Description',
                'Visible': 'False',
                'IncludeInCommandLine': 'False'
-              }
-             ],
+               }
+              ],
              ['StringListProperty',
               {'Name': 'AdditionalDependencies',
                'DisplayName': 'Additional Dependencies',
                'IncludeInCommandLine': 'False',
                'Visible': 'false'
-              }
-             ],
+               }
+              ],
              ['StringProperty',
               {'Subtype': 'AdditionalOptions',
                'Name': 'AdditionalOptions',
                'Category': 'Command Line'
-              },
+               },
               ['StringProperty.DisplayName',
                ['sys:String', 'Additional Options'],
-              ],
+               ],
               ['StringProperty.Description',
                ['sys:String', 'Additional Options'],
+               ],
               ],
              ],
-            ],
             ['ItemType',
              {'Name': rule.rule_name,
               'DisplayName': rule.display_name
-             }
-            ],
+              }
+             ],
             ['FileExtension',
              {'Name': '*' + rule.extension,
               'ContentType': rule.rule_name
-             }
-            ],
+              }
+             ],
             ['ContentType',
              {'Name': rule.rule_name,
               'DisplayName': '',
               'ItemType': rule.rule_name
-             }
-            ]
+              }
+             ]
         ])
     easy_xml.WriteXmlIfChanged(content, xml_path, pretty=True, win32=True)
 
@@ -2714,12 +2720,12 @@ def _GetMSBuildGlobalProperties(spec, version, guid, gyp_file_name):
     namespace = os.path.splitext(gyp_file_name)[0]
     properties = [
         ['PropertyGroup', {'Label': 'Globals'},
-          ['ProjectGuid', guid],
-          ['Keyword', 'Win32Proj'],
-          ['RootNamespace', namespace],
-          ['IgnoreWarnCompileDuplicatedFilename', 'true'],
-        ]
-      ]
+         ['ProjectGuid', guid],
+         ['Keyword', 'Win32Proj'],
+         ['RootNamespace', namespace],
+         ['IgnoreWarnCompileDuplicatedFilename', 'true'],
+         ]
+    ]
 
     if os.environ.get('PROCESSOR_ARCHITECTURE') == 'AMD64' or \
        os.environ.get('PROCESSOR_ARCHITEW6432') == 'AMD64':
@@ -2756,7 +2762,7 @@ def _GetMSBuildGlobalProperties(spec, version, guid, gyp_file_name):
     for configuration in spec['configurations'].values():
         platform_name = platform_name or _ConfigPlatform(configuration)
         msvs_windows_sdk_version = (msvs_windows_sdk_version or
-                      _ConfigWindowsTargetPlatformVersion(configuration, version))
+                                    _ConfigWindowsTargetPlatformVersion(configuration, version))
         if platform_name and msvs_windows_sdk_version:
             break
     if msvs_windows_sdk_version:
@@ -2786,7 +2792,7 @@ def _GetMSBuildConfigurationDetails(spec, build_file):
             _AddConditionalProperty(properties, condition, 'TargetVersion',
                                     _ConfigTargetVersion(settings))
         if character_set:
-            if 'msvs_enable_winrt' not in spec :
+            if 'msvs_enable_winrt' not in spec:
                 _AddConditionalProperty(properties, condition, 'CharacterSet',
                                         character_set)
     return _GetMSBuildPropertyGroup(spec, 'Configuration', properties)
@@ -2798,9 +2804,9 @@ def _GetMSBuildLocalProperties(msbuild_toolset):
     if msbuild_toolset:
         properties = [
             ['PropertyGroup', {'Label': 'Locals'},
-              ['PlatformToolset', msbuild_toolset],
-            ]
-          ]
+             ['PlatformToolset', msbuild_toolset],
+             ]
+        ]
     return properties
 
 
@@ -2825,29 +2831,30 @@ def _GetMSBuildPropertySheets(configurations):
               {'Project': user_props,
                'Condition': "exists('%s')" % user_props,
                'Label': 'LocalAppDataPlatform'
-              }
+               }
+              ]
              ]
-            ]
         ]
     else:
         sheets = []
         for condition, props in additional_props.items():
             import_group = [
-              'ImportGroup',
-              {'Label': 'PropertySheets',
-               'Condition': condition
-              },
-              ['Import',
-               {'Project': user_props,
-                'Condition': "exists('%s')" % user_props,
-                'Label': 'LocalAppDataPlatform'
-               }
-              ]
+                'ImportGroup',
+                {'Label': 'PropertySheets',
+                 'Condition': condition
+                 },
+                ['Import',
+                 {'Project': user_props,
+                  'Condition': "exists('%s')" % user_props,
+                  'Label': 'LocalAppDataPlatform'
+                  }
+                 ]
             ]
             for props_file in props:
-                import_group.append(['Import', {'Project':props_file}])
+                import_group.append(['Import', {'Project': props_file}])
             sheets.append(import_group)
         return sheets
+
 
 def _ConvertMSVSBuildAttributes(spec, config, build_file):
     config_type = _GetMSVSConfigurationType(spec, build_file)
@@ -2903,7 +2910,7 @@ def _GetMSBuildAttributes(spec, config, build_file):
         msbuild_attributes = config.get('msbuild_configuration_attributes', {})
         msbuild_attributes.setdefault('ConfigurationType', config_type)
         output_dir = msbuild_attributes.get('OutputDirectory',
-                                          '$(SolutionDir)$(Configuration)')
+                                            '$(SolutionDir)$(Configuration)')
         msbuild_attributes['OutputDirectory'] = _FixPath(output_dir) + '\\'
         if 'IntermediateDirectory' not in msbuild_attributes:
             intermediate = _FixPath('$(Configuration)') + '\\'
@@ -3035,6 +3042,7 @@ def _GetMSBuildPropertyGroup(spec, label, properties):
     if label:
         group.append({'Label': label})
     num_configurations = len(spec['configurations'])
+
     def GetEdges(node):
         # Use a definition of edges such that user_of_variable -> used_varible.
         # This happens to be easier in this case, since a variable's
@@ -3077,7 +3085,7 @@ def _GetMSBuildToolSettingsSections(spec, configurations):
         msbuild_settings = configuration['finalized_msbuild_settings']
         group = ['ItemDefinitionGroup',
                  {'Condition': _GetConfigurationCondition(name, configuration)}
-                ]
+                 ]
         for tool_name, tool_settings in sorted(msbuild_settings.items()):
             # Skip the tool named '' which is a holder of global settings handled
             # by _GetMSBuildConfigurationGlobalProperties.
@@ -3140,7 +3148,7 @@ def _FinalizeMSBuildSettings(spec, configuration):
     # Add in libraries, note that even for empty libraries, we want this
     # set, to prevent inheriting default libraries from the environment.
     _ToolSetOrAppend(msbuild_settings, 'Link', 'AdditionalDependencies',
-                    libraries)
+                     libraries)
     _ToolAppend(msbuild_settings, 'Link', 'AdditionalLibraryDirectories',
                 library_dirs)
     if out_file:
@@ -3309,7 +3317,7 @@ def _AddSources2(spec, sources, exclusions, grouped_sources,
                         detail.append(['PrecompiledHeader',
                                        {'Condition': condition},
                                        'Create'
-                                      ])
+                                       ])
                     else:
                         # Turn off precompiled header usage for source files of a
                         # different type than the file that generated the
@@ -3336,10 +3344,10 @@ def _GetMSBuildProjectReferences(project):
             relative_path = gyp.common.RelativePath(
                 dependency.path, project_dir)
             project_ref = ['ProjectReference',
-                {'Include': relative_path},
-                ['Project', guid],
-                ['ReferenceOutputAssembly', 'false']
-                ]
+                           {'Include': relative_path},
+                           ['Project', guid],
+                           ['ReferenceOutputAssembly', 'false']
+                           ]
             for config in dependency.spec.get('configurations', {}).values():
                 if config.get('msvs_use_library_dependency_inputs', 0):
                     project_ref.append(['UseLibraryDependencyInputs', 'true'])
@@ -3423,16 +3431,16 @@ def _GenerateMSBuildProject(project, options, version, generator_flags):
         ['Import', {'Project': r'$(VCTargetsPath)\Microsoft.Cpp.targets'}]]
     import_masm_props_section = [
         ['Import',
-          {'Project': r'$(VCTargetsPath)\BuildCustomizations\masm.props'}]]
+         {'Project': r'$(VCTargetsPath)\BuildCustomizations\masm.props'}]]
     import_masm_targets_section = [
         ['Import',
-          {'Project': r'$(VCTargetsPath)\BuildCustomizations\masm.targets'}]]
+         {'Project': r'$(VCTargetsPath)\BuildCustomizations\masm.targets'}]]
     import_marmasm_props_section = [
         ['Import',
-          {'Project': r'$(VCTargetsPath)\BuildCustomizations\marmasm.props'}]]
+         {'Project': r'$(VCTargetsPath)\BuildCustomizations\marmasm.props'}]]
     import_marmasm_targets_section = [
         ['Import',
-          {'Project': r'$(VCTargetsPath)\BuildCustomizations\marmasm.targets'}]]
+         {'Project': r'$(VCTargetsPath)\BuildCustomizations\marmasm.targets'}]]
     macro_section = [['PropertyGroup', {'Label': 'UserMacros'}]]
 
     content = [
@@ -3440,7 +3448,7 @@ def _GenerateMSBuildProject(project, options, version, generator_flags):
         {'xmlns': 'http://schemas.microsoft.com/developer/msbuild/2003',
          'ToolsVersion': version.ProjectVersion(),
          'DefaultTargets': 'Build'
-        }]
+         }]
 
     content += _GetMSBuildProjectConfigurations(configurations)
     content += _GetMSBuildGlobalProperties(spec, version, project.guid,
@@ -3600,7 +3608,7 @@ def _AddMSBuildAction(spec, primary_input, inputs, outputs, cmd, description,
          ['Command', command],
          ['Message', description],
          ['Outputs', outputs]
-        ])
+         ])
     if additional_inputs:
         action_spec.append(['AdditionalInputs', additional_inputs])
     actions_spec.append(action_spec)

@@ -45,23 +45,23 @@ except NameError:
     _maketrans = str.maketrans
 
 generator_default_variables = {
-  'EXECUTABLE_PREFIX': '',
-  'EXECUTABLE_SUFFIX': '',
-  'STATIC_LIB_PREFIX': 'lib',
-  'STATIC_LIB_SUFFIX': '.a',
-  'SHARED_LIB_PREFIX': 'lib',
-  'SHARED_LIB_SUFFIX': '.so',
-  'SHARED_LIB_DIR': '${builddir}/lib.${TOOLSET}',
-  'LIB_DIR': '${obj}.${TOOLSET}',
-  'INTERMEDIATE_DIR': '${obj}.${TOOLSET}/${TARGET}/geni',
-  'SHARED_INTERMEDIATE_DIR': '${obj}/gen',
-  'PRODUCT_DIR': '${builddir}',
-  'RULE_INPUT_PATH': '${RULE_INPUT_PATH}',
-  'RULE_INPUT_DIRNAME': '${RULE_INPUT_DIRNAME}',
-  'RULE_INPUT_NAME': '${RULE_INPUT_NAME}',
-  'RULE_INPUT_ROOT': '${RULE_INPUT_ROOT}',
-  'RULE_INPUT_EXT': '${RULE_INPUT_EXT}',
-  'CONFIGURATION_NAME': '${configuration}',
+    'EXECUTABLE_PREFIX': '',
+    'EXECUTABLE_SUFFIX': '',
+    'STATIC_LIB_PREFIX': 'lib',
+    'STATIC_LIB_SUFFIX': '.a',
+    'SHARED_LIB_PREFIX': 'lib',
+    'SHARED_LIB_SUFFIX': '.so',
+    'SHARED_LIB_DIR': '${builddir}/lib.${TOOLSET}',
+    'LIB_DIR': '${obj}.${TOOLSET}',
+    'INTERMEDIATE_DIR': '${obj}.${TOOLSET}/${TARGET}/geni',
+    'SHARED_INTERMEDIATE_DIR': '${obj}/gen',
+    'PRODUCT_DIR': '${builddir}',
+    'RULE_INPUT_PATH': '${RULE_INPUT_PATH}',
+    'RULE_INPUT_DIRNAME': '${RULE_INPUT_DIRNAME}',
+    'RULE_INPUT_NAME': '${RULE_INPUT_NAME}',
+    'RULE_INPUT_ROOT': '${RULE_INPUT_ROOT}',
+    'RULE_INPUT_EXT': '${RULE_INPUT_EXT}',
+    'CONFIGURATION_NAME': '${configuration}',
 }
 
 FULL_PATH_VARS = ('${CMAKE_CURRENT_LIST_DIR}', '${builddir}', '${obj}')
@@ -70,12 +70,12 @@ generator_supports_multiple_toolsets = True
 generator_wants_static_library_dependencies_adjusted = True
 
 COMPILABLE_EXTENSIONS = {
-  '.c': 'cc',
-  '.cc': 'cxx',
-  '.cpp': 'cxx',
-  '.cxx': 'cxx',
-  '.s': 's', # cc
-  '.S': 's', # cc
+    '.c': 'cc',
+    '.cc': 'cxx',
+    '.cpp': 'cxx',
+    '.cxx': 'cxx',
+    '.s': 's',  # cc
+    '.S': 's',  # cc
 }
 
 
@@ -230,11 +230,11 @@ class CMakeTargetType(object):
 
 
 cmake_target_type_from_gyp_target_type = {
-  'executable': CMakeTargetType('add_executable', None, 'RUNTIME'),
-  'static_library': CMakeTargetType('add_library', 'STATIC', 'ARCHIVE'),
-  'shared_library': CMakeTargetType('add_library', 'SHARED', 'LIBRARY'),
-  'loadable_module': CMakeTargetType('add_library', 'MODULE', 'LIBRARY'),
-  'none': CMakeTargetType('add_custom_target', 'SOURCES', None),
+    'executable': CMakeTargetType('add_executable', None, 'RUNTIME'),
+    'static_library': CMakeTargetType('add_library', 'STATIC', 'ARCHIVE'),
+    'shared_library': CMakeTargetType('add_library', 'SHARED', 'LIBRARY'),
+    'loadable_module': CMakeTargetType('add_library', 'MODULE', 'LIBRARY'),
+    'none': CMakeTargetType('add_custom_target', 'SOURCES', None),
 }
 
 
@@ -268,7 +268,7 @@ def WriteActions(target_name, actions, extra_sources, extra_deps,
         inputs = action['inputs']
         inputs_name = action_target_name + '__input'
         SetVariableList(output, inputs_name,
-            [NormjoinPathForceCMakeSource(path_to_gyp, dep) for dep in inputs])
+                        [NormjoinPathForceCMakeSource(path_to_gyp, dep) for dep in inputs])
 
         outputs = action['outputs']
         cmake_outputs = [NormjoinPathForceCMakeSource(path_to_gyp, out)
@@ -329,7 +329,7 @@ def WriteActions(target_name, actions, extra_sources, extra_deps,
 
 
 def NormjoinRulePathForceCMakeSource(base_path, rel_path, rule_source):
-    if rel_path.startswith(("${RULE_INPUT_PATH}","${RULE_INPUT_DIRNAME}")):
+    if rel_path.startswith(("${RULE_INPUT_PATH}", "${RULE_INPUT_DIRNAME}")):
         if any([rule_source.startswith(var) for var in FULL_PATH_VARS]):
             return rel_path
     return NormjoinPathForceCMakeSource(base_path, rel_path)
@@ -354,7 +354,7 @@ def WriteRules(target_name, rules, extra_sources, extra_deps,
         inputs = rule.get('inputs', [])
         inputs_name = rule_name + '__input'
         SetVariableList(output, inputs_name,
-            [NormjoinPathForceCMakeSource(path_to_gyp, dep) for dep in inputs])
+                        [NormjoinPathForceCMakeSource(path_to_gyp, dep) for dep in inputs])
         outputs = rule['outputs']
         var_outputs = []
 
@@ -375,15 +375,15 @@ def WriteRules(target_name, rules, extra_sources, extra_deps,
             # Build up a list of outputs.
             # Collect the output dirs we'll need.
             dirs = set(dir for dir in (os.path.dirname(o)
-                       for o in outputs) if dir)
+                                       for o in outputs) if dir)
 
             # Create variables for the output, as 'local' variable will be unset.
             these_outputs = []
             for output_index, out in enumerate(outputs):
                 output_name = action_name + '_' + str(output_index)
                 SetVariable(output, output_name,
-                             NormjoinRulePathForceCMakeSource(path_to_gyp, out,
-                                                              rule_source))
+                            NormjoinRulePathForceCMakeSource(path_to_gyp, out,
+                                                             rule_source))
                 if int(rule.get('process_outputs_as_sources', False)):
                     extra_sources.append(('${' + output_name + '}', out))
                 these_outputs.append('${' + output_name + '}')
@@ -603,6 +603,7 @@ class CMakeNamer(object):
     building. However, it also makes sense for an IDE, as it is possible for
     defines to be different.
     """
+
     def __init__(self, target_list):
         self.cmake_target_base_names_conficting = set()
 
@@ -661,7 +662,7 @@ def WriteTarget(namer, qualified_target, target_dicts, build_dir, config_to_use,
     cmake_target_type = cmake_target_type_from_gyp_target_type.get(target_type)
     if cmake_target_type is None:
         print('Target %s has unknown target type %s, skipping.' %
-              (        target_name,               target_type  ))
+              (target_name,               target_type))
         return
 
     SetVariable(output, 'TARGET', target_name)
@@ -774,7 +775,6 @@ def WriteTarget(namer, qualified_target, target_dicts, build_dir, config_to_use,
         output.write('" "")\n')
         output.write("endif()\n")
 
-
     # CMake is opposed to setting linker directories and considers the practice
     # of setting linker directories dangerous. Instead, it favors the use of
     # find_library and passing absolute paths to target_link_libraries.
@@ -816,12 +816,12 @@ def WriteTarget(namer, qualified_target, target_dicts, build_dir, config_to_use,
 
     # Let CMake know if the 'all' target should depend on this target.
     exclude_from_all = ('TRUE' if qualified_target not in all_qualified_targets
-                               else 'FALSE')
+                        else 'FALSE')
     SetTargetProperty(output, cmake_target_name,
-                        'EXCLUDE_FROM_ALL', exclude_from_all)
+                      'EXCLUDE_FROM_ALL', exclude_from_all)
     for extra_target_name in extra_deps:
         SetTargetProperty(output, extra_target_name,
-                            'EXCLUDE_FROM_ALL', exclude_from_all)
+                          'EXCLUDE_FROM_ALL', exclude_from_all)
 
     # Output name and location.
     if target_type != 'none':
@@ -859,12 +859,12 @@ def WriteTarget(namer, qualified_target, target_dicts, build_dir, config_to_use,
                     os.path.join(target_output_directory, base_path))
 
         cmake_target_output_directory = NormjoinPathForceCMakeSource(
-                                            path_from_cmakelists_to_gyp,
-                                            target_output_directory)
+            path_from_cmakelists_to_gyp,
+            target_output_directory)
         SetTargetProperty(output,
-            cmake_target_name,
-            cmake_target_type.property_modifier + '_OUTPUT_DIRECTORY',
-            cmake_target_output_directory)
+                          cmake_target_name,
+                          cmake_target_type.property_modifier + '_OUTPUT_DIRECTORY',
+                          cmake_target_output_directory)
 
         # Output name
         default_product_prefix = ''
@@ -898,8 +898,8 @@ def WriteTarget(namer, qualified_target, target_dicts, build_dir, config_to_use,
 
         SetTargetProperty(output, cmake_target_name, 'PREFIX', product_prefix)
         SetTargetProperty(output, cmake_target_name,
-                            cmake_target_type.property_modifier + '_OUTPUT_NAME',
-                            product_name)
+                          cmake_target_type.property_modifier + '_OUTPUT_NAME',
+                          product_name)
         SetTargetProperty(output, cmake_target_name, 'SUFFIX', product_ext)
 
         # Make the output of this target referenceable as a source.
@@ -914,8 +914,8 @@ def WriteTarget(namer, qualified_target, target_dicts, build_dir, config_to_use,
             # This (target include directories) is what requires CMake 2.8.8
             includes_name = cmake_target_name + '__include_dirs'
             SetVariableList(output, includes_name,
-                [NormjoinPathForceCMakeSource(path_from_cmakelists_to_gyp, include)
-                 for include in includes])
+                            [NormjoinPathForceCMakeSource(path_from_cmakelists_to_gyp, include)
+                             for include in includes])
             output.write('set_property(TARGET ')
             output.write(cmake_target_name)
             output.write(' APPEND PROPERTY INCLUDE_DIRECTORIES ')
@@ -1027,7 +1027,7 @@ def WriteTarget(namer, qualified_target, target_dicts, build_dir, config_to_use,
 
         if dep_target_type == 'static_library':
             static_deps.append(dep_cmake_name)
-        elif dep_target_type ==  'shared_library':
+        elif dep_target_type == 'shared_library':
             shared_deps.append(dep_cmake_name)
         else:
             other_deps.append(dep_cmake_name)

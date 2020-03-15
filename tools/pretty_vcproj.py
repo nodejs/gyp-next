@@ -34,6 +34,7 @@ ARGUMENTS = None
 
 class CmpTuple(object):
     """Compare function between 2 tuple."""
+
     def __call__(self, x, y):
         return cmp(x[0], y[0])
 
@@ -105,8 +106,8 @@ def FlattenFilter(node):
     node_list = []
 
     if (node.attributes and
-        node.getAttribute('Name') == '_excluded_files'):
-            # We don't add the "_excluded_files" filter.
+            node.getAttribute('Name') == '_excluded_files'):
+        # We don't add the "_excluded_files" filter.
         return []
 
     for current in node.childNodes:
@@ -193,7 +194,6 @@ def CleanupVcproj(node):
         else:
             node_array.append(current)
 
-
     # Sort the list.
     node_array.sort(CmpNode())
 
@@ -210,7 +210,7 @@ def CleanupVcproj(node):
 
 
 def GetConfiguationNodes(vcproj):
-    #TODO(nsylvain): Find a better way to navigate the xml.
+    # TODO(nsylvain): Find a better way to navigate the xml.
     nodes = []
     for node in vcproj.childNodes:
         if node.nodeName == "Configurations":
@@ -227,6 +227,7 @@ def GetChildrenVsprops(filename):
         vsprops = dom.documentElement.getAttribute('InheritedPropertySheets')
         return FixFilenames(vsprops.split(';'), os.path.dirname(filename))
     return []
+
 
 def SeekToNode(node1, child2):
     # A text node does not have properties.
@@ -329,7 +330,7 @@ def main(argv):
 
     # Finally, we use the prett xml function to print the vcproj back to the
     # user.
-    #print dom.toprettyxml(newl="\n")
+    # print dom.toprettyxml(newl="\n")
     PrettyPrintNode(dom.documentElement)
     return 0
 

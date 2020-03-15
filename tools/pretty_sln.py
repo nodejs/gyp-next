@@ -21,6 +21,7 @@ import pretty_vcproj
 
 __author__ = 'nsylvain (Nicolas Sylvain)'
 
+
 def BuildProject(project, built, projects, deps):
     # if all dependencies are done, we can build it, otherwise we try to build the
     # dependency.
@@ -30,6 +31,7 @@ def BuildProject(project, built, projects, deps):
             BuildProject(dep, built, projects, deps)
     print(project)
     built.append(project)
+
 
 def ParseSolution(solution_file):
     # All projects, their clsid and paths.
@@ -101,6 +103,7 @@ def ParseSolution(solution_file):
 
     return (projects, dependencies)
 
+
 def PrintDependencies(projects, deps):
     print("---------------------------------------")
     print("Dependencies for all projects")
@@ -117,6 +120,7 @@ def PrintDependencies(projects, deps):
 
     print("--                                   --")
 
+
 def PrintBuildOrder(projects, deps):
     print("---------------------------------------")
     print("Build order                            ")
@@ -129,6 +133,7 @@ def PrintBuildOrder(projects, deps):
             BuildProject(project, built, projects, deps)
 
     print("--                                   --")
+
 
 def PrintVCProj(projects):
 
@@ -145,12 +150,13 @@ def PrintVCProj(projects):
                                                     projects[project][2]))
 
         pretty = pretty_vcproj
-        argv = [ '',
-                 project_path,
-                 '$(SolutionDir)=%s\\' % os.path.dirname(sys.argv[1]),
-               ]
+        argv = ['',
+                project_path,
+                '$(SolutionDir)=%s\\' % os.path.dirname(sys.argv[1]),
+                ]
         argv.extend(sys.argv[3:])
         pretty.main(argv)
+
 
 def main():
     # check if we have exactly 1 parameter.

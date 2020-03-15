@@ -10,11 +10,11 @@ import os
 
 # A dictionary mapping supported target types to extensions.
 TARGET_TYPE_EXT = {
-  'executable': 'exe',
-  'loadable_module': 'dll',
-  'shared_library': 'dll',
-  'static_library': 'lib',
-  'windows_driver': 'sys',
+    'executable': 'exe',
+    'loadable_module': 'dll',
+    'shared_library': 'dll',
+    'static_library': 'lib',
+    'windows_driver': 'sys',
 }
 
 
@@ -102,7 +102,7 @@ def ShardTargets(target_list, target_dicts):
                 name = _ShardName(t, i)
                 new_target_dicts[name] = copy.copy(target_dicts[t])
                 new_target_dicts[name]['target_name'] = _ShardName(
-                     new_target_dicts[name]['target_name'], i)
+                    new_target_dicts[name]['target_name'], i)
                 sources = new_target_dicts[name].get('sources', [])
                 new_sources = []
                 for pos in range(i, len(sources), targets_to_shard[t]):
@@ -158,7 +158,6 @@ def _GetPdbPath(target_dict, config_name, vars):
     if pdb_path:
         return pdb_path
 
-
     pdb_base = target_dict.get('product_name', target_dict['target_name'])
     pdb_base = '%s.%s.pdb' % (pdb_base, TARGET_TYPE_EXT[target_dict['type']])
     pdb_path = vars['PRODUCT_DIR'] + '/' + pdb_base
@@ -200,7 +199,7 @@ def InsertLargePdbShims(target_list, target_dicts, vars):
         target_name = target_dict.get('target_name')
 
         base_dict = _DeepCopySomeKeys(target_dict,
-              ['configurations', 'default_configuration', 'toolset'])
+                                      ['configurations', 'default_configuration', 'toolset'])
 
         # This is the dict for copying the source file (part of the GYP tree)
         # to the intermediate directory of the project. This is necessary because
@@ -217,10 +216,10 @@ def InsertLargePdbShims(target_list, target_dicts, vars):
         copy_dict = copy.deepcopy(base_dict)
         copy_dict['target_name'] = copy_target_name
         copy_dict['type'] = 'none'
-        copy_dict['sources'] = [ large_pdb_shim_cc ]
+        copy_dict['sources'] = [large_pdb_shim_cc]
         copy_dict['copies'] = [{
-          'destination': shim_cc_dir,
-          'files': [ large_pdb_shim_cc ]
+            'destination': shim_cc_dir,
+            'files': [large_pdb_shim_cc]
         }]
 
         # This is the dict for the PDB generating shim target. It depends on the
@@ -231,8 +230,8 @@ def InsertLargePdbShims(target_list, target_dicts, vars):
         shim_dict = copy.deepcopy(base_dict)
         shim_dict['target_name'] = shim_target_name
         shim_dict['type'] = 'static_library'
-        shim_dict['sources'] = [ shim_cc_path ]
-        shim_dict['dependencies'] = [ full_copy_target_name ]
+        shim_dict['sources'] = [shim_cc_path]
+        shim_dict['dependencies'] = [full_copy_target_name]
 
         # Set up the shim to output its PDB to the same location as the final linker
         # target.

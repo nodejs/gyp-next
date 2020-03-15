@@ -11,11 +11,13 @@ import subprocess
 PY3 = bytes != str
 
 # Below IsCygwin() function copied from pylib/gyp/common.py
+
+
 def IsCygwin():
     try:
         out = subprocess.Popen("uname",
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT)
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT)
         stdout, stderr = out.communicate()
         if PY3:
             stdout = stdout.decode("utf-8")
@@ -29,8 +31,8 @@ def UnixifyPath(path):
         if not IsCygwin():
             return path
         out = subprocess.Popen(["cygpath", "-u", path],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT)
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT)
         stdout, _ = out.communicate()
         if PY3:
             stdout = stdout.decode("utf-8")
@@ -44,7 +46,7 @@ def UnixifyPath(path):
 # else the 'gyp' library will not be found
 path = UnixifyPath(sys.argv[0])
 sys.path.insert(0, os.path.join(os.path.dirname(path), 'pylib'))
-import gyp
+import gyp  # noqa: E402
 
 if __name__ == '__main__':
     sys.exit(gyp.script_main())

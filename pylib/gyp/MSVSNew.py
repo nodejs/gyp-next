@@ -26,7 +26,7 @@ ENTRY_TYPE_GUIDS = {
     'folder': '{2150E333-8FDC-42A3-9474-1A3956D46DE8}',
 }
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Helper functions
 
 
@@ -52,7 +52,7 @@ def MakeGuid(name, seed='msvs_new'):
             + '-' + d[20:32] + '}')
     return guid
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 class MSVSSolutionEntry(object):
@@ -64,8 +64,8 @@ class MSVSSolutionEntry(object):
 class MSVSFolder(MSVSSolutionEntry):
     """Folder in a Visual Studio project or solution."""
 
-    def __init__(self, path, name = None, entries = None,
-                 guid = None, items = None):
+    def __init__(self, path, name=None, entries=None,
+                 guid=None, items=None):
         """Initializes the folder.
 
         Args:
@@ -99,15 +99,15 @@ class MSVSFolder(MSVSSolutionEntry):
         return self.guid
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 class MSVSProject(MSVSSolutionEntry):
     """Visual Studio project."""
 
-    def __init__(self, path, name = None, dependencies = None, guid = None,
-                 spec = None, build_file = None, config_platform_overrides = None,
-                 fixpath_prefix = None):
+    def __init__(self, path, name=None, dependencies=None, guid=None,
+                 spec=None, build_file=None, config_platform_overrides=None,
+                 fixpath_prefix=None):
         """Initializes the project.
 
         Args:
@@ -165,7 +165,7 @@ class MSVSProject(MSVSSolutionEntry):
     def set_msbuild_toolset(self, msbuild_toolset):
         self.msbuild_toolset = msbuild_toolset
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 class MSVSSolution(object):
@@ -203,11 +203,9 @@ class MSVSSolution(object):
         # or add a separate variant_map variable?  If it's a dict, we can't
         # guarantee the order of variants since dict keys aren't ordered.
 
-
         # TODO(rspangler): Automatically write to disk for now; should delay until
         # node-evaluation time.
         self.Write()
-
 
     def Write(self, writer=gyp.common.WriteOnDiff):
         """Writes the solution file to disk.

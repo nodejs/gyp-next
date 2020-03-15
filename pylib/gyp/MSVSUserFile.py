@@ -6,13 +6,13 @@
 
 import os
 import re
-import socket # for gethostname
+import socket  # for gethostname
 
 import gyp.common
 import gyp.easy_xml as easy_xml
 
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 def _FindCommandInPath(command):
     """If there are no slashes in the command given, this function
@@ -28,12 +28,13 @@ def _FindCommandInPath(command):
     else:
         # Search through the path list and find an existing file that
         # we can access.
-        paths = os.environ.get('PATH','').split(os.pathsep)
+        paths = os.environ.get('PATH', '').split(os.pathsep)
         for path in paths:
             item = os.path.join(path, command)
             if os.path.isfile(item) and os.access(item, os.X_OK):
                 return item
     return command
+
 
 def _QuoteWin32CommandLineArgs(args):
     new_args = []
@@ -50,6 +51,7 @@ def _QuoteWin32CommandLineArgs(args):
             arg = '"%s"' % arg
         new_args.append(arg)
     return new_args
+
 
 class Writer(object):
     """Visual Studio XML user user file writer."""
@@ -75,7 +77,7 @@ class Writer(object):
         """
         self.configurations[name] = ['Configuration', {'Name': name}]
 
-    def AddDebugSettings(self, config_name, command, environment = {},
+    def AddDebugSettings(self, config_name, command, environment={},
                          working_directory=""):
         """Adds a DebugSettings node to the user file for a particular config.
 
@@ -91,7 +93,7 @@ class Writer(object):
 
         if environment and isinstance(environment, dict):
             env_list = ['%s="%s"' % (key, val)
-                        for (key,val) in environment.items()]
+                        for (key, val) in environment.items()]
             environment = ' '.join(env_list)
         else:
             environment = ''
@@ -123,7 +125,7 @@ class Writer(object):
                   'ShimCommand': '',
                   'MPIAcceptMode': '',
                   'MPIAcceptFilter': ''
-                 }]
+                  }]
 
         # Find the config, and add it if it doesn't exist.
         if config_name not in self.configurations:
@@ -141,7 +143,7 @@ class Writer(object):
         content = ['VisualStudioUserFile',
                    {'Version': self.version.ProjectVersion(),
                     'Name': self.name
-                   },
+                    },
                    configs]
         easy_xml.WriteXmlIfChanged(content, self.user_file_path,
                                    encoding="Windows-1252")

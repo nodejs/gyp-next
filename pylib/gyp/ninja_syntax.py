@@ -12,8 +12,10 @@ use Python.
 import textwrap
 import re
 
+
 def escape_path(word):
-    return word.replace('$ ','$$ ').replace(' ','$ ').replace(':', '$:')
+    return word.replace('$ ', '$$ ').replace(' ', '$ ').replace(':', '$:')
+
 
 class Writer(object):
     def __init__(self, output, width=78):
@@ -77,7 +79,7 @@ class Writer(object):
             all_inputs.extend(order_only)
 
         self._line('build %s: %s' % (' '.join(out_outputs),
-                                        ' '.join([rule] + all_inputs)))
+                                     ' '.join([rule] + all_inputs)))
 
         if variables:
             if isinstance(variables, dict):
@@ -125,7 +127,7 @@ class Writer(object):
                     break
 
             if space < 0:
-                    # No such space; just use the first unescaped space we can find.
+                # No such space; just use the first unescaped space we can find.
                 space = available_space - 1
                 while True:
                     space = text.find(' ', space + 1)

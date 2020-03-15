@@ -21,5 +21,6 @@ class TestEscapeXcodeDefine(unittest.TestCase):
             self.assertEqual(xcode.EscapeXcodeDefine(
                 'a b"c\\'), 'a\\ b\\"c\\\\')
 
+
 if __name__ == '__main__':
     unittest.main()

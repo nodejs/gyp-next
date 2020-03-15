@@ -7,10 +7,13 @@ structures or complex types except for dicts and lists. This is
 because gyp copies so large structure that small copy overhead ends up
 taking seconds in a project the size of Chromium."""
 
+
 class Error(Exception):
     pass
 
+
 __all__ = ["Error", "deepcopy"]
+
 
 def deepcopy(x):
     """Deep copy operation on gyp objects such as strings, ints, dicts
@@ -23,10 +26,13 @@ def deepcopy(x):
         raise Error('Unsupported type %s for deepcopy. Use copy.deepcopy ' +
                     'or expand simple_copy support.' % type(x))
 
+
 _deepcopy_dispatch = d = {}
+
 
 def _deepcopy_atomic(x):
     return x
+
 
 try:
     types = bool, float, int, str, type, type(None), long, unicode
@@ -36,15 +42,21 @@ except NameError:  # Python 3
 for x in types:
     d[x] = _deepcopy_atomic
 
+
 def _deepcopy_list(x):
     return [deepcopy(a) for a in x]
+
+
 d[list] = _deepcopy_list
+
 
 def _deepcopy_dict(x):
     y = {}
     for key, value in x.items():
         y[deepcopy(key)] = deepcopy(value)
     return y
+
+
 d[dict] = _deepcopy_dict
 
 del d

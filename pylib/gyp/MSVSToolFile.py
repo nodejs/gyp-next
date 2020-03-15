@@ -43,7 +43,7 @@ class Writer(object):
                  'FileExtensions': ';'.join(extensions),
                  'AdditionalDependencies':
                      ';'.join(additional_dependencies)
-                }]
+                 }]
         self.rules_section.append(rule)
 
     def WriteIfChanged(self):
@@ -51,7 +51,7 @@ class Writer(object):
         content = ['VisualStudioToolFile',
                    {'Version': '8.00',
                     'Name': self.name
-                   },
+                    },
                    self.rules_section
                    ]
         easy_xml.WriteXmlIfChanged(content, self.tool_file_path,

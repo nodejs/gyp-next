@@ -62,7 +62,8 @@ def EncodeRspFileList(args):
     # Take care to normpath only the path in the case of 'call ../x.bat' because
     # otherwise the whole thing is incorrectly interpreted as a path and not
     # normalized correctly.
-    if not args: return ''
+    if not args:
+        return ''
     if args[0].startswith('call '):
         call, program = args[0].split(' ', 1)
         program = call + ' ' + os.path.normpath(program)
@@ -165,6 +166,7 @@ def GetGlobalVSMacroEnv(vs_version):
     env['$(WDK_DIR)'] = os.environ.get('WDK_DIR', '')
     return env
 
+
 def ExtractSharedMSVSSystemIncludes(configs, generator_flags):
     """Finds msvs_system_include_dirs that are common to all targets, removes
     them from all targets, and returns an OrderedSet containing them."""
@@ -211,7 +213,7 @@ class MsvsSettings(object):
             ('msvs_precompiled_source', str),
             ('msvs_configuration_platform', str),
             ('msvs_target_platform', str),
-            ]
+        ]
         configs = spec['configurations']
         for field, default in supported_fields:
             setattr(self, field, {})
@@ -283,7 +285,7 @@ class MsvsSettings(object):
     def AdjustLibraries(self, libraries):
         """Strip -l from library if it's specified with that."""
         libs = [lib[2:] if lib.startswith('-l') else lib for lib in libraries]
-        return [lib + '.lib' if not lib.lower().endswith('.lib') \
+        return [lib + '.lib' if not lib.lower().endswith('.lib')
                 and not lib.lower().endswith('.obj') else lib for lib in libs]
 
     def _GetAndMunge(self, field, path, default, prefix, append, map):
@@ -302,9 +304,10 @@ class MsvsSettings(object):
             self.field = field
             self.base_path = [base_path]
             self.append = append
+
         def __call__(self, name, map=None, prefix='', default=None):
             return self.parent._GetAndMunge(self.field, self.base_path + [name],
-                default=default, prefix=prefix, append=self.append, map=map)
+                                            default=default, prefix=prefix, append=self.append, map=map)
 
     def GetArch(self, config):
         """Get architecture based on msvs_configuration_platform and
@@ -312,7 +315,7 @@ class MsvsSettings(object):
         configuration_platform = self.msvs_configuration_platform.get(
             config, '')
         platform = self.msvs_target_platform.get(config, '')
-        if not platform: # If no specific override, use the configuration's.
+        if not platform:  # If no specific override, use the configuration's.
             platform = configuration_platform
         # Map from platform to architecture.
         return {'Win32': 'x86', 'x64': 'x64', 'ARM64': 'arm64'}.get(platform, 'x86')
@@ -336,13 +339,13 @@ class MsvsSettings(object):
         return config
 
     def _Setting(self, path, config,
-                default=None, prefix='', append=None, map=None):
+                 default=None, prefix='', append=None, map=None):
         """_GetAndMunge for msvs_settings."""
         return self._GetAndMunge(
             self.msvs_settings[config], path, default, prefix, append, map)
 
     def _ConfigAttrib(self, path, config,
-                     default=None, prefix='', append=None, map=None):
+                      default=None, prefix='', append=None, map=None):
         """_GetAndMunge for msvs_configuration_attributes."""
         return self._GetAndMunge(
             self.msvs_configuration_attributes[config],
@@ -354,7 +357,7 @@ class MsvsSettings(object):
         config = self._TargetConfig(config)
         includes = include_dirs + self.msvs_system_include_dirs[config]
         includes.extend(self._Setting(
-          ('VCCLCompilerTool', 'AdditionalIncludeDirectories'), config, default=[]))
+            ('VCCLCompilerTool', 'AdditionalIncludeDirectories'), config, default=[]))
         return [self.ConvertVSMacros(p, config=config) for p in includes]
 
     def AdjustMidlIncludeDirs(self, midl_include_dirs, config):
@@ -363,7 +366,7 @@ class MsvsSettings(object):
         config = self._TargetConfig(config)
         includes = midl_include_dirs + self.msvs_system_include_dirs[config]
         includes.extend(self._Setting(
-          ('VCMIDLTool', 'AdditionalIncludeDirectories'), config, default=[]))
+            ('VCMIDLTool', 'AdditionalIncludeDirectories'), config, default=[]))
         return [self.ConvertVSMacros(p, config=config) for p in includes]
 
     def GetComputedDefines(self, config):
@@ -480,7 +483,7 @@ class MsvsSettings(object):
            '1': 's', '2': 'u', '3': '1'}, prefix='/RTC')
         cl('RuntimeLibrary',
             map={'0': 'T', '1': 'Td', '2': 'D', '3': 'Dd'}, prefix='/M')
-        cl('ExceptionHandling', map={'1': 'sc','2': 'a'}, prefix='/EH')
+        cl('ExceptionHandling', map={'1': 'sc', '2': 'a'}, prefix='/EH')
         cl('DefaultCharIsUnsigned', map={'true': '/J'})
         cl('TreatWChar_tAsBuiltInType',
             map={'false': '-', 'true': ''}, prefix='/Zc:wchar_t')
@@ -514,7 +517,7 @@ class MsvsSettings(object):
                 pch = self.msvs_precompiled_header[config]
                 pchbase = os.path.split(pch)[1]
                 return ['/Yu' + pch, '/FI' + pch, '/Fp${pchprefix}.' + pchbase + '.pch']
-        return  []
+        return []
 
     def GetCflagsC(self, config):
         """Returns the flags that need to be added to .c compilations."""
@@ -533,8 +536,8 @@ class MsvsSettings(object):
         libpaths = self._Setting((root, 'AdditionalLibraryDirectories'),
                                  config, default=[])
         libpaths = [os.path.normpath(
-                        gyp_to_build_path(self.ConvertVSMacros(p, config=config)))
-                    for p in libpaths]
+            gyp_to_build_path(self.ConvertVSMacros(p, config=config)))
+            for p in libpaths]
         return ['/LIBPATH:"' + p + '"' for p in libpaths]
 
     def GetLibFlags(self, config, gyp_to_build_path):
@@ -542,7 +545,7 @@ class MsvsSettings(object):
         config = self._TargetConfig(config)
         libflags = []
         lib = self._GetWrapper(self, self.msvs_settings[config],
-                              'VCLibrarianTool', append=libflags)
+                               'VCLibrarianTool', append=libflags)
         libflags.extend(self._GetAdditionalLibraryDirectories(
             'VCLibrarianTool', config, gyp_to_build_path))
         lib('LinkTimeCodeGeneration', map={'true': '/LTCG'})
@@ -612,7 +615,7 @@ class MsvsSettings(object):
             ldflags.append('/PGD:' + pgd)
         map_file = self.GetMapFileName(config, expand_special)
         ld('GenerateMapFile', map={'true': '/MAP:' + map_file if map_file
-            else '/MAP'})
+                                   else '/MAP'})
         ld('MapExports', map={'true': '/MAPINFO:EXPORTS'})
         ld('AdditionalOptions', prefix='')
 
@@ -707,8 +710,8 @@ class MsvsSettings(object):
 
         output_name = name + '.intermediate.manifest'
         flags = [
-          '/MANIFEST',
-          '/ManifestFile:' + output_name,
+            '/MANIFEST',
+            '/ManifestFile:' + output_name,
         ]
 
         # Instead of using the MANIFESTUAC flags, we generate a .manifest to
@@ -727,16 +730,16 @@ class MsvsSettings(object):
                                    default='true')
         manifest_files = []
         generated_manifest_outer = \
-    "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>" \
-    "<assembly xmlns='urn:schemas-microsoft-com:asm.v1' manifestVersion='1.0'>%s" \
-    "</assembly>"
+            "<?xml version='1.0' encoding='UTF-8' standalone='yes'?>" \
+            "<assembly xmlns='urn:schemas-microsoft-com:asm.v1' manifestVersion='1.0'>%s" \
+            "</assembly>"
         if enable_uac == 'true':
             execution_level = self._Setting(('VCLinkerTool', 'UACExecutionLevel'),
                                             config, default='0')
             execution_level_map = {
-              '0': 'asInvoker',
-              '1': 'highestAvailable',
-              '2': 'requireAdministrator'
+                '0': 'asInvoker',
+                '1': 'highestAvailable',
+                '2': 'requireAdministrator'
             }
 
             ui_access = self._Setting(('VCLinkerTool', 'UACUIAccess'), config,
@@ -782,8 +785,8 @@ class MsvsSettings(object):
         if isinstance(files, str):
             files = files.split(';')
         return [os.path.normpath(
-                    gyp_to_build_path(self.ConvertVSMacros(f, config=config)))
-                for f in files]
+            gyp_to_build_path(self.ConvertVSMacros(f, config=config)))
+            for f in files]
 
     def IsUseLibraryDependencyInputs(self, config):
         """Returns whether the target should be linked via Use Library Dependency
@@ -812,7 +815,7 @@ class MsvsSettings(object):
         config = self._TargetConfig(config)
         rcflags = []
         rc = self._GetWrapper(self, self.msvs_settings[config],
-            'VCResourceCompilerTool', append=rcflags)
+                              'VCResourceCompilerTool', append=rcflags)
         rc('AdditionalIncludeDirectories', map=gyp_to_ninja_path, prefix='/I')
         rcflags.append('/I' + gyp_to_ninja_path('.'))
         rc('PreprocessorDefinitions', prefix='/d')
@@ -875,6 +878,7 @@ class MsvsSettings(object):
         config = self._TargetConfig(config)
         midl_get = self._GetWrapper(
             self, self.msvs_settings[config], 'VCMIDLTool')
+
         def midl(name, default=None):
             return self.ConvertVSMacros(midl_get(name, default=default),
                                         config=config)
@@ -911,8 +915,9 @@ class PrecompiledHeader(object):
     """Helper to generate dependencies and build rules to handle generation of
     precompiled headers. Interface matches the GCH handler in xcode_emulation.py.
     """
+
     def __init__(
-        self, settings, config, gyp_to_build_path, gyp_to_unique_output, obj_ext):
+            self, settings, config, gyp_to_build_path, gyp_to_unique_output, obj_ext):
         self.settings = settings
         self.config = config
         pch_source = self.settings.msvs_precompiled_source[self.config]
@@ -960,6 +965,8 @@ class PrecompiledHeader(object):
 
 
 vs_version = None
+
+
 def GetVSVersion(generator_flags):
     global vs_version
     if not vs_version:
@@ -968,9 +975,11 @@ def GetVSVersion(generator_flags):
             allow_fallback=False)
     return vs_version
 
+
 def _GetVsvarsSetupArgs(generator_flags, arch):
     vs = GetVSVersion(generator_flags)
     return vs.SetupScript()
+
 
 def ExpandMacros(string, expansions):
     """Expand $(Variable) per expansions dict. See MsvsSettings.GetVSMacroEnv
@@ -981,11 +990,12 @@ def ExpandMacros(string, expansions):
             string = string.replace(old, new)
     return string
 
+
 def _ExtractImportantEnvironment(output_of_set):
     """Extracts environment variables required for the toolchain to run from
     a textual dump output by the cmd.exe 'set' command."""
     envvars_to_save = (
-        'goma_.*', # TODO(scottmg): This is ugly, but needed for goma.
+        'goma_.*',  # TODO(scottmg): This is ugly, but needed for goma.
         'include',
         'lib',
         'libpath',
@@ -994,7 +1004,7 @@ def _ExtractImportantEnvironment(output_of_set):
         'systemroot',
         'temp',
         'tmp',
-        )
+    )
     env = {}
     # This occasionally happens and leads to misleading SYSTEMROOT error messages
     # if not caught here.
@@ -1019,6 +1029,7 @@ def _ExtractImportantEnvironment(output_of_set):
                             'required to be set to valid path' % required)
     return env
 
+
 def _FormatAsEnvironmentBlock(envvar_dict):
     """Format as an 'environment block' directly suitable for CreateProcess.
     Briefly this is a list of key=value\0, terminated by an additional \0. See
@@ -1030,6 +1041,7 @@ def _FormatAsEnvironmentBlock(envvar_dict):
     block += nul
     return block
 
+
 def _ExtractCLPath(output_of_where):
     """Gets the path to cl.exe based on the output of calling the environment
     setup batch file, followed by the equivalent of `where`."""
@@ -1037,6 +1049,7 @@ def _ExtractCLPath(output_of_where):
     for line in output_of_where.strip().splitlines():
         if line.startswith('LOC:'):
             return line[len('LOC:'):].strip()
+
 
 def GenerateEnvironmentFiles(toplevel_build_dir, generator_flags,
                              system_includes, open_out):
@@ -1079,25 +1092,26 @@ def GenerateEnvironmentFiles(toplevel_build_dir, generator_flags,
         # Inject system includes from gyp files into INCLUDE.
         if system_includes:
             system_includes = system_includes | OrderedSet(
-                                                    env.get('INCLUDE', '').split(';'))
+                env.get('INCLUDE', '').split(';'))
             env['INCLUDE'] = ';'.join(system_includes)
 
         env_block = _FormatAsEnvironmentBlock(env)
         f = open_out(os.path.join(toplevel_build_dir,
-                     'environment.' + arch), 'w')
+                                  'environment.' + arch), 'w')
         f.write(env_block)
         f.close()
 
         # Find cl.exe location for this architecture.
         args = vs.SetupScript(arch)
         args.extend(('&&',
-          'for', '%i', 'in', '(cl.exe)', 'do', '@echo', 'LOC:%~$PATH:i'))
+                     'for', '%i', 'in', '(cl.exe)', 'do', '@echo', 'LOC:%~$PATH:i'))
         popen = subprocess.Popen(args, shell=True, stdout=subprocess.PIPE)
         output, _ = popen.communicate()
         if PY3:
             output = output.decode('utf-8')
         cl_paths[arch] = _ExtractCLPath(output)
     return cl_paths
+
 
 def VerifyMissingSources(sources, build_dir, generator_flags, gyp_to_ninja):
     """Emulate behavior of msvs_error_on_missing_sources present in the msvs
@@ -1108,7 +1122,7 @@ def VerifyMissingSources(sources, build_dir, generator_flags, gyp_to_ninja):
     if int(generator_flags.get('msvs_error_on_missing_sources', 0)):
         no_specials = filter(lambda x: '$' not in x, sources)
         relative = [os.path.join(build_dir, gyp_to_ninja(s))
-                                 for s in no_specials]
+                    for s in no_specials]
         missing = [x for x in relative if not os.path.exists(x)]
         if missing:
             # They'll look like out\Release\..\..\stuff\things.cc, so normalize the
@@ -1118,6 +1132,8 @@ def VerifyMissingSources(sources, build_dir, generator_flags, gyp_to_ninja):
 
 # Sets some values in default_variables, which are required for many
 # generators, run on Windows.
+
+
 def CalculateCommonVariables(default_variables, params):
     generator_flags = params.get('generator_flags', {})
 
@@ -1130,7 +1146,7 @@ def CalculateCommonVariables(default_variables, params):
     # process), it is also necessary to check PROCESSOR_ARCHITEW6432 (which
     # contains the actual word size of the system when running thru WOW64).
     if ('64' in os.environ.get('PROCESSOR_ARCHITECTURE', '') or
-        '64' in os.environ.get('PROCESSOR_ARCHITEW6432', '')):
+            '64' in os.environ.get('PROCESSOR_ARCHITEW6432', '')):
         default_variables['MSVS_OS_BITS'] = 64
     else:
         default_variables['MSVS_OS_BITS'] = 32

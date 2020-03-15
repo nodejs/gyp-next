@@ -24,24 +24,24 @@ import re
 import subprocess
 
 generator_default_variables = {
-  'OS': 'android',
-  'EXECUTABLE_PREFIX': '',
-  'EXECUTABLE_SUFFIX': '',
-  'STATIC_LIB_PREFIX': 'lib',
-  'SHARED_LIB_PREFIX': 'lib',
-  'STATIC_LIB_SUFFIX': '.a',
-  'SHARED_LIB_SUFFIX': '.so',
-  'INTERMEDIATE_DIR': '$(gyp_intermediate_dir)',
-  'SHARED_INTERMEDIATE_DIR': '$(gyp_shared_intermediate_dir)',
-  'PRODUCT_DIR': '$(gyp_shared_intermediate_dir)',
-  'SHARED_LIB_DIR': '$(builddir)/lib.$(TOOLSET)',
-  'LIB_DIR': '$(obj).$(TOOLSET)',
-  'RULE_INPUT_ROOT': '%(INPUT_ROOT)s',  # This gets expanded by Python.
-  'RULE_INPUT_DIRNAME': '%(INPUT_DIRNAME)s',  # This gets expanded by Python.
-  'RULE_INPUT_PATH': '$(RULE_SOURCES)',
-  'RULE_INPUT_EXT': '$(suffix $<)',
-  'RULE_INPUT_NAME': '$(notdir $<)',
-  'CONFIGURATION_NAME': '$(GYP_CONFIGURATION)',
+    'OS': 'android',
+    'EXECUTABLE_PREFIX': '',
+    'EXECUTABLE_SUFFIX': '',
+    'STATIC_LIB_PREFIX': 'lib',
+    'SHARED_LIB_PREFIX': 'lib',
+    'STATIC_LIB_SUFFIX': '.a',
+    'SHARED_LIB_SUFFIX': '.so',
+    'INTERMEDIATE_DIR': '$(gyp_intermediate_dir)',
+    'SHARED_INTERMEDIATE_DIR': '$(gyp_shared_intermediate_dir)',
+    'PRODUCT_DIR': '$(gyp_shared_intermediate_dir)',
+    'SHARED_LIB_DIR': '$(builddir)/lib.$(TOOLSET)',
+    'LIB_DIR': '$(obj).$(TOOLSET)',
+    'RULE_INPUT_ROOT': '%(INPUT_ROOT)s',  # This gets expanded by Python.
+    'RULE_INPUT_DIRNAME': '%(INPUT_DIRNAME)s',  # This gets expanded by Python.
+    'RULE_INPUT_PATH': '$(RULE_SOURCES)',
+    'RULE_INPUT_EXT': '$(suffix $<)',
+    'RULE_INPUT_NAME': '$(notdir $<)',
+    'CONFIGURATION_NAME': '$(GYP_CONFIGURATION)',
 }
 
 # Make supports multiple toolsets
@@ -232,7 +232,6 @@ class AndroidMkWriter(object):
         self.fp.close()
         return self.android_module
 
-
     def WriteActions(self, actions, extra_sources, extra_outputs):
         """Write Makefile code for any 'actions' from the gyp input.
 
@@ -255,7 +254,7 @@ class AndroidMkWriter(object):
             for out in outputs:
                 if not out.startswith('$'):
                     print('WARNING: Action for target "%s" writes output to local path '
-                           '"%s".' % (self.target, out))
+                          '"%s".' % (self.target, out))
                 dir = os.path.split(out)[0]
                 if dir:
                     dirs.add(dir)
@@ -328,7 +327,6 @@ class AndroidMkWriter(object):
 
         self.WriteLn()
 
-
     def WriteRules(self, rules, extra_sources, extra_outputs):
         """Write Makefile code for any 'rules' from the gyp input.
 
@@ -362,7 +360,7 @@ class AndroidMkWriter(object):
                 for out in outputs:
                     if not out.startswith('$'):
                         print('WARNING: Rule for target %s writes output to local path %s'
-                               % (self.target, out))
+                              % (self.target, out))
                     dir = os.path.dirname(out)
                     if dir:
                         dirs.add(dir)
@@ -406,7 +404,7 @@ class AndroidMkWriter(object):
                 if inputs:
                     main_output_deps += ' '
                     main_output_deps += ' '.join([self.LocalPathify(f)
-                                                 for f in inputs])
+                                                  for f in inputs])
 
                 self.WriteLn('%s: %s $(GYP_TARGET_DEPENDENCIES)' %
                              (main_output, main_output_deps))
@@ -418,7 +416,6 @@ class AndroidMkWriter(object):
                 self.WriteLn()
 
         self.WriteLn()
-
 
     def WriteCopies(self, copies, extra_outputs):
         """Write Makefile code for any 'copies' from the gyp input.
@@ -440,7 +437,7 @@ class AndroidMkWriter(object):
                 # because some of the gyp tests depend on this.
                 if not copy['destination'].startswith('$'):
                     print('WARNING: Copy rule for target %s writes output to '
-                           'local path %s' % (self.target, copy['destination']))
+                          'local path %s' % (self.target, copy['destination']))
 
                 # LocalPathify() calls normpath, stripping trailing slashes.
                 path = Sourceify(self.LocalPathify(path))
@@ -459,7 +456,6 @@ class AndroidMkWriter(object):
                                   ' '.join(map(make.QuoteSpaces, outputs))))
         extra_outputs.append('$(%s)' % variable)
         self.WriteLn()
-
 
     def WriteSourceFlags(self, spec, configs):
         """Write out the flags and include paths used to compile source files for
@@ -500,12 +496,11 @@ class AndroidMkWriter(object):
             self.WriteLn('# Undefine ANDROID for host modules')
             self.WriteLn('LOCAL_CFLAGS += -UANDROID')
         self.WriteLn('LOCAL_C_INCLUDES := $(GYP_COPIED_SOURCE_ORIGIN_DIRS) '
-                                         '$(LOCAL_C_INCLUDES_$(GYP_CONFIGURATION))')
+                     '$(LOCAL_C_INCLUDES_$(GYP_CONFIGURATION))')
         self.WriteLn('LOCAL_CPPFLAGS := $(LOCAL_CPPFLAGS_$(GYP_CONFIGURATION))')
         # Android uses separate flags for assembly file invocations, but gyp expects
         # the same CFLAGS to be applied:
         self.WriteLn('LOCAL_ASFLAGS := $(LOCAL_CFLAGS)')
-
 
     def WriteSources(self, spec, configs, extra_sources):
         """Write Makefile code for any 'sources' from the gyp input.
@@ -595,7 +590,6 @@ class AndroidMkWriter(object):
         # so that GYP_COPIED_SOURCE_ORIGIN_DIRS can be used as an include path.
         self.WriteSourceFlags(spec, configs)
 
-
     def ComputeAndroidModule(self, spec):
         """Return the Android module name used for a gyp spec.
 
@@ -629,7 +623,6 @@ class AndroidMkWriter(object):
 
         return ''.join([prefix, middle, suffix])
 
-
     def ComputeOutputParts(self, spec):
         """Return the 'output basename' of a gyp spec, split into filename + ext.
 
@@ -638,7 +631,7 @@ class AndroidMkWriter(object):
         ignored if we are building a library, and the "lib" prepending is
         not done for Android.
         """
-        assert self.type != 'loadable_module' # TODO: not supported?
+        assert self.type != 'loadable_module'  # TODO: not supported?
 
         target = spec['target_name']
         target_prefix = ''
@@ -653,7 +646,7 @@ class AndroidMkWriter(object):
             target_ext = '.stamp'
         elif self.type != 'executable':
             print("ERROR: What output file should be generated?",
-                   "type", self.type, "target", target)
+                  "type", self.type, "target", target)
 
         if self.type != 'static_library' and self.type != 'shared_library':
             target_prefix = spec.get('product_prefix', target_prefix)
@@ -665,7 +658,6 @@ class AndroidMkWriter(object):
         target_stem = target_prefix + target
         return (target_stem, target_ext)
 
-
     def ComputeOutputBasename(self, spec):
         """Return the 'output basename' of a gyp spec.
 
@@ -673,7 +665,6 @@ class AndroidMkWriter(object):
           'libfoobar.so'
         """
         return ''.join(self.ComputeOutputParts(spec))
-
 
     def ComputeOutput(self, spec):
         """Return the 'output' (full output path) of a gyp spec.
@@ -700,7 +691,7 @@ class AndroidMkWriter(object):
                 path = ('$(call intermediates-dir-for,%s,%s,,,$(GYP_VAR_PREFIX))'
                         % (self.android_class, self.android_module))
 
-        assert spec.get('product_dir') is None # TODO: not supported?
+        assert spec.get('product_dir') is None  # TODO: not supported?
         return os.path.join(path, self.ComputeOutputBasename(spec))
 
     def NormalizeIncludePaths(self, include_paths):
@@ -757,7 +748,7 @@ class AndroidMkWriter(object):
                 # Filter the system libraries, which are added by default by the Android
                 # build system.
                 if (lib == '-lc' or lib == '-lstdc++' or lib == '-lm' or
-                    lib.endswith('libgcc.a')):
+                        lib.endswith('libgcc.a')):
                     continue
                 match = re.search(r'([^/]+)\.a$', lib)
                 if match:
@@ -770,7 +761,6 @@ class AndroidMkWriter(object):
                 if lib.startswith('-l'):
                     ldflags.append(lib)
         return (static_lib_modules, dynamic_lib_modules, ldflags)
-
 
     def ComputeDeps(self, spec):
         """Compute the dependencies of a gyp spec.
@@ -789,7 +779,6 @@ class AndroidMkWriter(object):
                     link_deps.append(target_link_deps[dep])
             deps.extend(link_deps)
         return (gyp.common.uniquer(deps), gyp.common.uniquer(link_deps))
-
 
     def WriteTargetFlags(self, spec, configs, link_deps):
         """Write Makefile code to specify the link flags and library dependencies.
@@ -834,7 +823,6 @@ class AndroidMkWriter(object):
             self.WriteLn('')
             self.WriteList(dynamic_libs + shared_link_deps,
                            'LOCAL_SHARED_LIBRARIES')
-
 
     def WriteTarget(self, spec, configs, deps, link_deps, part_of_all,
                     write_alias_target):
@@ -916,7 +904,6 @@ class AndroidMkWriter(object):
             self.WriteLn()
             self.WriteLn('LOCAL_2ND_ARCH_VAR_PREFIX :=')
 
-
     def WriteList(self, value_list, variable=None, prefix='',
                   quoter=make.QuoteIfNecessary, local_pathify=False):
         """Write a variable definition that is a list of values.
@@ -933,10 +920,8 @@ class AndroidMkWriter(object):
             values = ' \\\n\t' + ' \\\n\t'.join(value_list)
         self.fp.write('%s :=%s\n\n' % (variable, values))
 
-
     def WriteLn(self, text=''):
         self.fp.write(text + '\n')
-
 
     def LocalPathify(self, path):
         """Convert a subdirectory-relative path into a normalized path which starts
@@ -953,9 +938,8 @@ class AndroidMkWriter(object):
         # path may legitimately have ended up containing just $(LOCAL_PATH), though,
         # so we don't look for a slash.
         assert local_path.startswith('$(LOCAL_PATH)'), (
-               'Path %s attempts to escape from gyp path %s !)' % (path, self.path))
+            'Path %s attempts to escape from gyp path %s !)' % (path, self.path))
         return local_path
-
 
     def ExpandInputRoot(self, template, expansion, dirname):
         if '%(INPUT_ROOT)s' not in template and '%(INPUT_DIRNAME)s' not in template:
@@ -963,7 +947,7 @@ class AndroidMkWriter(object):
         path = template % {
             'INPUT_ROOT': expansion,
             'INPUT_DIRNAME': dirname,
-            }
+        }
         return os.path.normpath(path)
 
 
@@ -975,7 +959,7 @@ def PerformBuild(data, configurations, params):
     env = dict(os.environ)
     env['ONE_SHOT_MAKEFILE'] = makefile
     arguments = ['make', '-C',
-        os.environ['ANDROID_BUILD_TOP'], 'gyp_all_modules']
+                 os.environ['ANDROID_BUILD_TOP'], 'gyp_all_modules']
     print('Building: %s' % arguments)
     subprocess.check_call(arguments, env=env)
 
@@ -1061,13 +1045,13 @@ def GenerateOutput(target_list, target_dicts, data, params):
             # If the include file is from the ~/.gyp dir, we should use absolute path
             # so that relocating the src dir doesn't break the path.
             if (params['home_dot_gyp'] and
-                abs_include_file.startswith(params['home_dot_gyp'])):
+                    abs_include_file.startswith(params['home_dot_gyp'])):
                 build_files.add(abs_include_file)
             else:
                 build_files.add(relative_include_file)
 
         base_path, output_file = CalculateMakefilePath(build_file,
-            target + '.' + toolset + options.suffix + '.mk')
+                                                       target + '.' + toolset + options.suffix + '.mk')
 
         spec = target_dicts[qualified_target]
         configs = spec['configurations']
@@ -1086,9 +1070,9 @@ def GenerateOutput(target_list, target_dicts, data, params):
                                       sdk_version=sdk_version)
         if android_module in android_modules:
             print('ERROR: Android module names must be unique. The following '
-                   'targets both generate Android module name %s.\n  %s\n  %s' %
-                   (android_module, android_modules[android_module],
-                    qualified_target))
+                  'targets both generate Android module name %s.\n  %s\n  %s' %
+                  (android_module, android_modules[android_module],
+                   qualified_target))
             return
         android_modules[android_module] = qualified_target
 

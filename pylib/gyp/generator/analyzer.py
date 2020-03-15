@@ -227,6 +227,7 @@ class Target(object):
     is_static_library: true if the type of target is static_library.
     is_or_has_linked_ancestor: true if the target does a link (eg executable), or
       if there is a target in back_deps that does a link."""
+
     def __init__(self, name):
         self.deps = set()
         self.match_status = MATCH_STATUS_TBD
@@ -247,6 +248,7 @@ class Config(object):
     """Details what we're looking for
     files: set of files to search for
     targets: see file description for details."""
+
     def __init__(self):
         self.files = []
         self.targets = set()
@@ -267,14 +269,14 @@ class Config(object):
         except IOError:
             raise Exception('Unable to open file ' + config_path)
         except ValueError as e:
-            raise Exception('Unable to parse config file ' + \
+            raise Exception('Unable to parse config file ' +
                             config_path + str(e))
         if not isinstance(config, dict):
             raise Exception(
                 'config_path must be a JSON file containing a dictionary')
         self.files = config.get('files', [])
         self.additional_compile_target_names = set(
-          config.get('additional_compile_targets', []))
+            config.get('additional_compile_targets', []))
         self.test_target_names = set(config.get('test_targets', []))
 
 
@@ -434,7 +436,7 @@ def _DoesTargetDependOnMatchingTargets(target):
     if target.match_status == MATCH_STATUS_DOESNT_MATCH:
         return False
     if target.match_status == MATCH_STATUS_MATCHES or \
-        target.match_status == MATCH_STATUS_MATCHES_BY_DEPENDENCY:
+            target.match_status == MATCH_STATUS_MATCHES_BY_DEPENDENCY:
         return True
     for dep in target.deps:
         if _DoesTargetDependOnMatchingTargets(dep):
@@ -476,7 +478,7 @@ def _AddCompileTargets(target, roots, add_if_no_ancestor, result):
         target.added_to_compile_targets |= back_dep_target.added_to_compile_targets
         target.in_roots |= back_dep_target.in_roots
         target.is_or_has_linked_ancestor |= (
-          back_dep_target.is_or_has_linked_ancestor)
+            back_dep_target.is_or_has_linked_ancestor)
 
     # Always add 'executable' targets. Even though they may be built by other
     # targets that depend upon them it makes detection of what is going to be
@@ -485,17 +487,17 @@ def _AddCompileTargets(target, roots, add_if_no_ancestor, result):
     # linkables. This is necessary as the other dependencies on them may be
     # static libraries themselves, which are not compile time dependencies.
     if target.in_roots and \
-          (target.is_executable or
-           (not target.added_to_compile_targets and
+        (target.is_executable or
+         (not target.added_to_compile_targets and
             (add_if_no_ancestor or target.requires_build)) or
-           (target.is_static_library and add_if_no_ancestor and
-            not target.is_or_has_linked_ancestor)):
+            (target.is_static_library and add_if_no_ancestor and
+             not target.is_or_has_linked_ancestor)):
         print('\t\tadding to compile targets', target.name, 'executable',
-               target.is_executable, 'added_to_compile_targets',
-               target.added_to_compile_targets, 'add_if_no_ancestor',
-               add_if_no_ancestor, 'requires_build', target.requires_build,
-               'is_static_library', target.is_static_library,
-               'is_or_has_linked_ancestor', target.is_or_has_linked_ancestor)
+              target.is_executable, 'added_to_compile_targets',
+              target.added_to_compile_targets, 'add_if_no_ancestor',
+              add_if_no_ancestor, 'requires_build', target.requires_build,
+              'is_static_library', target.is_static_library,
+              'is_or_has_linked_ancestor', target.is_or_has_linked_ancestor)
         result.add(target)
         target.added_to_compile_targets = True
 
@@ -589,9 +591,9 @@ def CalculateVariables(default_variables, params):
         # by the Windows Ninja generator.
         import gyp.generator.msvs as msvs_generator
         generator_additional_non_configuration_keys = getattr(msvs_generator,
-            'generator_additional_non_configuration_keys', [])
+                                                              'generator_additional_non_configuration_keys', [])
         generator_additional_path_sections = getattr(msvs_generator,
-            'generator_additional_path_sections', [])
+                                                     'generator_additional_path_sections', [])
 
         gyp.msvs_emulation.CalculateCommonVariables(default_variables, params)
     else:
@@ -603,17 +605,18 @@ def CalculateVariables(default_variables, params):
 
 class TargetCalculator(object):
     """Calculates the matching test_targets and matching compile_targets."""
+
     def __init__(self, files, additional_compile_target_names, test_target_names,
                  data, target_list, target_dicts, toplevel_dir, build_files):
         self._additional_compile_target_names = set(
             additional_compile_target_names)
         self._test_target_names = set(test_target_names)
         self._name_to_target, self._changed_targets, self._root_targets = (
-          _GenerateTargets(data, target_list, target_dicts, toplevel_dir,
-                           frozenset(files), build_files))
+            _GenerateTargets(data, target_list, target_dicts, toplevel_dir,
+                             frozenset(files), build_files))
         self._unqualified_mapping, self.invalid_targets = (
-          _GetUnqualifiedToTargetMapping(self._name_to_target,
-                                         self._supplied_target_names_no_all()))
+            _GetUnqualifiedToTargetMapping(self._name_to_target,
+                                           self._supplied_target_names_no_all()))
 
     def _supplied_target_names(self):
         return self._additional_compile_target_names | self._test_target_names
@@ -711,11 +714,11 @@ def GenerateOutput(target_list, target_dicts, data, params):
             print('toplevel_dir', toplevel_dir)
 
         if _WasGypIncludeFileModified(params, config.files):
-            result_dict = { 'status': all_changed_string,
-                            'test_targets': list(config.test_target_names),
-                            'compile_targets': list(
-                              config.additional_compile_target_names |
-                              config.test_target_names) }
+            result_dict = {'status': all_changed_string,
+                           'test_targets': list(config.test_target_names),
+                           'compile_targets': list(
+                               config.additional_compile_target_names |
+                               config.test_target_names)}
             _WriteOutput(params, **result_dict)
             return
 
@@ -725,9 +728,9 @@ def GenerateOutput(target_list, target_dicts, data, params):
                                       target_list, target_dicts, toplevel_dir,
                                       params['build_files'])
         if not calculator.is_build_impacted():
-            result_dict = { 'status': no_dependency_string,
-                            'test_targets': [],
-                            'compile_targets': [] }
+            result_dict = {'status': no_dependency_string,
+                           'test_targets': [],
+                           'compile_targets': []}
             if calculator.invalid_targets:
                 result_dict['invalid_targets'] = calculator.invalid_targets
             _WriteOutput(params, **result_dict)
@@ -736,12 +739,12 @@ def GenerateOutput(target_list, target_dicts, data, params):
         test_target_names = calculator.find_matching_test_target_names()
         compile_target_names = calculator.find_matching_compile_target_names()
         found_at_least_one_target = compile_target_names or test_target_names
-        result_dict = { 'test_targets': test_target_names,
-                        'status': found_dependency_string if
-                            found_at_least_one_target else no_dependency_string,
-                        'compile_targets': list(
-                            set(compile_target_names) |
-                            set(test_target_names)) }
+        result_dict = {'test_targets': test_target_names,
+                       'status': found_dependency_string if
+                       found_at_least_one_target else no_dependency_string,
+                       'compile_targets': list(
+                           set(compile_target_names) |
+                           set(test_target_names))}
         if calculator.invalid_targets:
             result_dict['invalid_targets'] = calculator.invalid_targets
         _WriteOutput(params, **result_dict)

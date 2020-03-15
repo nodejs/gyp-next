@@ -23,8 +23,8 @@ def is_test_name(f):
 def find_all_gyptest_files(directory):
     result = []
     for root, dirs, files in os.walk(directory):
-        result.extend([ os.path.join(root, f)
-                      for f in files if is_test_name(f) ])
+        result.extend([os.path.join(root, f)
+                       for f in files if is_test_name(f)])
     result.sort()
     return result
 
@@ -35,23 +35,23 @@ def main(argv=None):
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-a", "--all", action="store_true",
-        help="run all tests")
+                        help="run all tests")
     parser.add_argument("-C", "--chdir", action="store",
-        help="change to directory")
+                        help="change to directory")
     parser.add_argument("-f", "--format", action="store", default='',
-        help="run tests with the specified formats")
+                        help="run tests with the specified formats")
     parser.add_argument("-G", '--gyp_option', action="append", default=[],
-        help="Add -G options to the gyp command line")
+                        help="Add -G options to the gyp command line")
     parser.add_argument("-l", "--list", action="store_true",
-        help="list available tests and exit")
+                        help="list available tests and exit")
     parser.add_argument("-n", "--no-exec", action="store_true",
-        help="no execute, just print the command line")
+                        help="no execute, just print the command line")
     parser.add_argument("--path", action="append", default=[],
-        help="additional $PATH directory")
+                        help="additional $PATH directory")
     parser.add_argument("-q", "--quiet", action="store_true",
-        help="quiet, don't print anything unless there are failures")
+                        help="quiet, don't print anything unless there are failures")
     parser.add_argument("-v", "--verbose", action="store_true",
-        help="print configuration info and test results.")
+                        help="print configuration info and test results.")
     parser.add_argument('tests', nargs='*')
     args = parser.parse_args(argv[1:])
 
@@ -96,20 +96,20 @@ def main(argv=None):
         format_list = args.format.split(',')
     else:
         format_list = {
-          'aix5':     ['make'],
-          'freebsd7': ['make'],
-          'freebsd8': ['make'],
-          'openbsd5': ['make'],
-          'cygwin':   ['msvs'],
-          'win32':    ['msvs', 'ninja'],
-          'linux':    ['make', 'ninja'],
-          'linux2':   ['make', 'ninja'],
-          'linux3':   ['make', 'ninja'],
+            'aix5':     ['make'],
+            'freebsd7': ['make'],
+            'freebsd8': ['make'],
+            'openbsd5': ['make'],
+            'cygwin':   ['msvs'],
+            'win32':    ['msvs', 'ninja'],
+            'linux':    ['make', 'ninja'],
+            'linux2':   ['make', 'ninja'],
+            'linux3':   ['make', 'ninja'],
 
-          # TODO: Re-enable xcode-ninja.
-          # https://bugs.chromium.org/p/gyp/issues/detail?id=530
-          # 'darwin':   ['make', 'ninja', 'xcode', 'xcode-ninja'],
-          'darwin':   ['make', 'ninja', 'xcode'],
+            # TODO: Re-enable xcode-ninja.
+            # https://bugs.chromium.org/p/gyp/issues/detail?id=530
+            # 'darwin':   ['make', 'ninja', 'xcode', 'xcode-ninja'],
+            'darwin':   ['make', 'ninja', 'xcode'],
         }[sys.platform]
 
     gyp_options = []
@@ -204,7 +204,7 @@ class Runner(object):
 
         if (stdout and
             not stdout.endswith('PASSED\n') and
-            not (stdout.endswith('NO RESULT\n'))):
+                not (stdout.endswith('NO RESULT\n'))):
             print()
             for l in stdout.splitlines():
                 print('    %s' % l)

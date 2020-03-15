@@ -53,6 +53,7 @@ def _WriteWorkspace(main_gyp, sources_gyp, params):
     with open(workspace_file, 'w') as output_file:
         output_file.write(output_string)
 
+
 def _TargetFromSpec(old_spec, params):
     """ Create fake target for xcode-ninja wrapper. """
     # Determine ninja top level build dir (e.g. /path/to/out).
@@ -88,7 +89,7 @@ def _TargetFromSpec(old_spec, params):
     if 'configurations' in old_spec:
         for config in old_spec['configurations']:
             old_xcode_settings = \
-              old_spec['configurations'][config].get('xcode_settings', {})
+                old_spec['configurations'][config].get('xcode_settings', {})
             if 'IPHONEOS_DEPLOYMENT_TARGET' in old_xcode_settings:
                 new_xcode_settings['CODE_SIGNING_REQUIRED'] = "NO"
                 new_xcode_settings['IPHONEOS_DEPLOYMENT_TARGET'] = \
@@ -110,24 +111,25 @@ def _TargetFromSpec(old_spec, params):
     ninja_target['type'] = old_spec['type']
     if ninja_toplevel:
         ninja_target['actions'] = [
-          {
-            'action_name': 'Compile and copy %s via ninja' % target_name,
-            'inputs': [],
-            'outputs': [],
-            'action': [
-              'env',
-              'PATH=%s' % os.environ['PATH'],
-              'ninja',
-              '-C',
-              new_xcode_settings['CONFIGURATION_BUILD_DIR'],
-              target_name,
-            ],
-            'message': 'Compile and copy %s via ninja' % target_name,
-          },
+            {
+                'action_name': 'Compile and copy %s via ninja' % target_name,
+                'inputs': [],
+                'outputs': [],
+                'action': [
+                    'env',
+                    'PATH=%s' % os.environ['PATH'],
+                    'ninja',
+                    '-C',
+                    new_xcode_settings['CONFIGURATION_BUILD_DIR'],
+                    target_name,
+                ],
+                'message': 'Compile and copy %s via ninja' % target_name,
+            },
         ]
         if jobs > 0:
             ninja_target['actions'][0]['action'].extend(('-j', jobs))
     return ninja_target
+
 
 def IsValidTargetForWrapper(target_extras, executable_target_pattern, spec):
     """Limit targets for Xcode wrapper.
@@ -155,6 +157,7 @@ def IsValidTargetForWrapper(target_extras, executable_target_pattern, spec):
                 return False
         return True
     return False
+
 
 def CreateWrapper(target_list, target_dicts, data, params):
     """Initialize targets for the ninja wrapper.
@@ -224,16 +227,16 @@ def CreateWrapper(target_list, target_dicts, data, params):
     # Create sources target.
     sources_target_name = 'sources_for_indexing'
     sources_target = _TargetFromSpec(
-      { 'target_name' : sources_target_name,
-        'toolset': 'target',
-        'default_configuration': 'Default',
-        'mac_bundle': '0',
-        'type': 'executable'
-      }, None)
+        {'target_name': sources_target_name,
+         'toolset': 'target',
+         'default_configuration': 'Default',
+         'mac_bundle': '0',
+         'type': 'executable'
+         }, None)
 
     # Tell Xcode to look everywhere for headers.
     sources_target['configurations'] = {
-        'Default': { 'include_dirs': [ depth ] } }
+        'Default': {'include_dirs': [depth]}}
 
     # Put excluded files into the sources target so they can be opened in Xcode.
     skip_excluded_files = \
@@ -243,7 +246,7 @@ def CreateWrapper(target_list, target_dicts, data, params):
     for target, target_dict in target_dicts.items():
         base = os.path.dirname(target)
         files = target_dict.get('sources', []) + \
-                target_dict.get('mac_bundle_resources', [])
+            target_dict.get('mac_bundle_resources', [])
 
         if not skip_excluded_files:
             files.extend(target_dict.get('sources_excluded', []) +
@@ -257,12 +260,12 @@ def CreateWrapper(target_list, target_dicts, data, params):
 
         # Remove files starting with $. These are mostly intermediate files for the
         # build system.
-        files = [ file for file in files if not file.startswith('$')]
+        files = [file for file in files if not file.startswith('$')]
 
         # Make sources relative to root build file.
         relative_path = os.path.dirname(main_gyp)
-        sources += [ os.path.relpath(os.path.join(base, file), relative_path)
-                        for file in files ]
+        sources += [os.path.relpath(os.path.join(base, file), relative_path)
+                    for file in files]
 
     sources_target['sources'] = sorted(set(sources))
 

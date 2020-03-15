@@ -20,6 +20,7 @@ def main(args):
 
 class FlockTool(object):
     """This class emulates the 'flock' command."""
+
     def Dispatch(self, args):
         """Dispatches a string command to a method."""
         if len(args) < 1:
@@ -39,7 +40,7 @@ class FlockTool(object):
         # where fcntl.flock(fd, LOCK_EX) always fails
         # with EBADF, that's why we use this F_SETLK
         # hack instead.
-        fd = os.open(lockfile, os.O_WRONLY|os.O_NOCTTY|os.O_CREAT, 0o666)
+        fd = os.open(lockfile, os.O_WRONLY | os.O_NOCTTY | os.O_CREAT, 0o666)
         if sys.platform.startswith('aix'):
             # Python on AIX is compiled with LARGEFILE support, which changes the
             # struct size.

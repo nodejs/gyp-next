@@ -63,9 +63,9 @@ def CalculateVariables(default_variables, params):
         # by the Eclipse generator.
         import gyp.generator.msvs as msvs_generator
         generator_additional_non_configuration_keys = getattr(msvs_generator,
-            'generator_additional_non_configuration_keys', [])
+                                                              'generator_additional_non_configuration_keys', [])
         generator_additional_path_sections = getattr(msvs_generator,
-            'generator_additional_path_sections', [])
+                                                     'generator_additional_path_sections', [])
 
         gyp.msvs_emulation.CalculateCommonVariables(default_variables, params)
 
@@ -261,7 +261,7 @@ def GetAllDefines(target_list, target_dicts, data, config_name, params,
 def WriteIncludePaths(out, eclipse_langs, include_dirs):
     """Write the includes section of a CDT settings export file."""
 
-    out.write('  <section name="org.eclipse.cdt.internal.ui.wizards.' \
+    out.write('  <section name="org.eclipse.cdt.internal.ui.wizards.'
               'settingswizards.IncludePaths">\n')
     out.write('    <language name="holder for library settings"></language>\n')
     for lang in eclipse_langs:
@@ -276,7 +276,7 @@ def WriteIncludePaths(out, eclipse_langs, include_dirs):
 def WriteMacros(out, eclipse_langs, defines):
     """Write the macros section of a CDT settings export file."""
 
-    out.write('  <section name="org.eclipse.cdt.internal.ui.wizards.' \
+    out.write('  <section name="org.eclipse.cdt.internal.ui.wizards.'
               'settingswizards.Macros">\n')
     out.write('    <language name="holder for library settings"></language>\n')
     for lang in eclipse_langs:
@@ -398,7 +398,7 @@ def GetJavaSourceDirs(target_list, target_dicts, toplevel_dir):
         for action in target.get('actions', []):
             for input_ in action['inputs']:
                 if (os.path.splitext(input_)[1] == '.java' and
-                    not input_.startswith('$')):
+                        not input_.startswith('$')):
                     dir_ = os.path.dirname(os.path.join(os.path.dirname(target_name),
                                                         input_))
                     # If there is a parent 'src' or 'java' folder, navigate up to it -
@@ -433,4 +433,3 @@ def GenerateOutput(target_list, target_dicts, data, params):
         for config_name in config_names:
             GenerateOutputForConfig(target_list, target_dicts, data, params,
                                     config_name)
-

@@ -579,25 +579,25 @@ class TestSequenceFunctions(unittest.TestCase):
                 'AdditionalIncludeDirectories': 'dir1',
                 'AdditionalOptions': '/foo',
                 'BasicRuntimeChecks': '0',
-                },
+            },
             'VCLinkerTool': {
                 'LinkTimeCodeGeneration': '1',
                 'ErrorReporting': '1',
                 'DataExecutionPrevention': '2',
-                },
-            }
+            },
+        }
         expected_msbuild_settings = {
             'ClCompile': {
                 'AdditionalIncludeDirectories': 'dir1',
                 'AdditionalOptions': '/foo',
                 'BasicRuntimeChecks': 'Default',
-                },
+            },
             'Link': {
                 'LinkTimeCodeGeneration': 'UseLinkTimeCodeGeneration',
                 'LinkErrorReporting': 'PromptImmediately',
                 'DataExecutionPrevention': 'true',
-                },
-            }
+            },
+        }
         actual_msbuild_settings = MSVSSettings.ConvertToMSBuildSettings(
             msvs_settings,
             self.stderr)
@@ -654,7 +654,7 @@ class TestSequenceFunctions(unittest.TestCase):
             'MSBuild, index value (21) not in expected range [0, 3)',
             'Warning: while converting VCLinkerTool/FixedBaseAddress to '
             'MSBuild, index value (6) not in expected range [0, 3)',
-            ])
+        ])
 
     def testConvertToMSBuildSettings_full_synthetic(self):
         """Tests conversion of all the MSBuild settings."""
@@ -1472,11 +1472,11 @@ class TestSequenceFunctions(unittest.TestCase):
                 'GenerateManifest': 'false',
                 'IgnoreImportLibrary': 'true',
                 'LinkIncremental': ''
-                },
+            },
             'ManifestResourceCompile': {
                 'ResourceOutputFileName':
                 '$(IntDir)$(TargetFileName).embed.manifest.resfdsf'}
-            }
+        }
         self.maxDiff = 9999  # on failure display a long diff
         actual_msbuild_settings = MSVSSettings.ConvertToMSBuildSettings(
             msvs_settings,

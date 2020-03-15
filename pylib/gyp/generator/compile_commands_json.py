@@ -16,20 +16,20 @@ generator_wants_sorted_dependencies = False
 
 # Lifted from make.py.  The actual values don't matter much.
 generator_default_variables = {
-  'CONFIGURATION_NAME': '$(BUILDTYPE)',
-  'EXECUTABLE_PREFIX': '',
-  'EXECUTABLE_SUFFIX': '',
-  'INTERMEDIATE_DIR': '$(obj).$(TOOLSET)/$(TARGET)/geni',
-  'PRODUCT_DIR': '$(builddir)',
-  'RULE_INPUT_DIRNAME': '%(INPUT_DIRNAME)s',
-  'RULE_INPUT_EXT': '$(suffix $<)',
-  'RULE_INPUT_NAME': '$(notdir $<)',
-  'RULE_INPUT_PATH': '$(abspath $<)',
-  'RULE_INPUT_ROOT': '%(INPUT_ROOT)s',
-  'SHARED_INTERMEDIATE_DIR': '$(obj)/gen',
-  'SHARED_LIB_PREFIX': 'lib',
-  'STATIC_LIB_PREFIX': 'lib',
-  'STATIC_LIB_SUFFIX': '.a',
+    'CONFIGURATION_NAME': '$(BUILDTYPE)',
+    'EXECUTABLE_PREFIX': '',
+    'EXECUTABLE_SUFFIX': '',
+    'INTERMEDIATE_DIR': '$(obj).$(TOOLSET)/$(TARGET)/geni',
+    'PRODUCT_DIR': '$(builddir)',
+    'RULE_INPUT_DIRNAME': '%(INPUT_DIRNAME)s',
+    'RULE_INPUT_EXT': '$(suffix $<)',
+    'RULE_INPUT_NAME': '$(notdir $<)',
+    'RULE_INPUT_PATH': '$(abspath $<)',
+    'RULE_INPUT_ROOT': '%(INPUT_ROOT)s',
+    'SHARED_INTERMEDIATE_DIR': '$(obj)/gen',
+    'SHARED_LIB_PREFIX': 'lib',
+    'STATIC_LIB_PREFIX': 'lib',
+    'STATIC_LIB_SUFFIX': '.a',
 }
 
 

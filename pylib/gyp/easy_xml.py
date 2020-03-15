@@ -155,7 +155,7 @@ _xml_escape_re = re.compile(
 def _XmlEscape(value, attr=False):
     """ Escape a string for inclusion in XML."""
     def replace(match):
-        m = match.string[match.start() : match.end()]
+        m = match.string[match.start(): match.end()]
         # don't replace single quotes in attrs
         if attr and m == "'":
             return m

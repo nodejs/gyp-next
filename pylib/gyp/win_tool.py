@@ -26,6 +26,7 @@ PY3 = bytes != str
 # link.exe.
 _LINK_EXE_OUT_ARG = re.compile('/OUT:(?P<out>.+)$', re.IGNORECASE)
 
+
 def main(args):
     executor = WinTool()
     exit_code = executor.Dispatch(args)
@@ -53,7 +54,7 @@ class WinTool(object):
             m = _LINK_EXE_OUT_ARG.match(arg)
             if m:
                 endpoint_name = re.sub(r'\W+', '',
-                    '%s_%d' % (m.group('out'), os.getpid()))
+                                       '%s_%d' % (m.group('out'), os.getpid()))
                 break
 
         if endpoint_name is None:
@@ -139,7 +140,7 @@ class WinTool(object):
         for line in out.splitlines():
             if (not line.startswith('   Creating library ') and
                 not line.startswith('Generating code') and
-                not line.startswith('Finished generating code')):
+                    not line.startswith('Finished generating code')):
                 print(line)
         return link.returncode
 
@@ -158,15 +159,15 @@ class WinTool(object):
         # first and only link. We still tell link to generate a manifest, but we
         # only use that to assert that our simpler process did not miss anything.
         variables = {
-          'python': sys.executable,
-          'arch': arch,
-          'out': out,
-          'ldcmd': ldcmd,
-          'resname': resname,
-          'mt': mt,
-          'rc': rc,
-          'intermediate_manifest': intermediate_manifest,
-          'manifests': ' '.join(manifests),
+            'python': sys.executable,
+            'arch': arch,
+            'out': out,
+            'ldcmd': ldcmd,
+            'resname': resname,
+            'mt': mt,
+            'rc': rc,
+            'intermediate_manifest': intermediate_manifest,
+            'manifests': ' '.join(manifests),
         }
         add_to_ld = ''
         if manifests:
@@ -176,7 +177,7 @@ class WinTool(object):
             if embed_manifest == 'True':
                 subprocess.check_call(
                     '%(python)s gyp-win-tool manifest-to-rc %(arch)s %(out)s.manifest'
-                  ' %(out)s.manifest.rc %(resname)s' % variables)
+                    ' %(out)s.manifest.rc %(resname)s' % variables)
                 subprocess.check_call(
                     '%(python)s gyp-win-tool rc-wrapper %(arch)s %(rc)s '
                     '%(out)s.manifest.rc' % variables)
@@ -205,6 +206,7 @@ class WinTool(object):
                     assert_data = assert_f.read().translate(None, string.whitespace)
             if our_data != assert_data:
                 os.unlink(out)
+
                 def dump(filename):
                     print(filename, file=sys.stderr)
                     print('-----', file=sys.stderr)
@@ -218,7 +220,7 @@ class WinTool(object):
                     'Linker generated manifest "%s" added to final manifest "%s" '
                     '(result in "%s"). '
                     'Were /MANIFEST switches used in #pragma statements? ' % (
-                      intermediate_manifest, our_manifest, assert_manifest))
+                        intermediate_manifest, our_manifest, assert_manifest))
                 return 1
 
     def ExecManifestWrapper(self, arch, *args):
@@ -243,8 +245,8 @@ class WinTool(object):
         manifest_path, resource_path, resource_name = args
         with open(resource_path, 'w') as output:
             output.write('#include <windows.h>\n%s RT_MANIFEST "%s"' % (
-              resource_name,
-              os.path.abspath(manifest_path).replace('\\', '/')))
+                resource_name,
+                os.path.abspath(manifest_path).replace('\\', '/')))
 
     def ExecMidlWrapper(self, arch, outdir, tlb, h, dlldata, iid, proxy, idl,
                         *flags):
@@ -290,7 +292,7 @@ class WinTool(object):
             if (not line.startswith('Copyright (C) Microsoft Corporation') and
                 not line.startswith('Microsoft (R) Macro Assembler') and
                 not line.startswith(' Assembling: ') and
-                line):
+                    line):
                 print(line)
         return popen.returncode
 
@@ -306,7 +308,7 @@ class WinTool(object):
         for line in out.splitlines():
             if (not line.startswith('Microsoft (R) Windows (R) Resource Compiler') and
                 not line.startswith('Copyright (C) Microsoft Corporation') and
-                line):
+                    line):
                 print(line)
         return popen.returncode
 
@@ -329,10 +331,11 @@ class WinTool(object):
         project_dir = os.path.relpath(project_dir, BASE_DIR)
         selected_files = selected_files.split(';')
         ninja_targets = [os.path.join(project_dir, filename) + '^^'
-            for filename in selected_files]
+                         for filename in selected_files]
         cmd = ['ninja.exe']
         cmd.extend(ninja_targets)
         return subprocess.call(cmd, shell=True, cwd=BASE_DIR)
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))

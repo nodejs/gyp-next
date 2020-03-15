@@ -46,6 +46,7 @@ def DebugOutput(mode, message, *args):
         print('%s:%s:%d:%s %s' % (mode.upper(), os.path.basename(ctx[0]),
                                   ctx[1], ctx[2], message))
 
+
 def FindBuildFiles():
     extension = '.gyp'
     files = os.listdir(os.getcwd())
@@ -115,21 +116,21 @@ def Load(build_files, format, default_variables={},
     # so we can default things and the generators only have to provide what
     # they need.
     generator_input_info = {
-      'non_configuration_keys':
-          getattr(generator, 'generator_additional_non_configuration_keys', []),
-      'path_sections':
-          getattr(generator, 'generator_additional_path_sections', []),
-      'extra_sources_for_rules':
-          getattr(generator, 'generator_extra_sources_for_rules', []),
-      'generator_supports_multiple_toolsets':
-          getattr(generator, 'generator_supports_multiple_toolsets', False),
-      'generator_wants_static_library_dependencies_adjusted':
-          getattr(generator,
-                  'generator_wants_static_library_dependencies_adjusted', True),
-      'generator_wants_sorted_dependencies':
-          getattr(generator, 'generator_wants_sorted_dependencies', False),
-      'generator_filelist_paths':
-          getattr(generator, 'generator_filelist_paths', None),
+        'non_configuration_keys':
+        getattr(generator, 'generator_additional_non_configuration_keys', []),
+        'path_sections':
+        getattr(generator, 'generator_additional_path_sections', []),
+        'extra_sources_for_rules':
+        getattr(generator, 'generator_extra_sources_for_rules', []),
+        'generator_supports_multiple_toolsets':
+        getattr(generator, 'generator_supports_multiple_toolsets', False),
+        'generator_wants_static_library_dependencies_adjusted':
+        getattr(generator,
+                'generator_wants_static_library_dependencies_adjusted', True),
+        'generator_wants_sorted_dependencies':
+        getattr(generator, 'generator_wants_sorted_dependencies', False),
+        'generator_filelist_paths':
+        getattr(generator, 'generator_filelist_paths', None),
     }
 
     # Process the input specific to this generator.
@@ -139,13 +140,14 @@ def Load(build_files, format, default_variables={},
                             params['parallel'], params['root_targets'])
     return [generator] + result
 
+
 def NameValueListToDict(name_value_list):
     """
     Takes an array of strings of the form 'NAME=VALUE' and creates a dictionary
     of the pairs.  If a string is simply NAME, then the value in the dictionary
     is set to True.  If VALUE can be converted to an integer, it is.
     """
-    result = { }
+    result = {}
     for item in name_value_list:
         tokens = item.split('=', 1)
         if len(tokens) == 2:
@@ -161,16 +163,19 @@ def NameValueListToDict(name_value_list):
             result[tokens[0]] = True
     return result
 
+
 def ShlexEnv(env_name):
     flags = os.environ.get(env_name, [])
     if flags:
         flags = shlex.split(flags)
     return flags
 
+
 def FormatOpt(opt, value):
     if opt.startswith('--'):
         return '%s=%s' % (opt, value)
     return opt + value
+
 
 def RegenerateAppendFlag(flag, values, predicate, env_name, options):
     """Regenerate a list of command line flags, for an option of action='append'.
@@ -193,6 +198,7 @@ def RegenerateAppendFlag(flag, values, predicate, env_name, options):
         for flag_value in values:
             flags.append(FormatOpt(flag, predicate(flag_value)))
     return flags
+
 
 def RegenerateFlags(options):
     """Given a parsed options object, and taking the environment variables into
@@ -233,17 +239,18 @@ def RegenerateFlags(options):
                     FormatOpt(opt, value_predicate(os.environ.get(env_name))))
         elif action in ('store_true', 'store_false'):
             if ((action == 'store_true' and value) or
-                (action == 'store_false' and not value)):
+                    (action == 'store_false' and not value)):
                 flags.append(opt)
             elif options.use_environment and env_name:
                 print('Warning: environment regeneration unimplemented '
-                                     'for %s flag %r env_name %r' % (action, opt,
-                                                                     env_name), file=sys.stderr)
+                      'for %s flag %r env_name %r' % (action, opt,
+                                                      env_name), file=sys.stderr)
         else:
             print('Warning: regeneration unimplemented for action %r '
-                                 'flag %r' % (action, opt), file=sys.stderr)
+                  'flag %r' % (action, opt), file=sys.stderr)
 
     return flags
+
 
 class RegeneratableOptionParser(argparse.ArgumentParser):
     def __init__(self, usage):
@@ -277,7 +284,7 @@ class RegeneratableOptionParser(argparse.ArgumentParser):
                 'type': type,
                 'env_name': env_name,
                 'opt': args[0],
-              }
+            }
 
         argparse.ArgumentParser.add_argument(self, *args, **kw)
 
@@ -286,45 +293,45 @@ class RegeneratableOptionParser(argparse.ArgumentParser):
         values._regeneration_metadata = self.__regeneratable_options
         return values, args
 
+
 def gyp_main(args):
     my_name = os.path.basename(sys.argv[0])
     usage = 'usage: %(prog)s [options ...] [build_file ...]'
 
-
     parser = RegeneratableOptionParser(usage=usage.replace('%s', '%(prog)s'))
     parser.add_argument('--build', dest='configs', action='append',
-                      help='configuration for build after project generation')
+                        help='configuration for build after project generation')
     parser.add_argument('--check', dest='check', action='store_true',
-                      help='check format of gyp files')
+                        help='check format of gyp files')
     parser.add_argument('--config-dir', dest='config_dir', action='store',
-                      env_name='GYP_CONFIG_DIR', default=None,
-                      help='The location for configuration files like '
-                      'include.gypi.')
+                        env_name='GYP_CONFIG_DIR', default=None,
+                        help='The location for configuration files like '
+                        'include.gypi.')
     parser.add_argument('-d', '--debug', dest='debug', metavar='DEBUGMODE',
-                      action='append', default=[], help='turn on a debugging '
-                      'mode for debugging GYP.  Supported modes are "variables", '
-                      '"includes" and "general" or "all" for all of them.')
+                        action='append', default=[], help='turn on a debugging '
+                        'mode for debugging GYP.  Supported modes are "variables", '
+                        '"includes" and "general" or "all" for all of them.')
     parser.add_argument('-D', dest='defines', action='append', metavar='VAR=VAL',
-                      env_name='GYP_DEFINES',
-                      help='sets variable VAR to value VAL')
+                        env_name='GYP_DEFINES',
+                        help='sets variable VAR to value VAL')
     parser.add_argument('--depth', dest='depth', metavar='PATH', type='path',
-                      help='set DEPTH gyp variable to a relative path to PATH')
+                        help='set DEPTH gyp variable to a relative path to PATH')
     parser.add_argument('-f', '--format', dest='formats', action='append',
-                      env_name='GYP_GENERATORS', regenerate=False,
-                      help='output formats to generate')
+                        env_name='GYP_GENERATORS', regenerate=False,
+                        help='output formats to generate')
     parser.add_argument('-G', dest='generator_flags', action='append', default=[],
-                      metavar='FLAG=VAL', env_name='GYP_GENERATOR_FLAGS',
-                      help='sets generator flag FLAG to VAL')
+                        metavar='FLAG=VAL', env_name='GYP_GENERATOR_FLAGS',
+                        help='sets generator flag FLAG to VAL')
     parser.add_argument('--generator-output', dest='generator_output',
-                      action='store', default=None, metavar='DIR', type='path',
-                      env_name='GYP_GENERATOR_OUTPUT',
-                      help='puts generated build files under DIR')
+                        action='store', default=None, metavar='DIR', type='path',
+                        env_name='GYP_GENERATOR_OUTPUT',
+                        help='puts generated build files under DIR')
     parser.add_argument('--ignore-environment', dest='use_environment',
-                      action='store_false', default=True, regenerate=False,
-                      help='do not read options from environment variables')
+                        action='store_false', default=True, regenerate=False,
+                        help='do not read options from environment variables')
     parser.add_argument('-I', '--include', dest='includes', action='append',
-                      metavar='INCLUDE', type='path',
-                      help='files to include in all loaded .gyp files')
+                        metavar='INCLUDE', type='path',
+                        help='files to include in all loaded .gyp files')
     # --no-circular-check disables the check for circular relationships between
     # .gyp files.  These relationships should not exist, but they've only been
     # observed to be harmful with the Xcode generator.  Chromium's .gyp files
@@ -333,8 +340,8 @@ def gyp_main(args):
     # behavior to be used elsewhere.
     # TODO(mark): Remove this option when http://crbug.com/35878 is fixed.
     parser.add_argument('--no-circular-check', dest='circular_check',
-                      action='store_false', default=True, regenerate=False,
-                      help="don't check for circular relationships between files")
+                        action='store_false', default=True, regenerate=False,
+                        help="don't check for circular relationships between files")
     # --no-duplicate-basename-check disables the check for duplicate basenames
     # in a static_library/shared_library project. Visual C++ 2008 generator
     # doesn't support this configuration. Libtool on Mac also generates warnings
@@ -342,19 +349,19 @@ def gyp_main(args):
     # TODO(yukawa): Remove this option when these legacy generators are
     # deprecated.
     parser.add_argument('--no-duplicate-basename-check',
-                      dest='duplicate_basename_check', action='store_false',
-                      default=True, regenerate=False,
-                      help="don't check for duplicate basenames")
+                        dest='duplicate_basename_check', action='store_false',
+                        default=True, regenerate=False,
+                        help="don't check for duplicate basenames")
     parser.add_argument('--no-parallel', action='store_true', default=False,
-                      help='Disable multiprocessing')
+                        help='Disable multiprocessing')
     parser.add_argument('-S', '--suffix', dest='suffix', default='',
-                      help='suffix to add to generated files')
+                        help='suffix to add to generated files')
     parser.add_argument('--toplevel-dir', dest='toplevel_dir', action='store',
-                      default=None, metavar='DIR', type='path',
-                      help='directory to use as the root of the source tree')
+                        default=None, metavar='DIR', type='path',
+                        help='directory to use as the root of the source tree')
     parser.add_argument('-R', '--root-target', dest='root_targets',
-                      action='append', metavar='TARGET',
-                      help='include only TARGET and its deep dependencies')
+                        action='append', metavar='TARGET',
+                        help='include only TARGET and its deep dependencies')
 
     options, build_files_arg = parser.parse_args(args)
     build_files = build_files_arg
@@ -552,8 +559,11 @@ def main(args):
         return 1
 
 # NOTE: setuptools generated console_scripts calls function with no arguments
+
+
 def script_main():
     return main(sys.argv[1:])
+
 
 if __name__ == '__main__':
     sys.exit(script_main())

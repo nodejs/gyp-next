@@ -41,14 +41,14 @@ def CalculateVariables(default_variables, params):
     default_variables.setdefault('OS', gyp.common.GetFlavor(params))
 
     flavor = gyp.common.GetFlavor(params)
-    if flavor =='win':
+    if flavor == 'win':
         # Copy additional generator configuration data from VS, which is shared
         # by the Windows Ninja generator.
         import gyp.generator.msvs as msvs_generator
         generator_additional_non_configuration_keys = getattr(msvs_generator,
-            'generator_additional_non_configuration_keys', [])
+                                                              'generator_additional_non_configuration_keys', [])
         generator_additional_path_sections = getattr(msvs_generator,
-            'generator_additional_path_sections', [])
+                                                     'generator_additional_path_sections', [])
 
         gyp.msvs_emulation.CalculateCommonVariables(default_variables, params)
 
@@ -72,6 +72,7 @@ def CalculateGeneratorInputInfo(params):
         'toplevel': toplevel,
         'qualified_out_dir': qualified_out_dir,
     }
+
 
 def GenerateOutput(target_list, target_dicts, data, params):
     # Map of target -> list of targets it depends on.
