@@ -4,13 +4,11 @@
 
 from __future__ import print_function
 
-import collections
 import os
 import gyp
 import gyp.common
 import gyp.msvs_emulation
 import json
-import sys
 
 generator_supports_multiple_toolsets = True
 

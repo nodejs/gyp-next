@@ -16,7 +16,6 @@ import subprocess
 import sys
 import gyp
 import gyp.common
-from gyp.common import OrderedSet
 import gyp.msvs_emulation
 import gyp.MSVSUtil as MSVSUtil
 import gyp.xcode_emulation

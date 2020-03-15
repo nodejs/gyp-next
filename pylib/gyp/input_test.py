@@ -8,7 +8,6 @@
 
 import gyp.input
 import unittest
-import sys
 
 
 class TestFindCycles(unittest.TestCase):

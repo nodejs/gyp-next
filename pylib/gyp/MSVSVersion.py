@@ -9,7 +9,6 @@ import os
 import re
 import subprocess
 import sys
-import gyp
 import glob
 
 PY3 = bytes != str

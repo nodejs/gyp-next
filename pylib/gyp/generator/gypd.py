@@ -32,8 +32,6 @@ to change.
 
 
 import gyp.common
-import errno
-import os
 import pprint
 
 
