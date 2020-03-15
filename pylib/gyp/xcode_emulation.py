@@ -17,7 +17,6 @@ import re
 import shlex
 import subprocess
 import sys
-import tempfile
 from gyp.common import GypError
 
 PY3 = bytes != str

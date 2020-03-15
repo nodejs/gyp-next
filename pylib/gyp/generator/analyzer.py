@@ -65,11 +65,9 @@ then the "all" target includes "b1" and "b2".
 from __future__ import print_function
 
 import gyp.common
-import gyp.ninja_syntax as ninja_syntax
 import json
 import os
 import posixpath
-import sys
 
 debug = False
 
