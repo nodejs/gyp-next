@@ -2,7 +2,7 @@
 # TODO: Enable pytest --doctest-modules
 
 name: Python_tests
-on: [push]
+on: [push, pull_request]
 jobs:
   Python_tests:
     runs-on: ${{ matrix.os }}
@@ -11,7 +11,7 @@ jobs:
       max-parallel: 15
       matrix:
         os: [macos-latest, ubuntu-latest, windows-latest]
-        python-version: [2.7, 3.6, 3.7, 3.8]  # 3.5,
+        python-version: [2.7, 3.6, 3.7, 3.8] # 3.5,
     steps:
       - uses: actions/checkout@v1
       - name: Set up Python ${{ matrix.python-version }}
@@ -21,15 +21,14 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 pytest  # -r requirements.txt
+          pip install -r requirements_dev.txt
       - name: Lint with flake8
         run: |
           # stop the build if there are Python syntax errors or undefined names
           flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          flake8 . --count --exit-zero --statistics
       - name: Test with pytest
         run: pytest
       # - name: Run doctests with pytest
       #   run: pytest --doctest-modules
- 
