@@ -348,7 +348,8 @@ def WriteRules(target_name, rules, extra_sources, extra_deps,
           the Gyp file in which the target being generated is defined.
     """
     for rule in rules:
-        rule_name = StringToCMakeTargetName(target_name + '__' + rule['rule_name'])
+        rule_name = StringToCMakeTargetName(
+            target_name + '__' + rule['rule_name'])
 
         inputs = rule.get('inputs', [])
         inputs_name = rule_name + '__input'
@@ -360,8 +361,10 @@ def WriteRules(target_name, rules, extra_sources, extra_deps,
         for count, rule_source in enumerate(rule.get('rule_sources', [])):
             action_name = rule_name + '_' + str(count)
 
-            rule_source_dirname, rule_source_basename = os.path.split(rule_source)
-            rule_source_root, rule_source_ext = os.path.splitext(rule_source_basename)
+            rule_source_dirname, rule_source_basename = os.path.split(
+                rule_source)
+            rule_source_root, rule_source_ext = os.path.splitext(
+                rule_source_basename)
 
             SetVariable(output, 'RULE_INPUT_PATH', rule_source)
             SetVariable(output, 'RULE_INPUT_DIRNAME', rule_source_dirname)
@@ -371,7 +374,8 @@ def WriteRules(target_name, rules, extra_sources, extra_deps,
 
             # Build up a list of outputs.
             # Collect the output dirs we'll need.
-            dirs = set(dir for dir in (os.path.dirname(o) for o in outputs) if dir)
+            dirs = set(dir for dir in (os.path.dirname(o)
+                       for o in outputs) if dir)
 
             # Create variables for the output, as 'local' variable will be unset.
             these_outputs = []
@@ -494,8 +498,10 @@ def WriteCopies(target_name, copies, extra_deps, path_to_gyp, output):
 
             copy = file_copy if os.path.basename(src) else dir_copy
 
-            copy.cmake_inputs.append(NormjoinPathForceCMakeSource(path_to_gyp, src))
-            copy.cmake_outputs.append(NormjoinPathForceCMakeSource(path_to_gyp, dst))
+            copy.cmake_inputs.append(
+                NormjoinPathForceCMakeSource(path_to_gyp, src))
+            copy.cmake_outputs.append(
+                NormjoinPathForceCMakeSource(path_to_gyp, dst))
             copy.gyp_inputs.append(src)
             copy.gyp_outputs.append(dst)
 
@@ -607,7 +613,8 @@ class CMakeNamer(object):
             if cmake_target_base_name not in cmake_target_base_names_seen:
                 cmake_target_base_names_seen.add(cmake_target_base_name)
             else:
-                self.cmake_target_base_names_conficting.add(cmake_target_base_name)
+                self.cmake_target_base_names_conficting.add(
+                    cmake_target_base_name)
 
     def CreateCMakeTargetName(self, qualified_target):
         base_name = CreateCMakeTargetBaseName(qualified_target)
@@ -633,7 +640,8 @@ def WriteTarget(namer, qualified_target, target_dicts, build_dir, config_to_use,
     rel_gyp_dir = os.path.dirname(rel_gyp_file)
 
     # Relative path from build dir to top dir.
-    build_to_top = gyp.common.InvertRelativePath(build_dir, options.toplevel_dir)
+    build_to_top = gyp.common.InvertRelativePath(
+        build_dir, options.toplevel_dir)
     # Relative path from build dir to gyp dir.
     build_to_gyp = os.path.join(build_to_top, rel_gyp_dir)
 
@@ -819,7 +827,8 @@ def WriteTarget(namer, qualified_target, target_dicts, build_dir, config_to_use,
     if target_type != 'none':
         # Link as 'C' if there are no other files
         if not c_sources and not cxx_sources:
-            SetTargetProperty(output, cmake_target_name, 'LINKER_LANGUAGE', ['C'])
+            SetTargetProperty(output, cmake_target_name,
+                              'LINKER_LANGUAGE', ['C'])
 
         # Mark uncompiled sources as uncompiled.
         if other_sources_name:
@@ -948,42 +957,49 @@ def WriteTarget(namer, qualified_target, target_dicts, build_dir, config_to_use,
             #cflags_objcc = xcode_settings.GetCflagsObjCC(config_to_use)
 
         if (not cflags_c or not c_sources) and (not cflags_cxx or not cxx_sources):
-            SetTargetProperty(output, cmake_target_name, 'COMPILE_FLAGS', cflags, ' ')
+            SetTargetProperty(output, cmake_target_name,
+                              'COMPILE_FLAGS', cflags, ' ')
 
         elif c_sources and not (s_sources or cxx_sources):
             flags = []
             flags.extend(cflags)
             flags.extend(cflags_c)
-            SetTargetProperty(output, cmake_target_name, 'COMPILE_FLAGS', flags, ' ')
+            SetTargetProperty(output, cmake_target_name,
+                              'COMPILE_FLAGS', flags, ' ')
 
         elif cxx_sources and not (s_sources or c_sources):
             flags = []
             flags.extend(cflags)
             flags.extend(cflags_cxx)
-            SetTargetProperty(output, cmake_target_name, 'COMPILE_FLAGS', flags, ' ')
+            SetTargetProperty(output, cmake_target_name,
+                              'COMPILE_FLAGS', flags, ' ')
 
         else:
             # TODO: This is broken, one cannot generally set properties on files,
             # as other targets may require different properties on the same files.
             if s_sources and cflags:
-                SetFilesProperty(output, s_sources_name, 'COMPILE_FLAGS', cflags, ' ')
+                SetFilesProperty(output, s_sources_name,
+                                 'COMPILE_FLAGS', cflags, ' ')
 
             if c_sources and (cflags or cflags_c):
                 flags = []
                 flags.extend(cflags)
                 flags.extend(cflags_c)
-                SetFilesProperty(output, c_sources_name, 'COMPILE_FLAGS', flags, ' ')
+                SetFilesProperty(output, c_sources_name,
+                                 'COMPILE_FLAGS', flags, ' ')
 
             if cxx_sources and (cflags or cflags_cxx):
                 flags = []
                 flags.extend(cflags)
                 flags.extend(cflags_cxx)
-                SetFilesProperty(output, cxx_sources_name, 'COMPILE_FLAGS', flags, ' ')
+                SetFilesProperty(output, cxx_sources_name,
+                                 'COMPILE_FLAGS', flags, ' ')
 
         # Linker flags
         ldflags = config.get('ldflags')
         if ldflags is not None:
-            SetTargetProperty(output, cmake_target_name, 'LINK_FLAGS', ldflags, ' ')
+            SetTargetProperty(output, cmake_target_name,
+                              'LINK_FLAGS', ldflags, ' ')
 
         # XCode settings
         xcode_settings = config.get('xcode_settings', {})
@@ -1030,7 +1046,8 @@ def WriteTarget(namer, qualified_target, target_dicts, build_dir, config_to_use,
                     output.write('\n')
             output.write(')\n')
 
-    linkable = target_type in ('executable', 'loadable_module', 'shared_library')
+    linkable = target_type in (
+        'executable', 'loadable_module', 'shared_library')
     other_deps.extend(extra_deps)
     if other_deps or (not linkable and (static_deps or shared_deps)):
         output.write('add_dependencies(')
@@ -1050,13 +1067,15 @@ def WriteTarget(namer, qualified_target, target_dicts, build_dir, config_to_use,
 
     # Libraries
     if linkable:
-        external_libs = [lib for lib in spec.get('libraries', []) if len(lib) > 0]
+        external_libs = [lib for lib in spec.get(
+            'libraries', []) if len(lib) > 0]
         if external_libs or static_deps or shared_deps:
             output.write('target_link_libraries(')
             output.write(cmake_target_name)
             output.write('\n')
             if static_deps:
-                write_group = circular_libs and len(static_deps) > 1 and flavor != 'mac'
+                write_group = circular_libs and len(
+                    static_deps) > 1 and flavor != 'mac'
                 if write_group:
                     output.write('-Wl,--start-group\n')
                 for dep in gyp.common.uniquer(static_deps):
@@ -1112,7 +1131,8 @@ def GenerateOutputForConfig(target_list, target_dicts, data,
     output.write('cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)\n')
     output.write('cmake_policy(VERSION 2.8.8)\n')
 
-    gyp_file, project_target, _ = gyp.common.ParseQualifiedTarget(target_list[-1])
+    gyp_file, project_target, _ = gyp.common.ParseQualifiedTarget(
+        target_list[-1])
     output.write('project(')
     output.write(project_target)
     output.write(')\n')
@@ -1189,7 +1209,8 @@ def GenerateOutputForConfig(target_list, target_dicts, data,
         if flavor == 'mac':
             gyp_file, _, _ = gyp.common.ParseQualifiedTarget(qualified_target)
             spec = target_dicts[qualified_target]
-            gyp.xcode_emulation.MergeGlobalXcodeSettingsToSpec(data[gyp_file], spec)
+            gyp.xcode_emulation.MergeGlobalXcodeSettingsToSpec(
+                data[gyp_file], spec)
 
         WriteTarget(namer, qualified_target, target_dicts, build_dir, config_to_use,
                     options, generator_flags, all_qualified_targets, flavor, output)
@@ -1229,7 +1250,8 @@ def CallGenerateOutputForConfig(arglist):
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     target_list, target_dicts, data, params, config_name = arglist
-    GenerateOutputForConfig(target_list, target_dicts, data, params, config_name)
+    GenerateOutputForConfig(target_list, target_dicts,
+                            data, params, config_name)
 
 
 def GenerateOutput(target_list, target_dicts, data, params):

@@ -285,12 +285,15 @@ class NinjaWriter(object):
         if self.flavor == 'win':
             path = self.msvs_settings.ConvertVSMacros(
                 path, config=self.config_name)
-        path = path.replace(generator_default_variables['RULE_INPUT_ROOT'], root)
+        path = path.replace(
+            generator_default_variables['RULE_INPUT_ROOT'], root)
         path = path.replace(generator_default_variables['RULE_INPUT_DIRNAME'],
                             dirname)
-        path = path.replace(generator_default_variables['RULE_INPUT_PATH'], source)
+        path = path.replace(
+            generator_default_variables['RULE_INPUT_PATH'], source)
         path = path.replace(generator_default_variables['RULE_INPUT_EXT'], ext)
-        path = path.replace(generator_default_variables['RULE_INPUT_NAME'], name)
+        path = path.replace(
+            generator_default_variables['RULE_INPUT_NAME'], name)
         return path
 
     def GypPathToNinja(self, path, env=None):
@@ -361,7 +364,8 @@ class NinjaWriter(object):
             return None
         if len(targets) > 1 or order_only:
             stamp = self.GypPathToUniqueOutput(name + '.stamp')
-            targets = self.ninja.build(stamp, 'stamp', targets, order_only=order_only)
+            targets = self.ninja.build(
+                stamp, 'stamp', targets, order_only=order_only)
             self.ninja.newline()
         return targets[0]
 
@@ -384,7 +388,8 @@ class NinjaWriter(object):
         self.is_standalone_static_library = bool(
             spec.get('standalone_static_library', 0))
 
-        self.target_rpath = generator_flags.get('target_rpath', r'\$$ORIGIN/lib/')
+        self.target_rpath = generator_flags.get(
+            'target_rpath', r'\$$ORIGIN/lib/')
 
         self.is_mac_bundle = gyp.xcode_emulation.IsMacBundle(self.flavor, spec)
         self.xcode_settings = self.msvs_settings = None
@@ -511,7 +516,8 @@ class NinjaWriter(object):
 
         # Bundle all of the above together, if needed.
         if self.is_mac_bundle:
-            output = self.WriteMacBundle(spec, mac_bundle_depends, is_empty_bundle)
+            output = self.WriteMacBundle(
+                spec, mac_bundle_depends, is_empty_bundle)
 
         if not output:
             return None
@@ -572,7 +578,8 @@ class NinjaWriter(object):
                                        mac_bundle_resources,
                                        extra_mac_bundle_resources)
         if 'copies' in spec:
-            outputs += self.WriteCopies(spec['copies'], prebuild, mac_bundle_depends)
+            outputs += self.WriteCopies(spec['copies'],
+                                        prebuild, mac_bundle_depends)
 
         if 'sources' in spec and self.flavor == 'win':
             outputs += self.WriteWinIdlFiles(spec, prebuild)
@@ -585,7 +592,8 @@ class NinjaWriter(object):
         if self.is_mac_bundle:
             xcassets = self.WriteMacBundleResources(
                 extra_mac_bundle_resources + mac_bundle_resources, mac_bundle_depends)
-            partial_info_plist = self.WriteMacXCassets(xcassets, mac_bundle_depends)
+            partial_info_plist = self.WriteMacXCassets(
+                xcassets, mac_bundle_depends)
             self.WriteMacInfoPlist(partial_info_plist, mac_bundle_depends)
 
         return stamp
@@ -621,7 +629,8 @@ class NinjaWriter(object):
             depfile = action.get('depfile', None)
             if depfile:
                 depfile = self.ExpandSpecial(depfile, self.base_to_build)
-            pool = 'console' if int(action.get('ninja_use_console', 0)) else None
+            pool = 'console' if int(action.get(
+                'ninja_use_console', 0)) else None
             rule_name, _ = self.WriteNewNinjaRule(name, args, description,
                                                   is_cygwin, env, pool,
                                                   depfile=depfile)
@@ -685,7 +694,8 @@ class NinjaWriter(object):
                     return path.replace('\\', '/')
                 return path
 
-            inputs = [self.GypPathToNinja(i, env) for i in rule.get('inputs', [])]
+            inputs = [self.GypPathToNinja(i, env)
+                                          for i in rule.get('inputs', [])]
 
             # If there are n source files matching the rule, and m additional rule
             # inputs, then adding 'inputs' to each build edge written below will
@@ -731,14 +741,18 @@ class NinjaWriter(object):
                         # '$dirname' is a parameter to the rule action, which means
                         # it shouldn't be converted to a Ninja path.  But we don't
                         # want $!PRODUCT_DIR in there either.
-                        dirname_expanded = self.ExpandSpecial(dirname, self.base_to_build)
-                        extra_bindings.append(('dirname', cygwin_munge(dirname_expanded)))
+                        dirname_expanded = self.ExpandSpecial(
+                            dirname, self.base_to_build)
+                        extra_bindings.append(
+                            ('dirname', cygwin_munge(dirname_expanded)))
                     elif var == 'source':
                         # '$source' is a parameter to the rule action, which means
                         # it shouldn't be converted to a Ninja path.  But we don't
                         # want $!PRODUCT_DIR in there either.
-                        source_expanded = self.ExpandSpecial(source, self.base_to_build)
-                        extra_bindings.append(('source', cygwin_munge(source_expanded)))
+                        source_expanded = self.ExpandSpecial(
+                            source, self.base_to_build)
+                        extra_bindings.append(
+                            ('source', cygwin_munge(source_expanded)))
                     elif var == 'ext':
                         extra_bindings.append(('ext', ext))
                     elif var == 'name':
@@ -776,7 +790,8 @@ class NinjaWriter(object):
                 src = self.GypPathToNinja(path, env)
                 dst = self.GypPathToNinja(os.path.join(copy['destination'], basename),
                                           env)
-                outputs += self.ninja.build(dst, 'copy', src, order_only=prebuild)
+                outputs += self.ninja.build(dst,
+                                            'copy', src, order_only=prebuild)
                 if self.is_mac_bundle:
                     # gyp has mac_bundle_resources to copy things into a bundle's
                     # Resources folder, but there's no built-in way to copy files to other
@@ -954,7 +969,8 @@ class NinjaWriter(object):
                 obj = 'obj'
                 if self.toolset != 'target':
                     obj += '.' + self.toolset
-                pdbpath = os.path.normpath(os.path.join(obj, self.base_dir, self.name))
+                pdbpath = os.path.normpath(
+                    os.path.join(obj, self.base_dir, self.name))
                 pdbpath_c = pdbpath + '.c.pdb'
                 pdbpath_cc = pdbpath + '.cc.pdb'
             self.WriteVariableList(ninja_file, 'pdbname_c', [pdbpath_c])
@@ -1042,7 +1058,8 @@ class NinjaWriter(object):
                 self.target.uses_cpp = True
             elif ext == 'c' or (ext == 'S' and self.flavor != 'win'):
                 command = 'cc'
-            elif ext == 's' and self.flavor != 'win':  # Doesn't generate .o.d files.
+            # Doesn't generate .o.d files.
+            elif ext == 's' and self.flavor != 'win':
                 command = 'cc_s'
             elif (self.flavor == 'win' and ext == 'asm' and
                   not self.msvs_settings.HasExplicitAsmRules(spec)):
@@ -1066,7 +1083,8 @@ class NinjaWriter(object):
             output = self.GypPathToUniqueOutput(filename + obj_ext)
             if arch is not None:
                 output = AddArch(output, arch)
-            implicit = precompiled_header.GetObjDependencies([input], [output], arch)
+            implicit = precompiled_header.GetObjDependencies(
+                [input], [output], arch)
             variables = []
             if self.flavor == 'win':
                 variables, output, implicit = precompiled_header.GetFlagsModifications(
@@ -1078,7 +1096,8 @@ class NinjaWriter(object):
             outputs.append(output)
 
         if has_rc_source:
-            resource_include_dirs = config.get('resource_include_dirs', include_dirs)
+            resource_include_dirs = config.get(
+                'resource_include_dirs', include_dirs)
             self.WriteVariableList(ninja_file, 'resource_includes',
                 [QuoteShellArgument('-I' + self.GypPathToNinja(i, env), self.flavor)
                  for i in resource_include_dirs])
@@ -1119,7 +1138,8 @@ class NinjaWriter(object):
             extra_bindings = []
             build_output = output
             if not self.is_mac_bundle:
-                self.AppendPostbuildVariable(extra_bindings, spec, output, output)
+                self.AppendPostbuildVariable(
+                    extra_bindings, spec, output, output)
 
             # TODO(yyanagisawa): more work needed to fix:
             # https://code.google.com/p/gyp/issues/detail?id=411
@@ -1129,7 +1149,8 @@ class NinjaWriter(object):
                 self.ninja.build([output, output + '.TOC'], 'solipo', inputs,
                     variables=extra_bindings)
             else:
-                self.ninja.build(build_output, 'lipo', inputs, variables=extra_bindings)
+                self.ninja.build(build_output, 'lipo', inputs,
+                                 variables=extra_bindings)
             return output
 
     def WriteLinkForArch(self, ninja_file, spec, config_name, config,
@@ -1255,7 +1276,8 @@ class NinjaWriter(object):
         libraries = gyp.common.uniquer(map(self.ExpandSpecial,
                                            spec.get('libraries', [])))
         if self.flavor == 'mac':
-            libraries = self.xcode_settings.AdjustLibraries(libraries, config_name)
+            libraries = self.xcode_settings.AdjustLibraries(
+                libraries, config_name)
         elif self.flavor == 'win':
             libraries = self.msvs_settings.AdjustLibraries(libraries)
 
@@ -1336,7 +1358,8 @@ class NinjaWriter(object):
             else:
                 variables = []
                 if self.xcode_settings:
-                    libtool_flags = self.xcode_settings.GetLibtoolflags(config_name)
+                    libtool_flags = self.xcode_settings.GetLibtoolflags(
+                        config_name)
                     if libtool_flags:
                         variables.append(('libtool_flags', libtool_flags))
                 if self.msvs_settings:
@@ -1372,7 +1395,8 @@ class NinjaWriter(object):
 
     def WriteMacBundle(self, spec, mac_bundle_depends, is_empty):
         assert self.is_mac_bundle
-        package_framework = spec['type'] in ('shared_library', 'loadable_module')
+        package_framework = spec['type'] in (
+            'shared_library', 'loadable_module')
         output = self.ComputeMacBundleOutput()
         if is_empty:
             output += '.stamp'
@@ -1384,7 +1408,8 @@ class NinjaWriter(object):
                 self.ninja.build(output, 'package_ios_framework', mac_bundle_depends,
                                  variables=variables)
             else:
-                variables.append(('version', self.xcode_settings.GetFrameworkVersion()))
+                variables.append(
+                    ('version', self.xcode_settings.GetFrameworkVersion()))
                 self.ninja.build(output, 'package_framework', mac_bundle_depends,
                                  variables=variables)
         else:
@@ -1429,7 +1454,8 @@ class NinjaWriter(object):
     def AppendPostbuildVariable(self, variables, spec, output, binary,
                                 is_command_start=False):
         """Adds a 'postbuild' variable if there is a postbuild for |output|."""
-        postbuild = self.GetPostbuildCommand(spec, output, binary, is_command_start)
+        postbuild = self.GetPostbuildCommand(
+            spec, output, binary, is_command_start)
         if postbuild:
             variables.append(('postbuilds', postbuild))
 
@@ -1440,13 +1466,15 @@ class NinjaWriter(object):
         if not self.xcode_settings or spec['type'] == 'none' or not output:
             return ''
         output = QuoteShellArgument(output, self.flavor)
-        postbuilds = gyp.xcode_emulation.GetSpecPostbuildCommands(spec, quiet=True)
+        postbuilds = gyp.xcode_emulation.GetSpecPostbuildCommands(
+            spec, quiet=True)
         if output_binary is not None:
             postbuilds = self.xcode_settings.AddImplicitPostbuilds(
                 self.config_name,
                 os.path.normpath(os.path.join(self.base_to_build, output)),
                 QuoteShellArgument(
-                    os.path.normpath(os.path.join(self.base_to_build, output_binary)),
+                    os.path.normpath(os.path.join(
+                        self.base_to_build, output_binary)),
                     self.flavor),
                 postbuilds, quiet=True)
 
@@ -1460,7 +1488,8 @@ class NinjaWriter(object):
         # G will be non-null if any postbuild fails. Run all postbuilds in a
         # subshell.
         commands = env + ' (' + \
-            ' && '.join([ninja_syntax.escape(command) for command in postbuilds])
+            ' && '.join([ninja_syntax.escape(command)
+                        for command in postbuilds])
         command_string = (commands + '); G=$$?; '
                           # Remove the final output if any postbuild failed.
                           '((exit $$G) || rm -rf %s) ' % output + '&& exit $$G)')
@@ -1775,7 +1804,8 @@ def GetDefaultConcurrentLinks():
         # VS 2015 uses 20% more working set than VS 2013 and can consume all RAM
         # on a 64 GB machine.
         mem_limit = max(1, stat.ullTotalPhys // (5 * (2 ** 30)))  # total / 5GB
-        hard_cap = max(1, int(os.environ.get('GYP_LINK_CONCURRENCY_MAX', 2**32)))
+        hard_cap = max(1, int(os.environ.get(
+            'GYP_LINK_CONCURRENCY_MAX', 2**32)))
         return min(mem_limit, hard_cap)
     elif sys.platform.startswith('linux'):
         if os.path.exists("/proc/meminfo"):
@@ -1790,7 +1820,8 @@ def GetDefaultConcurrentLinks():
         return 1
     elif sys.platform == 'darwin':
         try:
-            avail_bytes = int(subprocess.check_output(['sysctl', '-n', 'hw.memsize']))
+            avail_bytes = int(subprocess.check_output(
+                ['sysctl', '-n', 'hw.memsize']))
             # A static library debug build of Chromium's unit_tests takes ~2.7GB, so
             # 4GB per ld process allows for some more bloat.
             return max(1, avail_bytes // (4 * (2 ** 30)))  # total / 4GB
@@ -1949,7 +1980,8 @@ def GenerateOutputForConfig(target_list, target_dicts, data, params,
         if key == 'READELF.host':
             readelf_host = os.path.join(build_to_root, value)
         if key.endswith('_wrapper'):
-            wrappers[key[:-len('_wrapper')]] = os.path.join(build_to_root, value)
+            wrappers[key[:-len('_wrapper')]
+                               ] = os.path.join(build_to_root, value)
 
     # Support wrappers from environment variables too.
     for key, value in os.environ.items():
@@ -1998,7 +2030,8 @@ def GenerateOutputForConfig(target_list, target_dicts, data, params,
         master_ninja.variable('mt', 'mt.exe')
     else:
         master_ninja.variable('ld', CommandWithWrapper('LINK', wrappers, ld))
-        master_ninja.variable('ldxx', CommandWithWrapper('LINK', wrappers, ldxx))
+        master_ninja.variable(
+            'ldxx', CommandWithWrapper('LINK', wrappers, ldxx))
         master_ninja.variable('ar', GetEnvironFallback(['AR_target', 'AR'], ar))
         if flavor != 'mac':
             # Mac does not use readelf/nm for .TOC generation, so avoiding polluting
@@ -2014,8 +2047,10 @@ def GenerateOutputForConfig(target_list, target_dicts, data, params,
         if not cxx_host:
             cxx_host = cxx
 
-        master_ninja.variable('ar_host', GetEnvironFallback(['AR_host'], ar_host))
-        master_ninja.variable('nm_host', GetEnvironFallback(['NM_host'], nm_host))
+        master_ninja.variable(
+            'ar_host', GetEnvironFallback(['AR_host'], ar_host))
+        master_ninja.variable(
+            'nm_host', GetEnvironFallback(['NM_host'], nm_host))
         master_ninja.variable('readelf_host',
                               GetEnvironFallback(['READELF_host'], readelf_host))
         cc_host = GetEnvironFallback(['CC_host'], cc_host)
@@ -2371,14 +2406,16 @@ def GenerateOutputForConfig(target_list, target_dicts, data, params,
         build_file, name, toolset = \
             gyp.common.ParseQualifiedTarget(qualified_target)
 
-        this_make_global_settings = data[build_file].get('make_global_settings', [])
+        this_make_global_settings = data[build_file].get(
+            'make_global_settings', [])
         assert make_global_settings == this_make_global_settings, (
             "make_global_settings needs to be the same for all targets. %s vs. %s" %
             (this_make_global_settings, make_global_settings))
 
         spec = target_dicts[qualified_target]
         if flavor == 'mac':
-            gyp.xcode_emulation.MergeGlobalXcodeSettingsToSpec(data[build_file], spec)
+            gyp.xcode_emulation.MergeGlobalXcodeSettingsToSpec(
+                data[build_file], spec)
 
         # If build_file is a symlink, we must not follow it because there's a chance
         # it could point to a path above toplevel_dir, and we cannot correctly deal
@@ -2465,7 +2502,8 @@ def CallGenerateOutputForConfig(arglist):
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
     (target_list, target_dicts, data, params, config_name) = arglist
-    GenerateOutputForConfig(target_list, target_dicts, data, params, config_name)
+    GenerateOutputForConfig(target_list, target_dicts,
+                            data, params, config_name)
 
 
 def GenerateOutput(target_list, target_dicts, data, params):
@@ -2475,7 +2513,8 @@ def GenerateOutput(target_list, target_dicts, data, params):
 
     user_config = params.get('generator_flags', {}).get('config', None)
     if gyp.common.GetFlavor(params) == 'win':
-        target_list, target_dicts = MSVSUtil.ShardTargets(target_list, target_dicts)
+        target_list, target_dicts = MSVSUtil.ShardTargets(
+            target_list, target_dicts)
         target_list, target_dicts = MSVSUtil.InsertLargePdbShims(
             target_list, target_dicts, generator_default_variables)
 

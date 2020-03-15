@@ -134,7 +134,8 @@ def GetAllIncludeDirectories(target_list, target_dicts,
             # TODO(jgreenwald): Change the gyp files to not abuse cflags for this, and
             # remove this.
             if flavor == 'win':
-                msvs_settings = gyp.msvs_emulation.MsvsSettings(target, generator_flags)
+                msvs_settings = gyp.msvs_emulation.MsvsSettings(
+                    target, generator_flags)
                 cflags = msvs_settings.GetCflags(config_name)
             else:
                 cflags = config['cflags']
@@ -212,7 +213,8 @@ def GetAllDefines(target_list, target_dicts, data, config_name, params,
         target = target_dicts[target_name]
 
         if flavor == 'win':
-            msvs_settings = gyp.msvs_emulation.MsvsSettings(target, generator_flags)
+            msvs_settings = gyp.msvs_emulation.MsvsSettings(
+                target, generator_flags)
             extra_defines = msvs_settings.GetComputedDefines(config_name)
         else:
             extra_defines = []
@@ -231,7 +233,8 @@ def GetAllDefines(target_list, target_dicts, data, config_name, params,
             all_defines[split_define[0].strip()] = split_define[1].strip()
     # Get default compiler defines (if possible).
     if flavor == 'win':
-        return all_defines  # Default defines already processed in the loop above.
+        # Default defines already processed in the loop above.
+        return all_defines
     if compiler_path:
         command = shlex.split(compiler_path)
         command.extend(['-E', '-dM', '-'])
@@ -364,7 +367,8 @@ def GenerateClasspathFile(target_list, target_dicts, toplevel_dir,
             entry_element.set('path', path)
 
     AddElements('lib', GetJavaJars(target_list, target_dicts, toplevel_dir))
-    AddElements('src', GetJavaSourceDirs(target_list, target_dicts, toplevel_dir))
+    AddElements('src', GetJavaSourceDirs(
+        target_list, target_dicts, toplevel_dir))
     # Include the standard JRE container and a dummy out folder
     AddElements('con', ['org.eclipse.jdt.launching.JRE_CONTAINER'])
     # Include a dummy out folder so that Eclipse doesn't use the default /bin
@@ -417,7 +421,8 @@ def GenerateOutput(target_list, target_dicts, data, params):
     """Generate an XML settings file that can be imported into a CDT project."""
 
     if params['options'].generator_output:
-        raise NotImplementedError("--generator_output not implemented for eclipse")
+        raise NotImplementedError(
+            "--generator_output not implemented for eclipse")
 
     user_config = params.get('generator_flags', {}).get('config', None)
     if user_config:

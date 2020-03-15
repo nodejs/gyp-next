@@ -143,7 +143,8 @@ def AbsoluteNode(node):
                         'AdditionalLibraryDirectories']:
                 # We want to fix up these paths
                 path_list = value.split(';')
-                new_list = FixFilenames(path_list, os.path.dirname(ARGUMENTS[1]))
+                new_list = FixFilenames(
+                    path_list, os.path.dirname(ARGUMENTS[1]))
                 node.setAttribute(name, ';'.join(new_list))
             if not value:
                 node.removeAttribute(name)

@@ -257,7 +257,8 @@ def _Renamed(tool, msvs_name, msbuild_name, setting_type):
 
     def _Translate(value, msbuild_settings):
         msbuild_tool_settings = _GetMSBuildToolSettings(msbuild_settings, tool)
-        msbuild_tool_settings[msbuild_name] = setting_type.ConvertToMSBuild(value)
+        msbuild_tool_settings[msbuild_name] = setting_type.ConvertToMSBuild(
+            value)
 
     _msvs_validators[tool.msvs_name][msvs_name] = setting_type.ValidateMSVS
     _msbuild_validators[tool.msbuild_name][msbuild_name] = (
@@ -284,7 +285,8 @@ def _MovedAndRenamed(tool, msvs_settings_name, msbuild_tool_name,
 
     def _Translate(value, msbuild_settings):
         tool_settings = msbuild_settings.setdefault(msbuild_tool_name, {})
-        tool_settings[msbuild_settings_name] = setting_type.ConvertToMSBuild(value)
+        tool_settings[msbuild_settings_name] = setting_type.ConvertToMSBuild(
+            value)
 
     _msvs_validators[tool.msvs_name][msvs_settings_name] = (
         setting_type.ValidateMSVS)

@@ -269,9 +269,11 @@ class MSVSSolution(object):
 
             if isinstance(e, MSVSProject):
                 if e.dependencies:
-                    f.write('\tProjectSection(ProjectDependencies) = postProject\r\n')
+                    f.write(
+                        '\tProjectSection(ProjectDependencies) = postProject\r\n')
                     for d in e.dependencies:
-                        f.write('\t\t%s = %s\r\n' % (d.get_guid(), d.get_guid()))
+                        f.write('\t\t%s = %s\r\n' %
+                                (d.get_guid(), d.get_guid()))
                     f.write('\tEndProjectSection\r\n')
 
             f.write('EndProject\r\n')
@@ -291,7 +293,8 @@ class MSVSSolution(object):
         for e in all_entries:
             if isinstance(e, MSVSProject):
                 config_guids.append(e.get_guid())
-                config_guids_overrides[e.get_guid()] = e.config_platform_overrides
+                config_guids_overrides[e.get_guid(
+                )] = e.config_platform_overrides
         config_guids.sort()
 
         f.write('\tGlobalSection(ProjectConfigurationPlatforms) = postSolution\r\n')
@@ -328,7 +331,8 @@ class MSVSSolution(object):
                 if not isinstance(e, MSVSFolder):
                     continue        # Does not apply to projects, only folders
                 for subentry in e.entries:
-                    f.write('\t\t%s = %s\r\n' % (subentry.get_guid(), e.get_guid()))
+                    f.write('\t\t%s = %s\r\n' %
+                            (subentry.get_guid(), e.get_guid()))
             f.write('\tEndGlobalSection\r\n')
 
         f.write('EndGlobal\r\n')

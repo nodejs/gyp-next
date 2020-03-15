@@ -75,7 +75,8 @@ def _TargetFromSpec(old_spec, params):
     if product_extension:
         ninja_target['product_extension'] = product_extension
     ninja_target['toolset'] = old_spec.get('toolset')
-    ninja_target['default_configuration'] = old_spec.get('default_configuration')
+    ninja_target['default_configuration'] = old_spec.get(
+        'default_configuration')
     ninja_target['configurations'] = {}
 
     # Tell Xcode to look in |ninja_toplevel| for build products.
@@ -231,7 +232,8 @@ def CreateWrapper(target_list, target_dicts, data, params):
       }, None)
 
     # Tell Xcode to look everywhere for headers.
-    sources_target['configurations'] = {'Default': { 'include_dirs': [ depth ] } }
+    sources_target['configurations'] = {
+        'Default': { 'include_dirs': [ depth ] } }
 
     # Put excluded files into the sources target so they can be opened in Xcode.
     skip_excluded_files = \

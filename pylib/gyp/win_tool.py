@@ -120,7 +120,8 @@ class WinTool(object):
         if use_separate_mspdbsrv == 'True':
             self._UseSeparateMspdbsrv(env, args)
         if sys.platform == 'win32':
-            args = list(args)  # *args is a tuple by default, which is read-only.
+            # *args is a tuple by default, which is read-only.
+            args = list(args)
             args[0] = args[0].replace('/', '\\')
         # https://docs.python.org/2/library/subprocess.html:
         # "On Unix with shell=True [...] if args is a sequence, the first item

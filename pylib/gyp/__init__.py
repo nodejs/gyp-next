@@ -229,7 +229,8 @@ def RegenerateFlags(options):
             if value:
                 flags.append(FormatOpt(opt, value_predicate(value)))
             elif options.use_environment and env_name and os.environ.get(env_name):
-                flags.append(FormatOpt(opt, value_predicate(os.environ.get(env_name))))
+                flags.append(
+                    FormatOpt(opt, value_predicate(os.environ.get(env_name))))
         elif action in ('store_true', 'store_false'):
             if ((action == 'store_true' and value) or
                 (action == 'store_false' and not value)):
@@ -535,7 +536,8 @@ def gyp_main(args):
             valid_configs = targets[flat_list[0]]['configurations']
             for conf in options.configs:
                 if conf not in valid_configs:
-                    raise GypError('Invalid config specified via --build: %s' % conf)
+                    raise GypError(
+                        'Invalid config specified via --build: %s' % conf)
             generator.PerformBuild(data, options.configs, params)
 
     # Done

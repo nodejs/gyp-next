@@ -179,7 +179,8 @@ def _ExtractSources(target, target_dict, toplevel_dir):
     # |target| is either absolute or relative and in the format of the OS. Gyp
     # source paths are always posix. Convert |target| to a posix path relative to
     # |toplevel_dir_|. This is done to make it easy to build source paths.
-    base_path = posixpath.dirname(_ToLocalPath(toplevel_dir, _ToGypPath(target)))
+    base_path = posixpath.dirname(
+        _ToLocalPath(toplevel_dir, _ToGypPath(target)))
     base_path_components = base_path.split('/')
 
     # Add a trailing '/' so that _AddSources() can easily build paths.
@@ -201,7 +202,8 @@ def _ExtractSources(target, target_dict, toplevel_dir):
                                       results)
     if 'rules' in target_dict:
         for rule in target_dict['rules']:
-            _ExtractSourcesFromAction(rule, base_path, base_path_components, results)
+            _ExtractSourcesFromAction(
+                rule, base_path, base_path_components, results)
 
     return results
 
@@ -265,9 +267,11 @@ class Config(object):
         except IOError:
             raise Exception('Unable to open file ' + config_path)
         except ValueError as e:
-            raise Exception('Unable to parse config file ' + config_path + str(e))
+            raise Exception('Unable to parse config file ' + \
+                            config_path + str(e))
         if not isinstance(config, dict):
-            raise Exception('config_path must be a JSON file containing a dictionary')
+            raise Exception(
+                'config_path must be a JSON file containing a dictionary')
         self.files = config.get('files', [])
         self.additional_compile_target_names = set(
           config.get('additional_compile_targets', []))
@@ -601,7 +605,8 @@ class TargetCalculator(object):
     """Calculates the matching test_targets and matching compile_targets."""
     def __init__(self, files, additional_compile_target_names, test_target_names,
                  data, target_list, target_dicts, toplevel_dir, build_files):
-        self._additional_compile_target_names = set(additional_compile_target_names)
+        self._additional_compile_target_names = set(
+            additional_compile_target_names)
         self._test_target_names = set(test_target_names)
         self._name_to_target, self._changed_targets, self._root_targets = (
           _GenerateTargets(data, target_list, target_dicts, toplevel_dir,
@@ -647,7 +652,8 @@ class TargetCalculator(object):
         for target in test_targets:
             print('\t', target.name)
         print('searching for matching test targets')
-        matching_test_targets = _GetTargetsDependingOnMatchingTargets(test_targets)
+        matching_test_targets = _GetTargetsDependingOnMatchingTargets(
+            test_targets)
         matching_test_targets_contains_all = (test_target_names_contains_all and
                                               set(matching_test_targets) &
                                               set(self._root_targets))
@@ -699,7 +705,8 @@ def GenerateOutput(target_list, target_dicts, data, params):
             raise Exception('Must specify files to analyze via config_path generator '
                             'flag')
 
-        toplevel_dir = _ToGypPath(os.path.abspath(params['options'].toplevel_dir))
+        toplevel_dir = _ToGypPath(
+            os.path.abspath(params['options'].toplevel_dir))
         if debug:
             print('toplevel_dir', toplevel_dir)
 

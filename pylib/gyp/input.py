@@ -199,7 +199,8 @@ def CheckNode(node, keypath):
                 raise GypError("Key '" + key + "' repeated at level " +
                       repr(len(keypath) + 1) + " with key path '" +
                       '.'.join(keypath) + "'")
-            kp = list(keypath)  # Make a copy of the list for descending this node.
+            # Make a copy of the list for descending this node.
+            kp = list(keypath)
             kp.append(key)
             dict[key] = CheckNode(value, kp)
         return dict
@@ -233,7 +234,8 @@ def LoadOneBuildFile(build_file_path, data, aux_data, includes,
         else:
             build_file_contents = open(build_file_path, 'rU').read()
     else:
-        raise GypError("%s not found (cwd: %s)" % (build_file_path, os.getcwd()))
+        raise GypError("%s not found (cwd: %s)" %
+                       (build_file_path, os.getcwd()))
 
     build_file_data = None
     try:
@@ -250,7 +252,8 @@ def LoadOneBuildFile(build_file_path, data, aux_data, includes,
         raise
 
     if type(build_file_data) is not dict:
-        raise GypError("%s does not evaluate to a dictionary." % build_file_path)
+        raise GypError("%s does not evaluate to a dictionary." %
+                       build_file_path)
 
     data[build_file_path] = build_file_data
     aux_data[build_file_path] = {}
@@ -284,7 +287,8 @@ def LoadBuildFileIncludesIntoDict(subdict, subdict_path, data, aux_data,
             # path to include by appending the provided "include" to the directory
             # in which subdict_path resides.
             relative_include = \
-                os.path.normpath(os.path.join(os.path.dirname(subdict_path), include))
+                os.path.normpath(os.path.join(
+                    os.path.dirname(subdict_path), include))
             includes_list.append(relative_include)
         # Unhook the includes list, it's no longer needed.
         del subdict['includes']
@@ -295,10 +299,12 @@ def LoadBuildFileIncludesIntoDict(subdict, subdict_path, data, aux_data,
             aux_data[subdict_path]['included'] = []
         aux_data[subdict_path]['included'].append(include)
 
-        gyp.DebugOutput(gyp.DEBUG_INCLUDES, "Loading Included File: '%s'", include)
+        gyp.DebugOutput(gyp.DEBUG_INCLUDES,
+                        "Loading Included File: '%s'", include)
 
         MergeDicts(subdict,
-                   LoadOneBuildFile(include, data, aux_data, None, False, check),
+                   LoadOneBuildFile(include, data, aux_data,
+                                    None, False, check),
                    subdict_path, include)
 
     # Recurse into subdictionaries.
@@ -318,7 +324,8 @@ def LoadBuildFileIncludesIntoList(sublist, sublist_path, data, aux_data, check):
             LoadBuildFileIncludesIntoDict(item, sublist_path, data, aux_data,
                                           None, check)
         elif type(item) is list:
-            LoadBuildFileIncludesIntoList(item, sublist_path, data, aux_data, check)
+            LoadBuildFileIncludesIntoList(
+                item, sublist_path, data, aux_data, check)
 
 # Processes toolsets in all the targets. This recurses into condition entries
 # since they can contain toolsets as well.
@@ -599,7 +606,8 @@ def LoadTargetBuildFilesParallel(build_files, data, variables, includes, depth,
               'multiple_toolsets': globals()['multiple_toolsets']}
 
             if not parallel_state.pool:
-                parallel_state.pool = multiprocessing.Pool(multiprocessing.cpu_count())
+                parallel_state.pool = multiprocessing.Pool(
+                    multiprocessing.cpu_count())
             parallel_state.pool.apply_async(
                 CallLoadTargetBuildFile,
                 args = (global_flags, dependency,
@@ -828,18 +836,21 @@ def ExpandVariables(input, phase, variables, build_file):
                 contents_list = contents.split(' ')
             replacement = contents_list[0]
             if os.path.isabs(replacement):
-                raise GypError('| cannot handle absolute paths, got "%s"' % replacement)
+                raise GypError(
+                    '| cannot handle absolute paths, got "%s"' % replacement)
 
             if not generator_filelist_paths:
                 path = os.path.join(build_file_dir, replacement)
             else:
                 if os.path.isabs(build_file_dir):
                     toplevel = generator_filelist_paths['toplevel']
-                    rel_build_file_dir = gyp.common.RelativePath(build_file_dir, toplevel)
+                    rel_build_file_dir = gyp.common.RelativePath(
+                        build_file_dir, toplevel)
                 else:
                     rel_build_file_dir = build_file_dir
                 qualified_out_dir = generator_filelist_paths['qualified_out_dir']
-                path = os.path.join(qualified_out_dir, rel_build_file_dir, replacement)
+                path = os.path.join(qualified_out_dir,
+                                    rel_build_file_dir, replacement)
                 gyp.common.EnsureDirExists(path)
 
             replacement = gyp.common.RelativePath(path, build_file_dir)
@@ -878,8 +889,10 @@ def ExpandVariables(input, phase, variables, build_file):
                     # passing ["param", "eters"] as a single list argument. For modules
                     # that don't load quickly, this can be faster than
                     # <!(python modulename param eters). Do this in |build_file_dir|.
-                    oldwd = os.getcwd()  # Python doesn't like os.open('.'): no fchdir.
-                    if build_file_dir:  # build_file_dir may be None (see above).
+                    # Python doesn't like os.open('.'): no fchdir.
+                    oldwd = os.getcwd()
+                    # build_file_dir may be None (see above).
+                    if build_file_dir:
                         os.chdir(build_file_dir)
                     sys.path.append(os.getcwd())
                     try:
@@ -890,7 +903,8 @@ def ExpandVariables(input, phase, variables, build_file):
                         except ImportError as e:
                             raise GypError("Error importing pymod_do_main"
                                            "module (%s): %s" % (parsed_contents[0], e))
-                        replacement = str(py_module.DoMain(parsed_contents[1:])).rstrip()
+                        replacement = str(py_module.DoMain(
+                            parsed_contents[1:])).rstrip()
                     finally:
                         sys.path.pop()
                         os.chdir(oldwd)
@@ -993,7 +1007,8 @@ def ExpandVariables(input, phase, variables, build_file):
                 # proper list-to-argument quoting rules on a specific
                 # platform instead of just calling the POSIX encoding
                 # routine.
-                encoded_replacement = gyp.common.EncodePOSIXShellList(replacement)
+                encoded_replacement = gyp.common.EncodePOSIXShellList(
+                    replacement)
             else:
                 encoded_replacement = replacement
 
@@ -1011,7 +1026,8 @@ def ExpandVariables(input, phase, variables, build_file):
         # Look for more matches now that we've replaced some, to deal with
         # expanding local variables (variables defined in the same
         # variables block as this one).
-        gyp.DebugOutput(gyp.DEBUG_VARIABLES, "Found output %r, recursing.", output)
+        gyp.DebugOutput(gyp.DEBUG_VARIABLES,
+                        "Found output %r, recursing.", output)
         if type(output) is list:
             if output and type(output[0]) is list:
                 # Leave output alone if it's a list of lists.
@@ -1103,7 +1119,8 @@ def EvalSingleCondition(
     except SyntaxError as e:
         syntax_error = SyntaxError('%s while evaluating condition \'%s\' in %s '
                                    'at character %d.' %
-                                   (str(e.args[0]), e.text, build_file, e.offset),
+                                   (str(e.args[0]), e.text,
+                                    build_file, e.offset),
                                    e.filename, e.lineno, e.offset, e.text)
         raise syntax_error
     except NameError as e:
@@ -1315,9 +1332,11 @@ def ProcessVariablesAndConditionsInList(the_list, phase, variables,
         if type(item) is dict:
             # Make a copy of the variables dict so that it won't influence anything
             # outside of its own scope.
-            ProcessVariablesAndConditionsInDict(item, phase, variables, build_file)
+            ProcessVariablesAndConditionsInDict(
+                item, phase, variables, build_file)
         elif type(item) is list:
-            ProcessVariablesAndConditionsInList(item, phase, variables, build_file)
+            ProcessVariablesAndConditionsInList(
+                item, phase, variables, build_file)
         elif type(item) is str:
             expanded = ExpandVariables(item, phase, variables, build_file)
             if type(expanded) in (str, int):
@@ -1360,7 +1379,8 @@ def BuildTargetsDict(data):
                                                      target['target_name'],
                                                      target['toolset'])
             if target_name in targets:
-                raise GypError('Duplicate target definitions for ' + target_name)
+                raise GypError(
+                    'Duplicate target definitions for ' + target_name)
             targets[target_name] = target
 
     return targets
@@ -1506,7 +1526,8 @@ def RemoveSelfDependencies(targets):
                 for t in dependencies:
                     if t == target_name:
                         if targets[t].get('variables', {}).get('prune_self_dependency', 0):
-                            target_dict[dependency_key] = Filter(dependencies, target_name)
+                            target_dict[dependency_key] = Filter(
+                                dependencies, target_name)
 
 
 def RemoveLinkDependenciesFromNoneTargets(targets):
@@ -1790,7 +1811,8 @@ class DependencyGraphNode(object):
         # 'allow_sharedlib_linksettings_propagation' flag is explicitly set to
         # False.  Once chrome is fixed, we can remove this flag.
         include_shared_libraries = \
-            targets[self.ref].get('allow_sharedlib_linksettings_propagation', True)
+            targets[self.ref].get(
+                'allow_sharedlib_linksettings_propagation', True)
         return self._LinkDependenciesInternal(targets, include_shared_libraries)
 
     def DependenciesToLinkAgainst(self, targets):
@@ -1877,7 +1899,8 @@ def VerifyNoGYPFileCircularDependencies(targets):
                 continue
             dependency_node = dependency_nodes.get(dependency_build_file)
             if not dependency_node:
-                raise GypError("Dependency '%s' not found" % dependency_build_file)
+                raise GypError("Dependency '%s' not found" %
+                               dependency_build_file)
             if dependency_node not in build_file_node.dependencies:
                 build_file_node.dependencies.append(dependency_node)
                 dependency_node.dependents.append(build_file_node)
@@ -2181,7 +2204,8 @@ def MergeDicts(to, fro, to_file, fro_file):
                 append = False
             elif ext == '?':
                 list_base = k[:-1]
-                lists_incompatible = [list_base, list_base + '=', list_base + '+']
+                lists_incompatible = [list_base,
+                    list_base + '=', list_base + '+']
             else:
                 list_base = k
                 lists_incompatible = [list_base + '=', list_base + '?']
@@ -2281,7 +2305,8 @@ def SetUpConfigurations(target, target_dict):
             else:
                 key_base = key
             if not key_base in non_configuration_keys:
-                new_configuration_dict[key] = gyp.simple_copy.deepcopy(target_val)
+                new_configuration_dict[key] = gyp.simple_copy.deepcopy(
+                    target_val)
 
         # Merge in configuration (with all its parents first).
         MergeConfigWithInheritance(new_configuration_dict, build_file,
@@ -2645,7 +2670,8 @@ def ValidateActionsInTarget(target, target_dict, build_file):
             raise GypError('Action in target %s has no inputs.' % target_name)
         action_command = action.get('action')
         if action_command and not action_command[0]:
-            raise GypError("Empty action as command in target %s." % target_name)
+            raise GypError("Empty action as command in target %s." %
+                           target_name)
 
 
 def TurnIntIntoStrInDict(the_dict):
@@ -2750,7 +2776,8 @@ def SetGeneratorGlobals(generator_input_info):
 
     global non_configuration_keys
     non_configuration_keys = base_non_configuration_keys[:]
-    non_configuration_keys.extend(generator_input_info['non_configuration_keys'])
+    non_configuration_keys.extend(
+        generator_input_info['non_configuration_keys'])
 
     global multiple_toolsets
     multiple_toolsets = generator_input_info[
@@ -2788,7 +2815,8 @@ def Load(build_files, variables, includes, depth, generator_input_info, check,
                 LoadTargetBuildFile(build_file, data, aux_data,
                                     variables, includes, depth, check, True)
             except Exception as e:
-                gyp.common.ExceptionAppend(e, 'while trying to load %s' % build_file)
+                gyp.common.ExceptionAppend(
+                    e, 'while trying to load %s' % build_file)
                 raise
 
     # Build a dict to access each target's subdict by qualified name.

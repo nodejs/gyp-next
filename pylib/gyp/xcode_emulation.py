@@ -77,7 +77,8 @@ class XcodeArchsDefault(object):
                         if arch not in expanded_archs:
                             expanded_archs.append(arch)
                 except KeyError as e:
-                    print('Warning: Ignoring unsupported variable "%s".' % variable)
+                    print('Warning: Ignoring unsupported variable "%s".' %
+                          variable)
             elif arch not in expanded_archs:
                 expanded_archs.append(arch)
         return expanded_archs
@@ -86,7 +87,8 @@ class XcodeArchsDefault(object):
         """Expands variables references in ARCHS, and filter by VALID_ARCHS if it
         is defined (if not set, Xcode accept any value in ARCHS, otherwise, only
         values present in VALID_ARCHS are kept)."""
-        expanded_archs = self._ExpandArchs(archs or self._default, sdkroot or '')
+        expanded_archs = self._ExpandArchs(
+            archs or self._default, sdkroot or '')
         if valid_archs:
             filtered_archs = []
             for arch in expanded_archs:
@@ -531,7 +533,8 @@ class XcodeSettings(object):
         return XcodeSettings._sdk_path_cache[sdk_root]
 
     def _AppendPlatformVersionMinFlags(self, lst):
-        self._Appendf(lst, 'MACOSX_DEPLOYMENT_TARGET', '-mmacosx-version-min=%s')
+        self._Appendf(lst, 'MACOSX_DEPLOYMENT_TARGET',
+                      '-mmacosx-version-min=%s')
         if 'IPHONEOS_DEPLOYMENT_TARGET' in self._Settings():
             # TODO: Implement this better?
             sdk_path_basename = os.path.basename(self._SdkPath())
@@ -586,11 +589,13 @@ class XcodeSettings(object):
             if dbg_format == 'dwarf':
                 cflags.append('-gdwarf-2')
             elif dbg_format == 'stabs':
-                raise NotImplementedError('stabs debug format is not supported yet.')
+                raise NotImplementedError(
+                    'stabs debug format is not supported yet.')
             elif dbg_format == 'dwarf-with-dsym':
                 cflags.append('-gdwarf-2')
             else:
-                raise NotImplementedError('Unknown debug format %s' % dbg_format)
+                raise NotImplementedError(
+                    'Unknown debug format %s' % dbg_format)
 
         if self._Settings().get('GCC_STRICT_ALIASING') == 'YES':
             cflags.append('-fstrict-aliasing')
@@ -652,7 +657,8 @@ class XcodeSettings(object):
         if self._IsXCTest():
             platform_root = self._XcodePlatformPath(configname)
             if platform_root:
-                cflags.append('-F' + platform_root + '/Developer/Library/Frameworks/')
+                cflags.append('-F' + platform_root + \
+                              '/Developer/Library/Frameworks/')
 
         if sdk_root:
             framework_root = sdk_root
@@ -661,7 +667,8 @@ class XcodeSettings(object):
         config = self.spec['configurations'][self.configname]
         framework_dirs = config.get('mac_framework_dirs', [])
         for directory in framework_dirs:
-            cflags.append('-F' + directory.replace('$(SDKROOT)', framework_root))
+            cflags.append(
+                '-F' + directory.replace('$(SDKROOT)', framework_root))
 
         self.configname = None
         return cflags
@@ -862,7 +869,8 @@ class XcodeSettings(object):
         # The xcode build is relative to a gyp file's directory, and OTHER_LDFLAGS
         # can contain entries that depend on this. Explicitly absolutify these.
         for ldflag in self._Settings().get('OTHER_LDFLAGS', []):
-            ldflags.append(self._MapLinkerFlagFilename(ldflag, gyp_to_build_path))
+            ldflags.append(self._MapLinkerFlagFilename(
+                ldflag, gyp_to_build_path))
 
         if self._Test('DEAD_CODE_STRIPPING', 'YES', default='NO'):
             ldflags.append('-Wl,-dead_strip')
@@ -921,7 +929,8 @@ class XcodeSettings(object):
         if self._IsXCTest():
             platform_root = self._XcodePlatformPath(configname)
             if sdk_root and platform_root:
-                ldflags.append('-F' + platform_root + '/Developer/Library/Frameworks/')
+                ldflags.append('-F' + platform_root + \
+                               '/Developer/Library/Frameworks/')
                 ldflags.append('-framework XCTest')
 
         is_extension = self._IsIosAppExtension() or self._IsIosWatchKitExtension()
@@ -1026,7 +1035,8 @@ class XcodeSettings(object):
 
             explicit_strip_flags = self._Settings().get('STRIPFLAGS', '')
             if explicit_strip_flags:
-                strip_flags += ' ' + _NormalizeEnvVarReferences(explicit_strip_flags)
+                strip_flags += ' ' + \
+                    _NormalizeEnvVarReferences(explicit_strip_flags)
 
             if not quiet:
                 result.append('echo STRIP\\(%s\\)' % self.spec['target_name'])
@@ -1048,8 +1058,10 @@ class XcodeSettings(object):
                 'DEBUG_INFORMATION_FORMAT', 'dwarf-with-dsym', default='dwarf') and
             self.spec['type'] != 'static_library'):
             if not quiet:
-                result.append('echo DSYMUTIL\\(%s\\)' % self.spec['target_name'])
-            result.append('dsymutil %s -o %s' % (output_binary, output + '.dSYM'))
+                result.append('echo DSYMUTIL\\(%s\\)' %
+                              self.spec['target_name'])
+            result.append('dsymutil %s -o %s' %
+                          (output_binary, output + '.dSYM'))
 
         self.configname = None
         return result
@@ -1080,7 +1092,8 @@ class XcodeSettings(object):
         if self._IsXCTest():
             source = os.path.join("${BUILT_PRODUCTS_DIR}", product_name)
             test_host = os.path.dirname(settings.get('TEST_HOST'))
-            xctest_destination = os.path.join(test_host, 'PlugIns', product_name)
+            xctest_destination = os.path.join(
+                test_host, 'PlugIns', product_name)
             postbuilds.extend(['ditto %s %s' % (source, xctest_destination)])
 
         key = self._GetIOSCodeSignIdentityKey(settings)
@@ -1104,7 +1117,8 @@ class XcodeSettings(object):
                  'Developer/Library/Frameworks/XCTest.framework']
             for framework in frameworks:
                 source = os.path.join(platform_root, framework)
-                destination = os.path.join(frameworks_dir, os.path.basename(framework))
+                destination = os.path.join(
+                    frameworks_dir, os.path.basename(framework))
                 postbuilds.extend(['ditto %s %s' % (source, destination)])
 
                 # Then re-sign everything with 'preserve=True'
@@ -1151,7 +1165,8 @@ class XcodeSettings(object):
         """Returns a list of shell commands that should run before and after
         |postbuilds|."""
         assert output_binary is not None
-        pre = self._GetTargetPostbuilds(configname, output, output_binary, quiet)
+        pre = self._GetTargetPostbuilds(
+            configname, output, output_binary, quiet)
         post = self._GetIOSPostbuilds(configname, output_binary)
         return pre + postbuilds + post
 
@@ -1198,7 +1213,8 @@ class XcodeSettings(object):
         return GetStdout(['sw_vers', '-buildVersion'])
 
     def _XcodeIOSDeviceFamily(self, configname):
-        family = self.xcode_settings[configname].get('TARGETED_DEVICE_FAMILY', '1')
+        family = self.xcode_settings[configname].get(
+            'TARGETED_DEVICE_FAMILY', '1')
         return [int(x) for x in family.split(',')]
 
     def GetExtraPlistItems(self, configname=None):
@@ -1217,7 +1233,8 @@ class XcodeSettings(object):
             sdk_root = self._SdkRoot(configname)
             if not sdk_root:
                 sdk_root = self._DefaultSdkRoot()
-            sdk_version = self._GetSdkVersionInfoItem(sdk_root, '--show-sdk-version')
+            sdk_version = self._GetSdkVersionInfoItem(
+                sdk_root, '--show-sdk-version')
             cache['DTSDKName'] = sdk_root + (sdk_version or '')
             if xcode_version >= '0720':
                 cache['DTSDKBuild'] = self._GetSdkVersionInfoItem(
@@ -1318,7 +1335,8 @@ class MacPrefixHeader(object):
         self.header = None
         self.compile_headers = False
         if xcode_settings:
-            self.header = xcode_settings.GetPerTargetSetting('GCC_PREFIX_HEADER')
+            self.header = xcode_settings.GetPerTargetSetting(
+                'GCC_PREFIX_HEADER')
             self.compile_headers = xcode_settings.GetPerTargetSetting(
                 'GCC_PRECOMPILE_PREFIX_HEADER', default='NO') != 'NO'
         self.compiled_headers = {}
@@ -1697,7 +1715,8 @@ def _GetXcodeEnv(xcode_settings, built_products_dir, srcroot, configuration,
     additional_settings.update(env)
 
     for k in additional_settings:
-        additional_settings[k] = _NormalizeEnvVarReferences(additional_settings[k])
+        additional_settings[k] = _NormalizeEnvVarReferences(
+            additional_settings[k])
 
     return additional_settings
 

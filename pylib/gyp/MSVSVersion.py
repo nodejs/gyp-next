@@ -35,7 +35,8 @@ class VisualStudioVersion(object):
         self.sdk_based = sdk_based
         self.default_toolset = default_toolset
         compatible_sdks = compatible_sdks or []
-        compatible_sdks.sort(key=lambda v: float(v.replace('v', '')), reverse=True)
+        compatible_sdks.sort(key=lambda v: float(
+            v.replace('v', '')), reverse=True)
         self.compatible_sdks = compatible_sdks
 
     def ShortName(self):

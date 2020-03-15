@@ -128,7 +128,8 @@ class Writer(object):
           attrs: Dict of configuration attributes; may be None.
           tools: List of tools (strings or Tool objects); may be None.
         """
-        spec = self._GetSpecForConfiguration('Configuration', name, attrs, tools)
+        spec = self._GetSpecForConfiguration(
+            'Configuration', name, attrs, tools)
         self.configurations_section.append(spec)
 
     def _AddFilesToNode(self, parent, files):

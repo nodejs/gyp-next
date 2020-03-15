@@ -97,7 +97,8 @@ def _DoRemapping(element, map):
     each item will be remapped. Any elements not found will be removed."""
     if map is not None and element is not None:
         if not callable(map):
-            map = map.get # Assume it's a dict, otherwise a callable to do the remap.
+            # Assume it's a dict, otherwise a callable to do the remap.
+            map = map.get
         if isinstance(element, list) or isinstance(element, tuple):
             element = filter(None, [map(elem) for elem in element])
         else:
@@ -130,7 +131,8 @@ def _FindDirectXInstallation():
     if not dxsdk_dir:
         # Setup params to pass to and attempt to launch reg.exe.
         cmd = ['reg.exe', 'query', r'HKLM\Software\Microsoft\DirectX', '/s']
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
         stdout = p.communicate()[0]
         if PY3:
             stdout = stdout.decode('utf-8')
@@ -307,7 +309,8 @@ class MsvsSettings(object):
     def GetArch(self, config):
         """Get architecture based on msvs_configuration_platform and
         msvs_target_platform. Returns either 'x86' or 'x64'."""
-        configuration_platform = self.msvs_configuration_platform.get(config, '')
+        configuration_platform = self.msvs_configuration_platform.get(
+            config, '')
         platform = self.msvs_target_platform.get(config, '')
         if not platform: # If no specific override, use the configuration's.
             platform = configuration_platform
@@ -392,7 +395,8 @@ class MsvsSettings(object):
         config = self._TargetConfig(config)
         map_file = self._Setting(('VCLinkerTool', 'MapFileName'), config)
         if map_file:
-            map_file = expand_special(self.ConvertVSMacros(map_file, config=config))
+            map_file = expand_special(
+                self.ConvertVSMacros(map_file, config=config))
         return map_file
 
     def GetOutputName(self, config, expand_special):
@@ -412,7 +416,8 @@ class MsvsSettings(object):
         """Gets the explicitly overridden pdb name for a target or returns
         default if it's not overridden, or if no pdb will be generated."""
         config = self._TargetConfig(config)
-        output_file = self._Setting(('VCLinkerTool', 'ProgramDatabaseFile'), config)
+        output_file = self._Setting(
+            ('VCLinkerTool', 'ProgramDatabaseFile'), config)
         generate_debug_info = self._Setting(
             ('VCLinkerTool', 'GenerateDebugInformation'), config)
         if generate_debug_info == 'true':
@@ -453,7 +458,8 @@ class MsvsSettings(object):
         cl('StringPooling', map={'true': '/GF'})
         cl('EnableFiberSafeOptimizations', map={'true': '/GT'})
         cl('OmitFramePointers', map={'false': '-', 'true': ''}, prefix='/Oy')
-        cl('EnableIntrinsicFunctions', map={'false': '-', 'true': ''}, prefix='/Oi')
+        cl('EnableIntrinsicFunctions', map={
+           'false': '-', 'true': ''}, prefix='/Oi')
         cl('FavorSizeOrSpeed', map={'1': 't', '2': 's'}, prefix='/O')
         cl('FloatingPointModel',
             map={'0': 'precise', '1': 'strict', '2': 'fast'}, prefix='/fp:',
@@ -470,7 +476,8 @@ class MsvsSettings(object):
         cl('EnableFunctionLevelLinking', map={'true': '/Gy', 'false': '/Gy-'})
         cl('MinimalRebuild', map={'true': '/Gm'})
         cl('BufferSecurityCheck', map={'true': '/GS', 'false': '/GS-'})
-        cl('BasicRuntimeChecks', map={'1': 's', '2': 'u', '3': '1'}, prefix='/RTC')
+        cl('BasicRuntimeChecks', map={
+           '1': 's', '2': 'u', '3': '1'}, prefix='/RTC')
         cl('RuntimeLibrary',
             map={'0': 'T', '1': 'Td', '2': 'D', '3': 'Dd'}, prefix='/M')
         cl('ExceptionHandling', map={'1': 'sc','2': 'a'}, prefix='/EH')
@@ -501,7 +508,8 @@ class MsvsSettings(object):
         # only be for the same language (i.e. C vs. C++), so only include the pch
         # flags when the language matches.
         if self.msvs_precompiled_header[config]:
-            source_ext = os.path.splitext(self.msvs_precompiled_source[config])[1]
+            source_ext = os.path.splitext(
+                self.msvs_precompiled_source[config])[1]
             if _LanguageMatchesForPch(source_ext, extension):
                 pch = self.msvs_precompiled_header[config]
                 pchbase = os.path.split(pch)[1]
@@ -624,7 +632,8 @@ class MsvsSettings(object):
                 ('VCLinkerTool', 'StackCommitSize'), config, default='')
             if stack_commit_size:
                 stack_commit_size = ',' + stack_commit_size
-            ldflags.append('/STACK:%s%s' % (stack_reserve_size, stack_commit_size))
+            ldflags.append('/STACK:%s%s' %
+                           (stack_reserve_size, stack_commit_size))
 
         ld('TerminalServerAware', map={'1': ':NO', '2': ''}, prefix='/TSAWARE')
         ld('LinkIncremental', map={'1': ':NO', '2': ''}, prefix='/INCREMENTAL')
@@ -636,7 +645,8 @@ class MsvsSettings(object):
             map={'1': ':NO', '2': ''}, prefix='/NXCOMPAT')
         ld('OptimizeReferences', map={'1': 'NOREF', '2': 'REF'}, prefix='/OPT:')
         ld('ForceSymbolReferences', prefix='/INCLUDE:')
-        ld('EnableCOMDATFolding', map={'1': 'NOICF', '2': 'ICF'}, prefix='/OPT:')
+        ld('EnableCOMDATFolding', map={
+           '1': 'NOICF', '2': 'ICF'}, prefix='/OPT:')
         ld('LinkTimeCodeGeneration',
             map={'1': '', '2': ':PGINSTRUMENT', '3': ':PGOPTIMIZE',
                  '4': ':PGUPDATE'},
@@ -779,7 +789,8 @@ class MsvsSettings(object):
         """Returns whether the target should be linked via Use Library Dependency
         Inputs (using component .objs of a given .lib)."""
         config = self._TargetConfig(config)
-        uldi = self._Setting(('VCLinkerTool', 'UseLibraryDependencyInputs'), config)
+        uldi = self._Setting(
+            ('VCLinkerTool', 'UseLibraryDependencyInputs'), config)
         return uldi == 'true'
 
     def IsEmbedManifest(self, config):
@@ -862,7 +873,8 @@ class MsvsSettings(object):
         """Determine the implicit outputs for an idl file. Returns output
         directory, outputs, and variables and flags that are required."""
         config = self._TargetConfig(config)
-        midl_get = self._GetWrapper(self, self.msvs_settings[config], 'VCMIDLTool')
+        midl_get = self._GetWrapper(
+            self, self.msvs_settings[config], 'VCMIDLTool')
         def midl(name, default=None):
             return self.ConvertVSMacros(midl_get(name, default=default),
                                         config=config)
@@ -997,7 +1009,8 @@ def _ExtractImportantEnvironment(output_of_set):
                     # Chromium rely on python being in the path. Add the path to this
                     # python here so that if it's not in the path when ninja is run
                     # later, python will still be found.
-                    setting = os.path.dirname(sys.executable) + os.pathsep + setting
+                    setting = os.path.dirname(
+                        sys.executable) + os.pathsep + setting
                 env[var.upper()] = setting
                 break
     for required in ('SYSTEMROOT', 'TEMP', 'TMP'):
@@ -1059,7 +1072,8 @@ def GenerateEnvironmentFiles(toplevel_build_dir, generator_flags,
         if PY3:
             variables = variables.decode('utf-8')
         if popen.returncode != 0:
-            raise Exception('"%s" failed with error %d' % (args, popen.returncode))
+            raise Exception('"%s" failed with error %d' %
+                            (args, popen.returncode))
         env = _ExtractImportantEnvironment(variables)
 
         # Inject system includes from gyp files into INCLUDE.
@@ -1069,7 +1083,8 @@ def GenerateEnvironmentFiles(toplevel_build_dir, generator_flags,
             env['INCLUDE'] = ';'.join(system_includes)
 
         env_block = _FormatAsEnvironmentBlock(env)
-        f = open_out(os.path.join(toplevel_build_dir, 'environment.' + arch), 'w')
+        f = open_out(os.path.join(toplevel_build_dir,
+                     'environment.' + arch), 'w')
         f.write(env_block)
         f.close()
 
@@ -1092,7 +1107,8 @@ def VerifyMissingSources(sources, build_dir, generator_flags, gyp_to_ninja):
     so they're not surprised when the VS build fails."""
     if int(generator_flags.get('msvs_error_on_missing_sources', 0)):
         no_specials = filter(lambda x: '$' not in x, sources)
-        relative = [os.path.join(build_dir, gyp_to_ninja(s)) for s in no_specials]
+        relative = [os.path.join(build_dir, gyp_to_ninja(s))
+                                 for s in no_specials]
         missing = [x for x in relative if not os.path.exists(x)]
         if missing:
             # They'll look like out\Release\..\..\stuff\things.cc, so normalize the

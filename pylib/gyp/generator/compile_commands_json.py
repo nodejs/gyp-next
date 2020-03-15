@@ -87,7 +87,8 @@ def AddCommandsForTarget(cwd, target, params, per_config_commands):
             cflags = cflags_c if isc else cflags_cc
             command = ' '.join((cc, defines, includes, cflags,
                                 '-c', gyp.common.EncodePOSIXShellArgument(file)))
-            commands.append(dict(command=command, directory=output_dir, file=file))
+            commands.append(
+                dict(command=command, directory=output_dir, file=file))
 
 
 def GenerateOutput(target_list, target_dicts, data, params):

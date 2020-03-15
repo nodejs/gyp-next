@@ -202,11 +202,13 @@ class AndroidMkWriter(object):
             self.WriteCopies(spec['copies'], extra_outputs)
 
         # GYP generated outputs.
-        self.WriteList(extra_outputs, 'GYP_GENERATED_OUTPUTS', local_pathify=True)
+        self.WriteList(extra_outputs, 'GYP_GENERATED_OUTPUTS',
+                       local_pathify=True)
 
         # Set LOCAL_ADDITIONAL_DEPENDENCIES so that Android's build rules depend
         # on both our dependency targets and our generated files.
-        self.WriteLn('# Make sure our deps and generated files are built first.')
+        self.WriteLn(
+            '# Make sure our deps and generated files are built first.')
         self.WriteLn('LOCAL_ADDITIONAL_DEPENDENCIES := $(GYP_TARGET_DEPENDENCIES) '
                      '$(GYP_GENERATED_OUTPUTS)')
         self.WriteLn()
@@ -281,7 +283,8 @@ class AndroidMkWriter(object):
             # writing duplicate dummy rules for those outputs.
             main_output = make.QuoteSpaces(self.LocalPathify(outputs[0]))
             self.WriteLn('%s: gyp_local_path := $(LOCAL_PATH)' % main_output)
-            self.WriteLn('%s: gyp_var_prefix := $(GYP_VAR_PREFIX)' % main_output)
+            self.WriteLn('%s: gyp_var_prefix := $(GYP_VAR_PREFIX)' %
+                         main_output)
             self.WriteLn('%s: gyp_intermediate_dir := '
                          '$(abspath $(gyp_intermediate_dir))' % main_output)
             self.WriteLn('%s: gyp_shared_intermediate_dir := '
@@ -317,7 +320,8 @@ class AndroidMkWriter(object):
             for output in outputs[1:]:
                 # Make each output depend on the main output, with an empty command
                 # to force make to notice that the mtime has changed.
-                self.WriteLn('%s: %s ;' % (self.LocalPathify(output), main_output))
+                self.WriteLn('%s: %s ;' %
+                             (self.LocalPathify(output), main_output))
 
             extra_outputs += outputs
             self.WriteLn()
@@ -385,8 +389,10 @@ class AndroidMkWriter(object):
                 # a rule for each additional output to depend on the first.
                 outputs = map(self.LocalPathify, outputs)
                 main_output = outputs[0]
-                self.WriteLn('%s: gyp_local_path := $(LOCAL_PATH)' % main_output)
-                self.WriteLn('%s: gyp_var_prefix := $(GYP_VAR_PREFIX)' % main_output)
+                self.WriteLn('%s: gyp_local_path := $(LOCAL_PATH)' %
+                             main_output)
+                self.WriteLn(
+                    '%s: gyp_var_prefix := $(GYP_VAR_PREFIX)' % main_output)
                 self.WriteLn('%s: gyp_intermediate_dir := '
                              '$(abspath $(gyp_intermediate_dir))' % main_output)
                 self.WriteLn('%s: gyp_shared_intermediate_dir := '
@@ -399,7 +405,8 @@ class AndroidMkWriter(object):
                 main_output_deps = self.LocalPathify(rule_source)
                 if inputs:
                     main_output_deps += ' '
-                    main_output_deps += ' '.join([self.LocalPathify(f) for f in inputs])
+                    main_output_deps += ' '.join([self.LocalPathify(f)
+                                                 for f in inputs])
 
                 self.WriteLn('%s: %s $(GYP_TARGET_DEPENDENCIES)' %
                              (main_output, main_output_deps))
@@ -421,7 +428,8 @@ class AndroidMkWriter(object):
         """
         self.WriteLn('### Generated for copy rule.')
 
-        variable = make.StringToMakefileVariable(self.relative_target + '_copies')
+        variable = make.StringToMakefileVariable(
+            self.relative_target + '_copies')
         outputs = []
         for copy in copies:
             for path in copy['files']:
@@ -480,7 +488,8 @@ class AndroidMkWriter(object):
             self.WriteList(includes, 'LOCAL_C_INCLUDES_%s' % configname)
 
             self.WriteLn('\n# Flags passed to only C++ (and not C) files.')
-            self.WriteList(config.get('cflags_cc'), 'LOCAL_CPPFLAGS_%s' % configname)
+            self.WriteList(config.get('cflags_cc'),
+                           'LOCAL_CPPFLAGS_%s' % configname)
 
         self.WriteLn('\nLOCAL_CFLAGS := $(MY_CFLAGS_$(GYP_CONFIGURATION)) '
                      '$(MY_DEFS_$(GYP_CONFIGURATION))')
@@ -511,7 +520,8 @@ class AndroidMkWriter(object):
           extra_sources: Sources generated from Actions or Rules.
         """
         sources = filter(make.Compilable, spec.get('sources', []))
-        generated_not_sources = [x for x in extra_sources if not make.Compilable(x)]
+        generated_not_sources = [
+            x for x in extra_sources if not make.Compilable(x)]
         extra_sources = filter(make.Compilable, extra_sources)
 
         # Determine and output the C++ extension used by these sources.
@@ -541,7 +551,8 @@ class AndroidMkWriter(object):
             elif IsCPPExtension(ext) and ext != local_cpp_extension:
                 extra_sources.append(source)
             else:
-                local_files.append(os.path.normpath(os.path.join(self.path, source)))
+                local_files.append(os.path.normpath(
+                    os.path.join(self.path, source)))
 
         # For any generated source, if it is coming from the shared intermediate
         # directory then we add a Make rule to copy them to the local intermediate
@@ -574,7 +585,8 @@ class AndroidMkWriter(object):
         self.WriteList(final_generated_sources, 'LOCAL_GENERATED_SOURCES')
 
         origin_src_dirs = gyp.common.uniquer(origin_src_dirs)
-        origin_src_dirs = map(Sourceify, map(self.LocalPathify, origin_src_dirs))
+        origin_src_dirs = map(Sourceify, map(
+            self.LocalPathify, origin_src_dirs))
         self.WriteList(origin_src_dirs, 'GYP_COPIED_SOURCE_ORIGIN_DIRS')
 
         self.WriteList(local_files, 'LOCAL_SRC_FILES')
@@ -593,7 +605,8 @@ class AndroidMkWriter(object):
         """
 
         if int(spec.get('android_unmangled_name', 0)):
-            assert self.type != 'shared_library' or self.target.startswith('lib')
+            assert self.type != 'shared_library' or self.target.startswith(
+                'lib')
             return self.target
 
         if self.type == 'shared_library':
@@ -609,7 +622,8 @@ class AndroidMkWriter(object):
             suffix = '_gyp'
 
         if self.path:
-            middle = make.StringToMakefileVariable('%s_%s' % (self.path, self.target))
+            middle = make.StringToMakefileVariable(
+                '%s_%s' % (self.path, self.target))
         else:
             middle = make.StringToMakefileVariable(self.target)
 
@@ -787,7 +801,8 @@ class AndroidMkWriter(object):
         # These must be included even for static libraries as some of them provide
         # implicit include paths through the build system.
         libraries = gyp.common.uniquer(spec.get('libraries', []))
-        static_libs, dynamic_libs, ldflags_libs = self.FilterLibraries(libraries)
+        static_libs, dynamic_libs, ldflags_libs = self.FilterLibraries(
+            libraries)
 
         if self.type != 'static_library':
             for configname, config in sorted(configs.items()):
@@ -888,11 +903,13 @@ class AndroidMkWriter(object):
             if self.toolset == 'target':
                 self.WriteLn('LOCAL_2ND_ARCH_VAR_PREFIX := $(GYP_VAR_PREFIX)')
             else:
-                self.WriteLn('LOCAL_2ND_ARCH_VAR_PREFIX := $(GYP_HOST_VAR_PREFIX)')
+                self.WriteLn(
+                    'LOCAL_2ND_ARCH_VAR_PREFIX := $(GYP_HOST_VAR_PREFIX)')
             self.WriteLn()
             self.WriteLn('include $(BUILD_SYSTEM)/base_rules.mk')
             self.WriteLn()
-            self.WriteLn('$(LOCAL_BUILT_MODULE): $(LOCAL_ADDITIONAL_DEPENDENCIES)')
+            self.WriteLn(
+                '$(LOCAL_BUILT_MODULE): $(LOCAL_ADDITIONAL_DEPENDENCIES)')
             self.WriteLn('\t$(hide) echo "Gyp timestamp: $@"')
             self.WriteLn('\t$(hide) mkdir -p $(dir $@)')
             self.WriteLn('\t$(hide) touch $@')
@@ -957,7 +974,8 @@ def PerformBuild(data, configurations, params):
                                             'GypAndroid.mk'))
     env = dict(os.environ)
     env['ONE_SHOT_MAKEFILE'] = makefile
-    arguments = ['make', '-C', os.environ['ANDROID_BUILD_TOP'], 'gyp_all_modules']
+    arguments = ['make', '-C',
+        os.environ['ANDROID_BUILD_TOP'], 'gyp_all_modules']
     print('Building: %s' % arguments)
     subprocess.check_call(arguments, env=env)
 

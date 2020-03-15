@@ -141,7 +141,8 @@ class MacTool(object):
         with open(source, 'rb') as in_file:
             s = in_file.read()
         d = CoreFoundation.CFDataCreate(None, s, len(s))
-        _, error = CoreFoundation.CFPropertyListCreateFromXMLData(None, d, 0, None)
+        _, error = CoreFoundation.CFPropertyListCreateFromXMLData(
+            None, d, 0, None)
         if error:
             return
 
@@ -347,7 +348,8 @@ class MacTool(object):
         if not os.path.exists(header_path):
             os.makedirs(header_path)
         for header in copy_headers:
-            shutil.copy(header, os.path.join(header_path, os.path.basename(header)))
+            shutil.copy(header, os.path.join(
+                header_path, os.path.basename(header)))
 
     def ExecCompileXcassets(self, keys, *inputs):
         """Compiles multiple .xcassets files into a single .car file.
@@ -380,7 +382,8 @@ class MacTool(object):
                 '--platform', 'macosx', '--target-device', 'mac',
                 '--minimum-deployment-target', os.environ['MACOSX_DEPLOYMENT_TARGET'],
                 '--compile',
-                os.path.abspath(os.environ['UNLOCALIZED_RESOURCES_FOLDER_PATH']),
+                os.path.abspath(
+                    os.environ['UNLOCALIZED_RESOURCES_FOLDER_PATH']),
             ])
         if keys:
             keys = json.loads(keys)
@@ -426,7 +429,8 @@ class MacTool(object):
 
         args = ['codesign', '--force', '--sign', key]
         if preserve == 'True':
-            args.extend(['--deep', '--preserve-metadata=identifier,entitlements'])
+            args.extend(
+                ['--deep', '--preserve-metadata=identifier,entitlements'])
         else:
             args.extend(['--entitlements', entitlements_path])
         args.extend(['--timestamp=none', path])
@@ -479,11 +483,13 @@ class MacTool(object):
         profiles_dir = os.path.join(
             os.environ['HOME'], 'Library', 'MobileDevice', 'Provisioning Profiles')
         if not os.path.isdir(profiles_dir):
-            print('cannot find mobile provisioning for %s' % (bundle_identifier), file=sys.stderr)
+            print('cannot find mobile provisioning for %s' %
+                  (bundle_identifier), file=sys.stderr)
             sys.exit(1)
         provisioning_profiles = None
         if profile:
-            profile_path = os.path.join(profiles_dir, profile + '.mobileprovision')
+            profile_path = os.path.join(
+                profiles_dir, profile + '.mobileprovision')
             if os.path.exists(profile_path):
                 provisioning_profiles = [profile_path]
         if not provisioning_profiles:
@@ -500,7 +506,8 @@ class MacTool(object):
                     valid_provisioning_profiles[app_id_pattern] = (
                         profile_path, profile_data, team_identifier)
         if not valid_provisioning_profiles:
-            print('cannot find mobile provisioning for %s' % (bundle_identifier), file=sys.stderr)
+            print('cannot find mobile provisioning for %s' %
+                  (bundle_identifier), file=sys.stderr)
             sys.exit(1)
         # If the user has multiple provisioning profiles installed that can be
         # used for ${bundle_identifier}, pick the most specific one (ie. the
@@ -690,9 +697,11 @@ def WriteHmap(output_name, filelist):
             (file, path) = bucket
             key_offset = next_offset
             prefix_offset = key_offset + len(file) + 1
-            suffix_offset = prefix_offset + len(os.path.dirname(path) + os.sep) + 1
+            suffix_offset = prefix_offset + \
+                len(os.path.dirname(path) + os.sep) + 1
             next_offset = suffix_offset + len(os.path.basename(path)) + 1
-            out.write(struct.pack('<LLL', key_offset, prefix_offset, suffix_offset))
+            out.write(struct.pack('<LLL', key_offset,
+                      prefix_offset, suffix_offset))
 
     # Pad byte since next offset starts at 1.
     out.write(struct.pack('<x'))

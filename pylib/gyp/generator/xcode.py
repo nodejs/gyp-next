@@ -191,7 +191,8 @@ class XcodeProject(object):
             config_ref = self.project.AddOrGetFileInRootGroup(
                 self.build_file_dict['xcode_config_file'])
             xccl.SetBaseConfiguration(config_ref)
-        build_file_configurations = self.build_file_dict.get('configurations', {})
+        build_file_configurations = self.build_file_dict.get(
+            'configurations', {})
         if build_file_configurations:
             for config_name in configurations:
                 build_file_configuration_named = \
@@ -386,7 +387,8 @@ sys.exit(subprocess.call(sys.argv[1:]))" """
                     pbxtds = xcode_target.GetProperty('dependencies')
                     for pbxtd in pbxtds:
                         pbxcip = pbxtd.GetProperty('targetProxy')
-                        dependency_xct = pbxcip.GetProperty('remoteGlobalIDString')
+                        dependency_xct = pbxcip.GetProperty(
+                            'remoteGlobalIDString')
                         if hasattr(dependency_xct, 'test_runner'):
                             all_run_tests.append(dependency_xct.test_runner)
 
@@ -402,8 +404,10 @@ sys.exit(subprocess.call(sys.argv[1:]))" """
                             run_all_target.AddDependency(run_test_target)
 
                         # Insert the test runner after the related target.
-                        idx = self.project._properties['targets'].index(xcode_target)
-                        self.project._properties['targets'].insert(idx + 1, run_all_target)
+                        idx = self.project._properties['targets'].index(
+                            xcode_target)
+                        self.project._properties['targets'].insert(
+                            idx + 1, run_all_target)
 
         # Update all references to other projects, to make sure that the lists of
         # remote products are complete.  Otherwise, Xcode will fill them in when
@@ -574,7 +578,8 @@ def PerformBuild(data, configurations, params):
             continue
         xcodeproj_path = build_file_root + options.suffix + '.xcodeproj'
         if options.generator_output:
-            xcodeproj_path = os.path.join(options.generator_output, xcodeproj_path)
+            xcodeproj_path = os.path.join(
+                options.generator_output, xcodeproj_path)
 
     for config in configurations:
         arguments = ['xcodebuild', '-project', xcodeproj_path]
@@ -586,7 +591,8 @@ def PerformBuild(data, configurations, params):
 def CalculateGeneratorInputInfo(params):
     toplevel = params['options'].toplevel_dir
     if params.get('flavor') == 'ninja':
-        generator_dir = os.path.relpath(params['options'].generator_output or '.')
+        generator_dir = os.path.relpath(
+            params['options'].generator_output or '.')
         output_dir = params.get('generator_flags', {}).get('output_dir', 'out')
         output_dir = os.path.normpath(os.path.join(generator_dir, output_dir))
         qualified_out_dir = os.path.normpath(os.path.join(
@@ -608,7 +614,8 @@ def GenerateOutput(target_list, target_dicts, data, params):
     ninja_wrapper = params.get('flavor') == 'ninja'
     if ninja_wrapper:
         (target_list, target_dicts, data) = \
-            gyp.xcode_ninja.CreateWrapper(target_list, target_dicts, data, params)
+            gyp.xcode_ninja.CreateWrapper(
+                target_list, target_dicts, data, params)
 
     options = params['options']
     generator_flags = params.get('generator_flags', {})
@@ -633,7 +640,8 @@ def GenerateOutput(target_list, target_dicts, data, params):
             continue
         xcodeproj_path = build_file_root + options.suffix + '.xcodeproj'
         if options.generator_output:
-            xcodeproj_path = os.path.join(options.generator_output, xcodeproj_path)
+            xcodeproj_path = os.path.join(
+                options.generator_output, xcodeproj_path)
         xcp = XcodeProject(build_file, xcodeproj_path, build_file_dict)
         xcode_projects[build_file] = xcp
         pbxp = xcp.project
@@ -818,7 +826,8 @@ def GenerateOutput(target_list, target_dicts, data, params):
             # Do we have a message to print when this action runs?
             message = action.get('message')
             if message:
-                message = 'echo note: ' + gyp.common.EncodePOSIXShellArgument(message)
+                message = 'echo note: ' + \
+                    gyp.common.EncodePOSIXShellArgument(message)
             else:
                 message = ''
 
@@ -827,7 +836,8 @@ def GenerateOutput(target_list, target_dicts, data, params):
 
             # Convert Xcode-type variable references to sh-compatible environment
             # variable references.
-            message_sh = gyp.xcodeproj_file.ConvertVariablesToShellSyntax(message)
+            message_sh = gyp.xcodeproj_file.ConvertVariablesToShellSyntax(
+                message)
             action_string_sh = gyp.xcodeproj_file.ConvertVariablesToShellSyntax(
               action_string)
 
@@ -973,15 +983,18 @@ def GenerateOutput(target_list, target_dicts, data, params):
                     # Any remaning $(VAR)-type variables in the string can be given
                     # directly to make, which will pick up the correct settings from
                     # what Xcode puts into the environment.
-                    concrete_output = ExpandXcodeVariables(output, rule_input_dict)
-                    concrete_outputs_for_this_rule_source.append(concrete_output)
+                    concrete_output = ExpandXcodeVariables(
+                        output, rule_input_dict)
+                    concrete_outputs_for_this_rule_source.append(
+                        concrete_output)
 
                     # Add all concrete outputs to the project.
                     pbxp.AddOrGetFileInRootGroup(concrete_output)
 
                 concrete_outputs_by_rule_source.append( \
                     concrete_outputs_for_this_rule_source)
-                concrete_outputs_all.extend(concrete_outputs_for_this_rule_source)
+                concrete_outputs_all.extend(
+                    concrete_outputs_for_this_rule_source)
 
                 # TODO(mark): Should verify that at most one of these is specified.
                 if int(rule.get('process_outputs_as_sources', False)):
@@ -1224,7 +1237,8 @@ exit 1
                         pbxp.AddOrGetFileInRootGroup(item)
 
         for postbuild in spec.get('postbuilds', []):
-            action_string_sh = gyp.common.EncodePOSIXShellList(postbuild['action'])
+            action_string_sh = gyp.common.EncodePOSIXShellList(
+                postbuild['action'])
             script = 'exec ' + action_string_sh + '\nexit 1\n'
 
             # Make the postbuild step depend on the output of ld or ar from this
@@ -1268,7 +1282,8 @@ exit 1
                 if library_dir not in xcode_standard_library_dirs and (
                     not xct.HasBuildSetting(_library_search_paths_var) or
                     library_dir not in xct.GetBuildSetting(_library_search_paths_var)):
-                    xct.AppendBuildSetting(_library_search_paths_var, library_dir)
+                    xct.AppendBuildSetting(
+                        _library_search_paths_var, library_dir)
 
         for configuration_name in configuration_names:
             configuration = spec['configurations'][configuration_name]
@@ -1281,12 +1296,14 @@ exit 1
                 if library_dir not in xcode_standard_library_dirs and (
                     not xcbc.HasBuildSetting(_library_search_paths_var) or
                     library_dir not in xcbc.GetBuildSetting(_library_search_paths_var)):
-                    xcbc.AppendBuildSetting(_library_search_paths_var, library_dir)
+                    xcbc.AppendBuildSetting(
+                        _library_search_paths_var, library_dir)
 
             if 'defines' in configuration:
                 for define in configuration['defines']:
                     set_define = EscapeXcodeDefine(define)
-                    xcbc.AppendBuildSetting('GCC_PREPROCESSOR_DEFINITIONS', set_define)
+                    xcbc.AppendBuildSetting(
+                        'GCC_PREPROCESSOR_DEFINITIONS', set_define)
             if 'xcode_settings' in configuration:
                 for xck, xcv in configuration['xcode_settings'].items():
                     xcbc.SetBuildSetting(xck, xcv)

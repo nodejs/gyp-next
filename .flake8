@@ -1,3 +1,4 @@
 [flake8]
 max_complexity=10
-select=E111,E114
+max_line_length=80
+select=E111,E114,E501

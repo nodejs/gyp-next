@@ -362,7 +362,8 @@ class XCObject(object):
             ('name' in self._schema and self._schema['name'][3]):
             return self._properties['name']
 
-        raise NotImplementedError(self.__class__.__name__ + ' must implement Name')
+        raise NotImplementedError(
+            self.__class__.__name__ + ' must implement Name')
 
     def Comment(self):
         """Return a comment string for the object.
@@ -446,7 +447,8 @@ class XCObject(object):
             # into the portion that gets used.
             assert hash.digest_size % 4 == 0
             digest_int_count = hash.digest_size // 4
-            digest_ints = struct.unpack('>' + 'I' * digest_int_count, hash.digest())
+            digest_ints = struct.unpack(
+                '>' + 'I' * digest_int_count, hash.digest())
             id_ints = [0, 0, 0]
             for index in range(0, digest_int_count):
                 id_ints[index % 3] ^= digest_ints[index]
@@ -625,7 +627,8 @@ class XCObject(object):
                     sep
             printable += end_tabs + '}'
         else:
-            raise TypeError("Can't make " + value.__class__.__name__ + ' printable')
+            raise TypeError(
+                "Can't make " + value.__class__.__name__ + ' printable')
 
         if comment != None:
             printable += ' ' + self._EncodeComment(comment)
@@ -835,7 +838,8 @@ class XCObject(object):
 
         (is_list, property_type, is_strong) = self._schema[key][0:3]
         if not is_list:
-            raise TypeError(key + ' of ' + self.__class__.__name__ + ' must be list')
+            raise TypeError(
+                key + ' of ' + self.__class__.__name__ + ' must be list')
         if not isinstance(value, property_type):
             raise TypeError('item of ' + key + ' of ' + self.__class__.__name__ + \
                             ' must be ' + property_type.__name__ + ', not ' + \
@@ -863,7 +867,8 @@ class XCObject(object):
         for property, attributes in self._schema.items():
             (is_list, property_type, is_strong, is_required) = attributes[0:4]
             if is_required and not property in self._properties:
-                raise KeyError(self.__class__.__name__ + ' requires ' + property)
+                raise KeyError(self.__class__.__name__ + \
+                               ' requires ' + property)
 
     def _SetDefaultsFromSchema(self):
         """Assign object default values according to the schema.  This will not
@@ -921,7 +926,8 @@ class XCHierarchicalElement(XCObject):
             # If the pathname begins with an Xcode variable like "$(SDKROOT)/", take
             # the variable out and make the path be relative to that variable by
             # assigning the variable name as the sourceTree.
-            (source_tree, path) = SourceTreeAndPathFromPath(self._properties['path'])
+            (source_tree, path) = SourceTreeAndPathFromPath(
+                self._properties['path'])
             if source_tree != None:
                 self._properties['sourceTree'] = source_tree
             if path != None:
@@ -1137,7 +1143,8 @@ class PBXGroup(XCHierarchicalElement):
         child_path = child.PathFromSourceTreeAndPath()
         if child_path:
             if child_path in self._children_by_path:
-                raise ValueError('Found multiple children with path ' + child_path)
+                raise ValueError(
+                    'Found multiple children with path ' + child_path)
             self._children_by_path[child_path] = child
 
         if isinstance(child, PBXVariantGroup):
@@ -1861,7 +1868,8 @@ class XCBuildPhase(XCObject):
             if settings is None:
                 pbxbuildfile = PBXBuildFile({'fileRef': file_ref})
             else:
-                pbxbuildfile = PBXBuildFile({'fileRef': file_ref, 'settings': settings})
+                pbxbuildfile = PBXBuildFile(
+                    {'fileRef': file_ref, 'settings': settings})
             self.AppendBuildFile(pbxbuildfile, path)
 
 
@@ -2121,7 +2129,8 @@ class PBXContainerItemProxy(XCObject):
 
     def __repr__(self):
         props = self._properties
-        name = '%s.gyp:%s' % (props['containerPortal'].Name(), props['remoteInfo'])
+        name = '%s.gyp:%s' % (
+            props['containerPortal'].Name(), props['remoteInfo'])
         return '<%s %r at 0x%x>' % (self.__class__.__name__, name, id(self))
 
     def Name(self):
@@ -2388,9 +2397,11 @@ class PBXNativeTarget(XCTarget):
                     # Extension override.
                     suffix = '.' + force_extension
                     if filetype.startswith('wrapper.'):
-                        self.SetBuildSetting('WRAPPER_EXTENSION', force_extension)
+                        self.SetBuildSetting(
+                            'WRAPPER_EXTENSION', force_extension)
                     else:
-                        self.SetBuildSetting('EXECUTABLE_EXTENSION', force_extension)
+                        self.SetBuildSetting(
+                            'EXECUTABLE_EXTENSION', force_extension)
 
                     if filetype.startswith('compiled.mach-o.executable'):
                         product_name = self._properties['productName']
@@ -2534,7 +2545,8 @@ class PBXNativeTarget(XCTarget):
             if pbxproject != other_pbxproject:
                 other_project_product_group = \
                     pbxproject.AddOrGetProjectReference(other_pbxproject)[0]
-                file_ref = other_project_product_group.GetChildByRemoteObject(file_ref)
+                file_ref = other_project_product_group.GetChildByRemoteObject(
+                    file_ref)
 
             self.FrameworksPhase().AppendProperty('files',
                                                   PBXBuildFile({'fileRef': file_ref}))
@@ -2776,7 +2788,8 @@ class PBXProject(XCContainerPortal):
                     this_path = projectDirPath
                 else:
                     this_path = posixpath.join(this_path, projectDirPath)
-            other_path = gyp.common.RelativePath(other_pbxproject.Path(), this_path)
+            other_path = gyp.common.RelativePath(
+                other_pbxproject.Path(), this_path)
 
             # ProjectRef is weak (it's owned by the mainGroup hierarchy).
             project_ref = PBXFileReference({
@@ -2786,7 +2799,8 @@ class PBXProject(XCContainerPortal):
                 })
             self.ProjectsGroup().AppendChild(project_ref)
 
-            ref_dict = {'ProductGroup': product_group, 'ProjectRef': project_ref}
+            ref_dict = {'ProductGroup': product_group,
+                'ProjectRef': project_ref}
             self._other_pbxprojects[other_pbxproject] = ref_dict
             self.AppendProperty('projectReferences', ref_dict)
 
@@ -2801,9 +2815,11 @@ class PBXProject(XCContainerPortal):
             product_group = project_ref_dict['ProductGroup']
             project_ref = project_ref_dict['ProjectRef']
 
-        self._SetUpProductReferences(other_pbxproject, product_group, project_ref)
+        self._SetUpProductReferences(
+            other_pbxproject, product_group, project_ref)
 
-        inherit_unique_symroot = self._AllSymrootsUnique(other_pbxproject, False)
+        inherit_unique_symroot = self._AllSymrootsUnique(
+            other_pbxproject, False)
         targets = other_pbxproject.GetProperty('targets')
         if all(self._AllSymrootsUnique(t, inherit_unique_symroot) for t in targets):
             dir_path = project_ref._properties['path']
@@ -2935,7 +2951,8 @@ class XCProjectFile(XCObject):
         # proper object in the Xcode sense, and it certainly doesn't have its own
         # ID.  Pass through an attempt to update IDs to the real root object.
         if recursive:
-            self._properties['rootObject'].ComputeIDs(recursive, overwrite, hash)
+            self._properties['rootObject'].ComputeIDs(
+                recursive, overwrite, hash)
 
     def Print(self, file=sys.stdout):
         self.VerifyHasRequiredProperties()
