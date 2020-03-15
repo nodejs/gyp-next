@@ -100,13 +100,13 @@ class Writer(object):
         self._line('default %s' % ' '.join(self._as_list(paths)))
 
     def _count_dollars_before_index(self, s, i):
-      """Returns the number of '$' characters right in front of s[i]."""
-      dollar_count = 0
-      dollar_index = i - 1
-      while dollar_index > 0 and s[dollar_index] == '$':
-        dollar_count += 1
-        dollar_index -= 1
-      return dollar_count
+        """Returns the number of '$' characters right in front of s[i]."""
+        dollar_count = 0
+        dollar_index = i - 1
+        while dollar_index > 0 and s[dollar_index] == '$':
+            dollar_count += 1
+            dollar_index -= 1
+        return dollar_count
 
     def _line(self, text, indent=0):
         """Write 'text' word-wrapped at self.width characters."""
@@ -119,19 +119,19 @@ class Writer(object):
             available_space = self.width - len(leading_space) - len(' $')
             space = available_space
             while True:
-              space = text.rfind(' ', 0, space)
-              if space < 0 or \
-                 self._count_dollars_before_index(text, space) % 2 == 0:
-                break
+                space = text.rfind(' ', 0, space)
+                if space < 0 or \
+                   self._count_dollars_before_index(text, space) % 2 == 0:
+                    break
 
             if space < 0:
-                # No such space; just use the first unescaped space we can find.
+                    # No such space; just use the first unescaped space we can find.
                 space = available_space - 1
                 while True:
-                  space = text.find(' ', space + 1)
-                  if space < 0 or \
-                     self._count_dollars_before_index(text, space) % 2 == 0:
-                    break
+                    space = text.find(' ', space + 1)
+                    if space < 0 or \
+                       self._count_dollars_before_index(text, space) % 2 == 0:
+                        break
             if space < 0:
                 # Give up on breaking.
                 break

@@ -71,24 +71,24 @@ generator_supports_multiple_toolsets = True
 # module should use < for the early phase and then switch to > for the late
 # phase.  Bonus points for carrying @ back into the output too.
 for v in _generator_identity_variables:
-  generator_default_variables[v] = '<(%s)' % v
+    generator_default_variables[v] = '<(%s)' % v
 
 
 def GenerateOutput(target_list, target_dicts, data, params):
-  output_files = {}
-  for qualified_target in target_list:
-    [input_file, target] = \
-        gyp.common.ParseQualifiedTarget(qualified_target)[0:2]
+    output_files = {}
+    for qualified_target in target_list:
+        [input_file, target] = \
+            gyp.common.ParseQualifiedTarget(qualified_target)[0:2]
 
-    if input_file[-4:] != '.gyp':
-      continue
-    input_file_stem = input_file[:-4]
-    output_file = input_file_stem + params['options'].suffix + '.gypd'
+        if input_file[-4:] != '.gyp':
+            continue
+        input_file_stem = input_file[:-4]
+        output_file = input_file_stem + params['options'].suffix + '.gypd'
 
-    if not output_file in output_files:
-      output_files[output_file] = input_file
+        if not output_file in output_files:
+            output_files[output_file] = input_file
 
-  for output_file, input_file in output_files.items():
-    output = open(output_file, 'w')
-    pprint.pprint(data[input_file], output)
-    output.close()
+    for output_file, input_file in output_files.items():
+        output = open(output_file, 'w')
+        pprint.pprint(data[input_file], output)
+        output.close()

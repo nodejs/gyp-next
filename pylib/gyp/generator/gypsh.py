@@ -37,20 +37,20 @@ generator_default_variables = {
 }
 
 for v in _generator_identity_variables:
-  generator_default_variables[v] = '<(%s)' % v
+    generator_default_variables[v] = '<(%s)' % v
 
 
 def GenerateOutput(target_list, target_dicts, data, params):
-  locals = {
-        'target_list':  target_list,
-        'target_dicts': target_dicts,
-        'data':         data,
-      }
+    locals = {
+          'target_list':  target_list,
+          'target_dicts': target_dicts,
+          'data':         data,
+        }
 
-  # Use a banner that looks like the stock Python one and like what
-  # code.interact uses by default, but tack on something to indicate what
-  # locals are available, and identify gypsh.
-  banner='Python %s on %s\nlocals.keys() = %s\ngypsh' % \
-         (sys.version, sys.platform, repr(sorted(locals.keys())))
+    # Use a banner that looks like the stock Python one and like what
+    # code.interact uses by default, but tack on something to indicate what
+    # locals are available, and identify gypsh.
+    banner='Python %s on %s\nlocals.keys() = %s\ngypsh' % \
+           (sys.version, sys.platform, repr(sorted(locals.keys())))
 
-  code.interact(banner, local=locals)
+    code.interact(banner, local=locals)
