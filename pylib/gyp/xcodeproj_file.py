@@ -651,7 +651,7 @@ class XCObject(object):
         else:
             raise TypeError("Can't make " + value.__class__.__name__ + " printable")
 
-        if comment is not None:
+        if comment:
             printable += " " + self._EncodeComment(comment)
 
         return printable
@@ -898,8 +898,7 @@ class XCObject(object):
 
         # If the property doesn't exist yet, create a new empty list to receive the
         # item.
-        if key not in self._properties:
-            self._properties[key] = []
+        self._properties[key] = self._properties.get(key, [])
 
         # Set up the ownership link.
         if is_strong:
@@ -1466,8 +1465,7 @@ class PBXGroup(XCHierarchicalElement):
             # live on.  If the name attribute seems unnecessary now, get rid of it.
             if (
                 "name" in old_properties
-                and old_properties["name"] is not None
-                and old_properties["name"] != self.Name()
+                and old_properties["name"] not in (None, self.Name())
             ):
                 self._properties["name"] = old_properties["name"]
             if (
@@ -1512,7 +1510,7 @@ class XCFileLikeElement(XCHierarchicalElement):
 
         hashables = []
         xche = self
-        while xche is not None and isinstance(xche, XCHierarchicalElement):
+        while isinstance(xche, XCHierarchicalElement):
             xche_hashables = xche.Hashables()
             for index, xche_hashable in enumerate(xche_hashables):
                 hashables.insert(index, xche_hashable)

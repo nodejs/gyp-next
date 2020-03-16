@@ -494,7 +494,7 @@ def gyp_main(args):
                 home_vars.append("USERPROFILE")
             for home_var in home_vars:
                 home = os.getenv(home_var)
-                if home is not None:
+                if home:
                     home_dot_gyp = os.path.join(home, ".gyp")
                     if not os.path.exists(home_dot_gyp):
                         home_dot_gyp = None
@@ -604,7 +604,7 @@ def gyp_main(args):
 
     # If ~/.gyp/include.gypi exists, it'll be forcibly included into every
     # .gyp file that's loaded, before anything else is included.
-    if home_dot_gyp is not None:
+    if home_dot_gyp:
         default_include = os.path.join(home_dot_gyp, "include.gypi")
         if os.path.exists(default_include):
             print("Using overrides found in " + default_include)

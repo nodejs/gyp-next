@@ -1775,7 +1775,7 @@ class DependencyGraphNode(object):
 
         for dependency in self.dependencies:
             # Check for None, corresponding to the root node.
-            if dependency.ref is not None and dependency.ref not in dependencies:
+            if dependency.ref and dependency.ref not in dependencies:
                 dependencies.append(dependency.ref)
 
         return dependencies
