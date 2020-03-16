@@ -384,7 +384,7 @@ def _GenerateTargets(data, target_list, target_dicts, toplevel_dir, files, build
         )
 
         build_file = gyp.common.ParseQualifiedTarget(target_name)[0]
-        if not build_file in build_file_in_files:
+        if build_file not in build_file_in_files:
             build_file_in_files[build_file] = _WasBuildFileModified(
                 build_file, data, files, toplevel_dir
             )

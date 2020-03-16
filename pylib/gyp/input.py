@@ -284,7 +284,7 @@ def LoadBuildFileIncludesIntoDict(
     subdict, subdict_path, data, aux_data, includes, check
 ):
     includes_list = []
-    if includes != None:
+    if includes is not None:
         includes_list.extend(includes)
     if "includes" in subdict:
         for include in subdict["includes"]:
@@ -300,7 +300,7 @@ def LoadBuildFileIncludesIntoDict(
 
     # Merge in the included files.
     for include in includes_list:
-        if not "included" in aux_data[subdict_path]:
+        if "included" not in aux_data[subdict_path]:
             aux_data[subdict_path]["included"] = []
         aux_data[subdict_path]["included"].append(include)
 
@@ -963,7 +963,7 @@ def ExpandVariables(input, phase, variables, build_file):
                     finally:
                         sys.path.pop()
                         os.chdir(oldwd)
-                    assert replacement != None
+                    assert replacement is not None
                 elif command_string:
                     raise GypError(
                         "Unknown command string '%s' in '%s'."
@@ -1013,7 +1013,7 @@ def ExpandVariables(input, phase, variables, build_file):
                 replacement = cached_value
 
         else:
-            if not contents in variables:
+            if contents not in variables:
                 if contents[-1] in ["!", "/"]:
                     # In order to allow cross-compiles (nacl) to happen more naturally,
                     # we will allow references to >(sources/) etc. to resolve to
@@ -1251,7 +1251,7 @@ def ProcessConditionsInDict(the_dict, phase, variables, build_file):
     else:
         assert False
 
-    if not conditions_key in the_dict:
+    if conditions_key not in the_dict:
         return
 
     conditions_list = the_dict[conditions_key]
@@ -1263,7 +1263,7 @@ def ProcessConditionsInDict(the_dict, phase, variables, build_file):
             condition, conditions_key, phase, variables, build_file
         )
 
-        if merge_dict != None:
+        if merge_dict is not None:
             # Expand variables and nested conditinals in the merge_dict before
             # merging it.
             ProcessVariablesAndConditionsInDict(
@@ -1732,7 +1732,7 @@ class DependencyGraphNode(object):
                 for node_dependent_dependency in sorted(
                     node_dependent.dependencies, key=ExtractNodeRef
                 ):
-                    if not node_dependent_dependency.ref in flat_list:
+                    if node_dependent_dependency.ref not in flat_list:
                         # The dependent one or more dependencies not in flat_list.  There
                         # will be more chances to add it to flat_list when examining
                         # it again as a dependent of those other dependencies, provided
@@ -1759,7 +1759,7 @@ class DependencyGraphNode(object):
             for child in node.dependents:
                 if child in path:
                     results.append([child] + path[: path.index(child) + 1])
-                elif not child in visited:
+                elif child not in visited:
                     visited.add(child)
                     Visit(child, [child] + path)
 
@@ -1775,7 +1775,7 @@ class DependencyGraphNode(object):
 
         for dependency in self.dependencies:
             # Check for None, corresponding to the root node.
-            if dependency.ref != None and dependency.ref not in dependencies:
+            if dependency.ref is not None and dependency.ref not in dependencies:
                 dependencies.append(dependency.ref)
 
         return dependencies
@@ -2025,7 +2025,7 @@ def VerifyNoGYPFileCircularDependencies(targets):
     dependency_nodes = {}
     for target in targets:
         build_file = gyp.common.BuildFile(target)
-        if not build_file in dependency_nodes:
+        if build_file not in dependency_nodes:
             dependency_nodes[build_file] = DependencyGraphNode(build_file)
 
     # Set up the dependency links.
@@ -2103,7 +2103,7 @@ def DoDependentSettings(key, flat_list, targets, dependency_nodes):
 
         for dependency in dependencies:
             dependency_dict = targets[dependency]
-            if not key in dependency_dict:
+            if key not in dependency_dict:
                 continue
             dependency_build_file = gyp.common.BuildFile(dependency)
             MergeDicts(
@@ -2125,7 +2125,7 @@ def AdjustStaticLibraryDependencies(
         target_type = target_dict["type"]
 
         if target_type == "static_library":
-            if not "dependencies" in target_dict:
+            if "dependencies" not in target_dict:
                 continue
 
             target_dict["dependencies_original"] = target_dict.get("dependencies", [])[
@@ -2155,7 +2155,7 @@ def AdjustStaticLibraryDependencies(
                     and not dependency_dict.get("hard_dependency", False)
                 ) or (
                     dependency_dict["type"] != "static_library"
-                    and not dependency in target_dict["dependencies"]
+                    and dependency not in target_dict["dependencies"]
                 ):
                     # Take the dependency out of the list, and don't increment index
                     # because the next dependency to analyze will shift into the index
@@ -2182,9 +2182,9 @@ def AdjustStaticLibraryDependencies(
             for dependency in link_dependencies:
                 if dependency == target:
                     continue
-                if not "dependencies" in target_dict:
+                if "dependencies" not in target_dict:
                     target_dict["dependencies"] = []
-                if not dependency in target_dict["dependencies"]:
+                if dependency not in target_dict["dependencies"]:
                     target_dict["dependencies"].append(dependency)
             # Sort the dependencies list in the order from dependents to dependencies.
             # e.g. If A and B depend on C and C depends on D, sort them in A, B, C, D.
@@ -2242,7 +2242,8 @@ def MakePathRelative(to_file, fro_file, item):
 def MergeLists(to, fro, to_file, fro_file, is_paths=False, append=True):
     # Python documentation recommends objects which do not support hash
     # set this value to None. Python library objects follow this rule.
-    is_hashable = lambda val: val.__hash__
+    def is_hashable(val):
+        return val.__hash__
 
     # If x is hashable, returns whether x is in s. Else returns whether x is in l.
     def is_in_set_or_list(x, s, l):
@@ -2325,7 +2326,7 @@ def MergeDicts(to, fro, to_file, fro_file):
             if type(v) in (str, int):
                 if type(to[k]) not in (str, int):
                     bad_merge = True
-            elif type(v) is not type(to[k]):
+            elif not isinstance(v, type(to[k])):
                 bad_merge = True
 
             if bad_merge:
@@ -2346,7 +2347,7 @@ def MergeDicts(to, fro, to_file, fro_file):
                 to[k] = v
         elif type(v) is dict:
             # Recurse, guaranteeing copies will be made of objects that require it.
-            if not k in to:
+            if k not in to:
                 to[k] = {}
             MergeDicts(to[k], v, to_file, fro_file)
         elif type(v) is list:
@@ -2466,9 +2467,9 @@ def SetUpConfigurations(target, target_dict):
     # Provide a single configuration by default if none exists.
     # TODO(mark): Signal an error if default_configurations exists but
     # configurations does not.
-    if not "configurations" in target_dict:
+    if "configurations" not in target_dict:
         target_dict["configurations"] = {"Default": {}}
-    if not "default_configuration" in target_dict:
+    if "default_configuration" not in target_dict:
         concrete = [
             i
             for (i, config) in target_dict["configurations"].items()
@@ -2492,7 +2493,7 @@ def SetUpConfigurations(target, target_dict):
                 key_base = key[:-1]
             else:
                 key_base = key
-            if not key_base in non_configuration_keys:
+            if key_base not in non_configuration_keys:
                 new_configuration_dict[key] = gyp.simple_copy.deepcopy(target_val)
 
         # Merge in configuration (with all its parents first).
@@ -2524,7 +2525,7 @@ def SetUpConfigurations(target, target_dict):
             key_base = key[:-1]
         else:
             key_base = key
-        if not key_base in non_configuration_keys:
+        if key_base not in non_configuration_keys:
             delete_keys.append(key)
     for key in delete_keys:
         del target_dict[key]
@@ -2603,7 +2604,7 @@ def ProcessListFiltersInDict(name, the_dict):
                 + {"!": "exclusion", "/": "regex"}[operation]
             )
 
-        if not list_key in lists:
+        if list_key not in lists:
             lists.append(list_key)
 
     # Delete the lists that are known to be unneeded at this point.
@@ -2954,7 +2955,7 @@ def PruneUnwantedTargets(targets, flat_list, dependency_nodes, root_targets, dat
 
     # Prune unwanted targets from each build_file's data dict.
     for build_file in data["target_build_files"]:
-        if not "targets" in data[build_file]:
+        if "targets" not in data[build_file]:
             continue
         new_targets = []
         for target in data[build_file]["targets"]:

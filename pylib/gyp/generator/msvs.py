@@ -3590,7 +3590,7 @@ def _AddSources2(
                 list_excluded,
             )
         else:
-            if not source in sources_handled_by_action:
+            if source not in sources_handled_by_action:
                 detail = []
                 excluded_configurations = exclusions.get(source, [])
                 if len(excluded_configurations) == len(spec["configurations"]):
