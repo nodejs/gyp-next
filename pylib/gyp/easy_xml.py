@@ -128,7 +128,7 @@ def WriteXmlIfChanged(content, path, encoding="utf-8", pretty=False, win32=False
         f = open(path, "r")
         existing = f.read()
         f.close()
-    except:
+    except Exception:
         existing = None
 
     # It has changed, write it

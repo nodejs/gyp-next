@@ -39,7 +39,7 @@ def DebugOutput(mode, message, *args):
             f = traceback.extract_stack(limit=2)
             if f:
                 ctx = f[0][:3]
-        except:
+        except Exception:
             pass
         if args:
             message %= args
