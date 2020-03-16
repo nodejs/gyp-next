@@ -841,14 +841,14 @@ class NinjaWriter(object):
             env = self.GetToolchainEnv(additional_settings=extra_env)
         else:
             env = self.GetToolchainEnv()
-        for copy in copies:
-            for path in copy["files"]:
+        for to_copy in copies:
+            for path in to_copy["files"]:
                 # Normalize the path so trailing slashes don't confuse us.
                 path = os.path.normpath(path)
                 basename = os.path.split(path)[1]
                 src = self.GypPathToNinja(path, env)
                 dst = self.GypPathToNinja(
-                    os.path.join(copy["destination"], basename), env
+                    os.path.join(to_copy["destination"], basename), env
                 )
                 outputs += self.ninja.build(dst, "copy", src, order_only=prebuild)
                 if self.is_mac_bundle:

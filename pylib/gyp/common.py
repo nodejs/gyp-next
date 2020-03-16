@@ -497,9 +497,7 @@ def CopyTool(flavor, out_path, generator_flags={}):
 # (Also in the printed Python Cookbook.)
 
 
-def uniquer(seq, idfun=None):
-    if idfun is None:
-        idfun = lambda x: x
+def uniquer(seq, idfun=lambda x: x):
     seen = {}
     result = []
     for item in seq:

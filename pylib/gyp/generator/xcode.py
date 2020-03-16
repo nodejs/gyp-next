@@ -579,7 +579,7 @@ def ExpandXcodeVariables(string, expansions):
     matches.reverse()
     for match in matches:
         (to_replace, variable) = match
-        if not variable in expansions:
+        if variable not in expansions:
             continue
 
         replacement = expansions[variable]

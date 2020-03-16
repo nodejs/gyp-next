@@ -182,7 +182,7 @@ def GetAllIncludeDirectories(
     all_includes_list = list(gyp_includes_set)
     all_includes_list.sort()
     for compiler_include in compiler_includes_list:
-        if not compiler_include in gyp_includes_set:
+        if compiler_include not in gyp_includes_set:
             all_includes_list.append(compiler_include)
 
     # All done.

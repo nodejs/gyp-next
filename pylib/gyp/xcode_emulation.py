@@ -1243,13 +1243,13 @@ class XcodeSettings(object):
 
     def _AdjustLibrary(self, library, config_name=None):
         if library.endswith(".framework"):
-            l = "-framework " + os.path.splitext(os.path.basename(library))[0]
+            l_flag = "-framework " + os.path.splitext(os.path.basename(library))[0]
         else:
             m = self.library_re.match(library)
             if m:
-                l = "-l" + m.group(1)
+                l_flag = "-l" + m.group(1)
             else:
-                l = library
+                l_flag = library
 
         sdk_root = self._SdkPath(config_name)
         if not sdk_root:
@@ -1263,8 +1263,8 @@ class XcodeSettings(object):
         # following conditions are both true:
         # - library is referenced in the gyp file as "$(SDKROOT)/**/*.dylib",
         # - the ".dylib" file does not exists but a ".tbd" file do.
-        library = l.replace("$(SDKROOT)", sdk_root)
-        if l.startswith("$(SDKROOT)"):
+        library = l_flag.replace("$(SDKROOT)", sdk_root)
+        if l_flag.startswith("$(SDKROOT)"):
             basename, ext = os.path.splitext(library)
             if ext == ".dylib" and not os.path.exists(library):
                 tbd_library = basename + ".tbd"

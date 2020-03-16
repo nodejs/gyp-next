@@ -10,8 +10,9 @@ import subprocess
 
 PY3 = bytes != str
 
-# Below IsCygwin() function copied from pylib/gyp/common.py
+
 def IsCygwin():
+    # Function copied from pylib/gyp/common.py
     try:
         out = subprocess.Popen(
             "uname", stdout=subprocess.PIPE, stderr=subprocess.STDOUT
