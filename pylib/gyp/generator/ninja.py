@@ -2133,7 +2133,7 @@ def GetDefaultConcurrentLinks():
             # A static library debug build of Chromium's unit_tests takes ~2.7GB, so
             # 4GB per ld process allows for some more bloat.
             return max(1, avail_bytes // (4 * (2 ** 30)))  # total / 4GB
-        except:
+        except subprocess.CalledProcessError:
             return 1
     else:
         # TODO(scottmg): Implement this for other platforms.

@@ -605,7 +605,7 @@ class MacTool(object):
             # and if an exception is raised, convert a temporary copy to XML and
             # load that copy.
             return plistlib.readPlist(plist_path)
-        except:
+        except Exception:
             pass
         with tempfile.NamedTemporaryFile() as temp:
             shutil.copy2(plist_path, temp.name)
