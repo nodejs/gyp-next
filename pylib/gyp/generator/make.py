@@ -1201,7 +1201,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
                 )
                 self.WriteLn(
                     "quiet_cmd_%(name)s_%(count)d = RULE %(name)s_%(count)d $@"
-                    % {"count": count, "name": name,}
+                    % {"count": count, "name": name}
                 )
                 self.WriteLn()
                 count += 1
@@ -2346,9 +2346,7 @@ def GenerateOutput(target_list, target_dicts, data, params):
             }
         )
     elif flavor == "android":
-        header_params.update(
-            {"link_commands": LINK_COMMANDS_ANDROID,}
-        )
+        header_params.update({"link_commands": LINK_COMMANDS_ANDROID})
     elif flavor == "zos":
         copy_archive_arguments = "-fPR"
         makedep_arguments = "-qmakedep=gcc"
@@ -2364,19 +2362,13 @@ def GenerateOutput(target_list, target_dicts, data, params):
             }
         )
     elif flavor == "solaris":
-        header_params.update(
-            {"flock": "./gyp-flock-tool flock", "flock_index": 2,}
-        )
+        header_params.update({"flock": "./gyp-flock-tool flock", "flock_index": 2})
     elif flavor == "freebsd":
         # Note: OpenBSD has sysutils/flock. lockf seems to be FreeBSD specific.
-        header_params.update(
-            {"flock": "lockf",}
-        )
+        header_params.update({"flock": "lockf"})
     elif flavor == "openbsd":
         copy_archive_arguments = "-pPRf"
-        header_params.update(
-            {"copy_archive_args": copy_archive_arguments,}
-        )
+        header_params.update({"copy_archive_args": copy_archive_arguments})
     elif flavor == "aix":
         copy_archive_arguments = "-pPRf"
         header_params.update(

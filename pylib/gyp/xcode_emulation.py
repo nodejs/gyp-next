@@ -1073,7 +1073,7 @@ class XcodeSettings(object):
                 default_strip_style = "all"
 
             strip_style = self._Settings().get("STRIP_STYLE", default_strip_style)
-            strip_flags = {"all": "", "non-global": "-x", "debugging": "-S",}[
+            strip_flags = {"all": "", "non-global": "-x", "debugging": "-S"}[
                 strip_style
             ]
 
