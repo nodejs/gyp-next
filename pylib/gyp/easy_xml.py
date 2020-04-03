@@ -125,17 +125,15 @@ def WriteXmlIfChanged(content, path, encoding="utf-8", pretty=False, win32=False
 
     # Get the old content
     try:
-        f = open(path, "r")
-        existing = f.read()
-        f.close()
-    except:
+        with open(path, "r") as file:
+            existing = file.read()
+    except IOError:
         existing = None
 
     # It has changed, write it
     if existing != xml_string:
-        f = open(path, "wb")
-        f.write(xml_string)
-        f.close()
+        with open(path, "wb") as file:
+            file.write(xml_string)
 
 
 _xml_escape_map = {
