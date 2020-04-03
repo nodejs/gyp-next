@@ -156,7 +156,7 @@ class XcodeProject(object):
         try:
             xccl = CreateXCConfigurationList(configurations)
             self.project.SetProperty("buildConfigurationList", xccl)
-        except:
+        except Exception:
             sys.stderr.write("Problem with gyp file %s\n" % self.gyp_path)
             raise
 
