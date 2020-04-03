@@ -610,7 +610,7 @@ class AndroidMkWriter(object):
         origin_src_dirs = []
         for source in extra_sources:
             local_file = source
-            if not "$(gyp_intermediate_dir)/" in local_file:
+            if "$(gyp_intermediate_dir)/" not in local_file:
                 basename = os.path.basename(local_file)
                 local_file = "$(gyp_intermediate_dir)/" + basename
             (root, ext) = os.path.splitext(local_file)

@@ -81,8 +81,7 @@ def GenerateOutput(target_list, target_dicts, data, params):
         input_file_stem = input_file[:-4]
         output_file = input_file_stem + params["options"].suffix + ".gypd"
 
-        if not output_file in output_files:
-            output_files[output_file] = input_file
+        output_files[output_file] = output_files.get(output_file, input_file)
 
     for output_file, input_file in output_files.items():
         output = open(output_file, "w")

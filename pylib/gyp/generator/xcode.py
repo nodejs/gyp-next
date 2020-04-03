@@ -156,7 +156,7 @@ class XcodeProject(object):
         try:
             xccl = CreateXCConfigurationList(configurations)
             self.project.SetProperty("buildConfigurationList", xccl)
-        except:
+        except Exception:
             sys.stderr.write("Problem with gyp file %s\n" % self.gyp_path)
             raise
 
@@ -579,7 +579,7 @@ def ExpandXcodeVariables(string, expansions):
     matches.reverse()
     for match in matches:
         (to_replace, variable) = match
-        if not variable in expansions:
+        if variable not in expansions:
             continue
 
         replacement = expansions[variable]

@@ -1897,7 +1897,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
             installable_deps = [self.output]
             if (
                 self.flavor == "mac"
-                and not "product_dir" in spec
+                and "product_dir" not in spec
                 and self.toolset == "target"
             ):
                 # On mac, products are created in install_path immediately.
@@ -2176,7 +2176,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
         """Convert a path to its output directory form."""
         if "$(" in path:
             path = path.replace("$(obj)/", "$(obj).%s/$(TARGET)/" % self.toolset)
-        if not "$(obj)" in path:
+        if "$(obj)" not in path:
             path = "$(obj).%s/$(TARGET)/%s" % (self.toolset, path)
         return path
 
