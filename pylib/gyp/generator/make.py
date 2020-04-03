@@ -740,7 +740,7 @@ class MakefileWriter(object):
                     ext: (
                         """\
 $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(srcdir)/%%%s FORCE_DO_CMD
-	@$(call do_cmd,%s,1)
+\t@$(call do_cmd,%s,1)
 """
                         % (ext, COMPILABLE_EXTENSIONS[ext])
                     )
@@ -753,7 +753,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(srcdir)/%%%s FORCE_DO_CMD
                     ext: (
                         """\
 $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj).$(TOOLSET)/%%%s FORCE_DO_CMD
-	@$(call do_cmd,%s,1)
+\t@$(call do_cmd,%s,1)
 """
                         % (ext, COMPILABLE_EXTENSIONS[ext])
                     )
@@ -764,7 +764,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj).$(TOOLSET)/%%%s FORCE_DO_CMD
                     ext: (
                         """\
 $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
-	@$(call do_cmd,%s,1)
+\t@$(call do_cmd,%s,1)
 """
                         % (ext, COMPILABLE_EXTENSIONS[ext])
                     )
