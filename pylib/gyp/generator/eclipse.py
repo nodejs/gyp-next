@@ -65,17 +65,6 @@ def CalculateVariables(default_variables, params):
     flavor = gyp.common.GetFlavor(params)
     default_variables.setdefault("OS", flavor)
     if flavor == "win":
-        # Copy additional generator configuration data from VS, which is shared
-        # by the Eclipse generator.
-        import gyp.generator.msvs as msvs_generator
-
-        generator_additional_non_configuration_keys = getattr(
-            msvs_generator, "generator_additional_non_configuration_keys", []
-        )
-        generator_additional_path_sections = getattr(
-            msvs_generator, "generator_additional_path_sections", []
-        )
-
         gyp.msvs_emulation.CalculateCommonVariables(default_variables, params)
 
 

@@ -120,7 +120,6 @@ def prettyprint_input(lines):
     """Does the main work of indenting the input based on the brace counts."""
     indent = 0
     basic_offset = 2
-    last_line = ""
     for line in lines:
         if COMMENT_RE.match(line):
             print(line)
@@ -139,7 +138,6 @@ def prettyprint_input(lines):
                     print(" " * (basic_offset * indent) + line)
             else:
                 print("")
-            last_line = line
 
 
 def main():

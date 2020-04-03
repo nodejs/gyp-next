@@ -1033,7 +1033,6 @@ def PerformBuild(data, configurations, params):
 def GenerateOutput(target_list, target_dicts, data, params):
     options = params["options"]
     generator_flags = params.get("generator_flags", {})
-    builddir_name = generator_flags.get("output_dir", "out")
     limit_to_target_all = generator_flags.get("limit_to_target_all", False)
     write_alias_targets = generator_flags.get("write_alias_targets", True)
     sdk_version = generator_flags.get("aosp_sdk_version", 0)
@@ -1061,7 +1060,6 @@ def GenerateOutput(target_list, target_dicts, data, params):
     # away when we add verification that all targets have the
     # necessary configurations.
     default_configuration = None
-    toolsets = set([target_dicts[target]["toolset"] for target in target_list])
     for target in target_list:
         spec = target_dicts[target]
         if spec["default_configuration"] != "Default":
@@ -1070,7 +1068,6 @@ def GenerateOutput(target_list, target_dicts, data, params):
     if not default_configuration:
         default_configuration = "Default"
 
-    srcdir = "."
     makefile_name = "GypAndroid" + options.suffix + ".mk"
     makefile_path = os.path.join(options.toplevel_dir, makefile_name)
     assert (

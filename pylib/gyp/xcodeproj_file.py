@@ -1463,9 +1463,9 @@ class PBXGroup(XCHierarchicalElement):
             # If the original parent had a name set, keep using it.  If the original
             # parent didn't have a name but the child did, let the child's name
             # live on.  If the name attribute seems unnecessary now, get rid of it.
-            if (
-                "name" in old_properties
-                and old_properties["name"] not in (None, self.Name())
+            if "name" in old_properties and old_properties["name"] not in (
+                None,
+                self.Name(),
             ):
                 self._properties["name"] = old_properties["name"]
             if (
