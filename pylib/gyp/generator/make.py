@@ -2504,9 +2504,10 @@ def GenerateOutput(target_list, target_dicts, data, params):
         # calculating the Makefile path.
         build_file = os.path.join(depth_rel_path, build_file)
         gyp_targets = [
-            target_dicts[target]["target_name"]
-            for target in target_list
-            if target.startswith(build_file) and target in needed_targets
+            target_dicts[qualified_target]["target_name"]
+            for qualified_target in target_list
+            if qualified_target.startswith(build_file)
+            and qualified_target in needed_targets
         ]
         # Only generate Makefiles for gyp files with targets.
         if not gyp_targets:
