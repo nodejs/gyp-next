@@ -2150,7 +2150,7 @@ def _AddWinLinkRules(master_ninja, embed_manifest):
     """Adds link rules for Windows platform to |master_ninja|."""
 
     def FullLinkCommand(ldcmd, out, binary_type):
-        resource_name = {"exe": "1", "dll": "2",}[binary_type]
+        resource_name = {"exe": "1", "dll": "2"}[binary_type]
         return (
             "%(python)s gyp-win-tool link-with-manifests $arch %(embed)s "
             '%(out)s "%(ldcmd)s" %(resname)s $mt $rc "$intermediatemanifest" '

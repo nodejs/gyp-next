@@ -2743,12 +2743,12 @@ def _GenerateMSBuildRuleXmlFile(xml_path, msbuild_rules):
                         [
                             "Category",
                             {"Name": "General"},
-                            ["Category.DisplayName", ["sys:String", "General"],],
+                            ["Category.DisplayName", ["sys:String", "General"]],
                         ],
                         [
                             "Category",
                             {"Name": "Command Line", "Subtype": "CommandLine"},
-                            ["Category.DisplayName", ["sys:String", "Command Line"],],
+                            ["Category.DisplayName", ["sys:String", "Command Line"]],
                         ],
                     ],
                     [
@@ -3133,7 +3133,7 @@ def _ConvertMSVSBuildAttributes(spec, config, build_file):
 
 def _ConvertMSVSCharacterSet(char_set):
     if char_set.isdigit():
-        char_set = {"0": "MultiByte", "1": "Unicode", "2": "MultiByte",}[char_set]
+        char_set = {"0": "MultiByte", "1": "Unicode", "2": "MultiByte"}[char_set]
     return char_set
 
 

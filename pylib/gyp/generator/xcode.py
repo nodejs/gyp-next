@@ -95,7 +95,7 @@ generator_filelist_paths = None
 # Xcode's standard set of library directories, which don't need to be duplicated
 # in LIBRARY_SEARCH_PATHS. This list is not exhaustive, but that's okay.
 xcode_standard_library_dirs = frozenset(
-    ["$(SDKROOT)/usr/lib", "$(SDKROOT)/usr/local/lib",]
+    ["$(SDKROOT)/usr/lib", "$(SDKROOT)/usr/local/lib"]
 )
 
 
@@ -330,7 +330,7 @@ sys.exit(subprocess.call(sys.argv[1:]))" """
                 )
 
                 ssbp = gyp.xcodeproj_file.PBXShellScriptBuildPhase(
-                    {"shellScript": script, "showEnvVarsInLog": 0,}
+                    {"shellScript": script, "showEnvVarsInLog": 0}
                 )
                 run_target.AppendProperty("buildPhases", ssbp)
 
@@ -361,7 +361,7 @@ sys.exit(subprocess.call(sys.argv[1:]))" """
         if len(targets_for_all) > 1 and not has_custom_all:
             xccl = CreateXCConfigurationList(configurations)
             all_target = gyp.xcodeproj_file.PBXAggregateTarget(
-                {"buildConfigurationList": xccl, "name": "All",}, parent=self.project
+                {"buildConfigurationList": xccl, "name": "All"}, parent=self.project
             )
 
             for target in targets_for_all:
@@ -376,7 +376,7 @@ sys.exit(subprocess.call(sys.argv[1:]))" """
         if len(run_test_targets) > 1:
             xccl = CreateXCConfigurationList(configurations)
             run_all_tests_target = gyp.xcodeproj_file.PBXAggregateTarget(
-                {"buildConfigurationList": xccl, "name": "Run All Tests",},
+                {"buildConfigurationList": xccl, "name": "Run All Tests"},
                 parent=self.project,
             )
             for run_test_target in run_test_targets:
