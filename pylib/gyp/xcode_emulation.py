@@ -76,7 +76,7 @@ class XcodeArchsDefault(object):
                     for arch in variable_expansion:
                         if arch not in expanded_archs:
                             expanded_archs.append(arch)
-                except KeyError as e:
+                except KeyError:
                     print('Warning: Ignoring unsupported variable "%s".' % variable)
             elif arch not in expanded_archs:
                 expanded_archs.append(arch)

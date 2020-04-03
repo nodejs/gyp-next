@@ -2103,7 +2103,7 @@ def PerformBuild(data, configurations, params):
     for config in configurations:
         arguments = [devenv, sln_path, "/Build", config]
         print("Building [%s]: %s" % (config, arguments))
-        rtn = subprocess.check_call(arguments)
+        subprocess.check_call(arguments)
 
 
 def CalculateGeneratorInputInfo(params):
@@ -3681,8 +3681,6 @@ def _GenerateMSBuildProject(project, options, version, generator_flags):
     project_dir, project_file_name = os.path.split(project.path)
     gyp.common.EnsureDirExists(project.path)
     # Prepare list of sources and excluded sources.
-    gyp_path = _NormalizedSource(project.build_file)
-    relative_path_of_gyp_file = gyp.common.RelativePath(gyp_path, project_dir)
 
     gyp_file = os.path.split(project.build_file)[1]
     sources, excluded_sources = _PrepareListOfSources(spec, generator_flags, gyp_file)

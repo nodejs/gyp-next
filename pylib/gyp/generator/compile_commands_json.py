@@ -44,8 +44,6 @@ def CalculateVariables(default_variables, params):
 def AddCommandsForTarget(cwd, target, params, per_config_commands):
     output_dir = params["generator_flags"].get("output_dir", "out")
     for configuration_name, configuration in target["configurations"].items():
-        builddir_name = os.path.join(output_dir, configuration_name)
-
         if IsMac(params):
             xcode_settings = gyp.xcode_emulation.XcodeSettings(target)
             cflags = xcode_settings.GetCflags(configuration_name)
