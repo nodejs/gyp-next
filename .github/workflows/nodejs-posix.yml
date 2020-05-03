@@ -1,0 +1,30 @@
+name: Node.js POSIX integration
+
+on: [push, pull_request]
+
+jobs:
+  build-posix:
+    name: Build Node.js on ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macOS-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Clone node-gyp
+        uses: actions/checkout@v2
+        with:
+          path: gyp-next
+      - name: Clone nodejs/node
+        uses: actions/checkout@v2
+        with:
+          repository: nodejs/node
+          path: node
+      - name: Replace gyp in Node.js
+        run: |
+          rm -rf node/tools/gyp
+          cp -r gyp-next node/tools/gyp
+      - name: Build Node.js
+        run: |
+          cd node
+          make build-ci -j
