@@ -3812,7 +3812,7 @@ def _GenerateMSBuildProject(project, options, version, generator_flags, spec):
         content += _GetMSBuildLocalProperties(project.msbuild_toolset)
     content += import_cpp_props_section
     content += import_masm_props_section
-    if spec.get("msvs_enable_marmasm") or True:
+    if spec.get("msvs_enable_marmasm"):
         content += import_marmasm_props_section
     content += _GetMSBuildExtensions(props_files_of_rules)
     content += _GetMSBuildPropertySheets(configurations, spec)
