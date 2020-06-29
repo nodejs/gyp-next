@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+- Fixed a bug on Solaris where copying archives failed.
+
 ## [0.3.0] - 2020-06-06
 
 ### Added
