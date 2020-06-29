@@ -2362,7 +2362,14 @@ def GenerateOutput(target_list, target_dicts, data, params):
             }
         )
     elif flavor == "solaris":
-        header_params.update({"flock": "./gyp-flock-tool flock", "flock_index": 2})
+        copy_archive_arguments = "-pPRf@"
+        header_params.update(
+            {
+                "copy_archive_args": copy_archive_arguments,
+                "flock": "./gyp-flock-tool flock",
+                "flock_index": 2
+            }
+        )
     elif flavor == "freebsd":
         # Note: OpenBSD has sysutils/flock. lockf seems to be FreeBSD specific.
         header_params.update({"flock": "lockf"})
