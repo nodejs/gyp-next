@@ -113,7 +113,7 @@ def GetXcodeArchsDefault():
   of $(ARCHS_STANDARD_INCLUDING_64_BIT) from Xcode 5.0. From Xcode 5.1, they
   are also part of $(ARCHS_STANDARD).
 
-  All thoses rules are coded in the construction of the |XcodeArchsDefault|
+  All these rules are coded in the construction of the |XcodeArchsDefault|
   object to use depending on the version of Xcode detected. The object is
   for performance reason."""
     global XCODE_ARCHS_DEFAULT_CACHE

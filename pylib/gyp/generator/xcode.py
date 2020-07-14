@@ -594,7 +594,7 @@ _xcode_define_re = re.compile(r"([\\\"\' ])")
 def EscapeXcodeDefine(s):
     """We must escape the defines that we give to XCode so that it knows not to
      split on spaces and to respect backslash and quote literals. However, we
-     must not quote the define, or Xcode will incorrectly intepret variables
+     must not quote the define, or Xcode will incorrectly interpret variables
      especially $(inherited)."""
     return re.sub(_xcode_define_re, r"\\\1", s)
 
@@ -1026,7 +1026,7 @@ def GenerateOutput(target_list, target_dicts, data, params):
                 for output in rule.get("outputs", []):
                     # Fortunately, Xcode and make both use $(VAR) format for their
                     # variables, so the expansion is the only transformation necessary.
-                    # Any remaning $(VAR)-type variables in the string can be given
+                    # Any remaining $(VAR)-type variables in the string can be given
                     # directly to make, which will pick up the correct settings from
                     # what Xcode puts into the environment.
                     concrete_output = ExpandXcodeVariables(output, rule_input_dict)
