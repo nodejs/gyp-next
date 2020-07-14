@@ -735,7 +735,8 @@ def GenerateOutput(target_list, target_dicts, data, params):
             "loadable_module+xcuitest": "com.apple.product-type.bundle.ui-testing",
             "shared_library+bundle": "com.apple.product-type.framework",
             "executable+extension+bundle": "com.apple.product-type.app-extension",
-            "executable+watch+extension+bundle": "com.apple.product-type.watchkit-extension",
+            "executable+watch+extension+bundle":
+                "com.apple.product-type.watchkit-extension",
             "executable+watch+bundle": "com.apple.product-type.application.watchapp",
             "mac_kernel_extension+bundle": "com.apple.product-type.kernel-extension",
         }
@@ -1151,8 +1152,8 @@ def GenerateOutput(target_list, target_dicts, data, params):
                             '\t@mkdir -p "%s"\n' % '" "'.join(concrete_output_dirs)
                         )
 
-                    # The rule message and action have already had the necessary variable
-                    # substitutions performed.
+                    # The rule message and action have already had
+                    # the necessary variable substitutions performed.
                     if message:
                         # Mark it with note: so Xcode picks it up in build output.
                         makefile.write("\t@echo note: %s\n" % message)
@@ -1204,8 +1205,8 @@ exit 1
                     support_xct.AppendProperty("buildPhases", ssbp)
                 else:
                     # TODO(mark): this assumes too much knowledge of the internals of
-                    # xcodeproj_file; some of these smarts should move into xcodeproj_file
-                    # itself.
+                    # xcodeproj_file; some of these smarts should move
+                    # into xcodeproj_file itself.
                     xct._properties["buildPhases"].insert(prebuild_index, ssbp)
                     prebuild_index = prebuild_index + 1
 
