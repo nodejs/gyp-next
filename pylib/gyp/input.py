@@ -232,8 +232,8 @@ def LoadOneBuildFile(build_file_path, data, aux_data, includes, is_target, check
         # to make sure platform specific newlines ('\r\n' or '\r') are converted to '\n'
         # which otherwise will fail eval()
         if sys.platform == "zos":
-            # On z/OS, universal-newlines mode treats the file as an ascii file. But since
-            # node-gyp produces ebcdic files, do not use that mode.
+            # On z/OS, universal-newlines mode treats the file as an ascii file.
+            # But since node-gyp produces ebcdic files, do not use that mode.
             build_file_contents = open(build_file_path, "r").read()
         else:
             build_file_contents = open(build_file_path, "rU").read()
@@ -1731,10 +1731,10 @@ class DependencyGraphNode(object):
                     node_dependent.dependencies, key=ExtractNodeRef
                 ):
                     if node_dependent_dependency.ref not in flat_list:
-                        # The dependent one or more dependencies not in flat_list.  There
-                        # will be more chances to add it to flat_list when examining
-                        # it again as a dependent of those other dependencies, provided
-                        # that there are no cycles.
+                        # The dependent one or more dependencies not in flat_list.
+                        # There will be more chances to add it to flat_list
+                        # when examining it again as a dependent of those other
+                        # dependencies, provided that there are no cycles.
                         is_in_degree_zero = False
                         break
 
@@ -2641,10 +2641,10 @@ def ProcessListFiltersInDict(name, the_dict):
                 pattern_re = re.compile(pattern)
 
                 if action == "exclude":
-                    # This item matches an exclude regex, so set its value to 0 (exclude).
+                    # This item matches an exclude regex, set its value to 0 (exclude).
                     action_value = 0
                 elif action == "include":
-                    # This item matches an include regex, so set its value to 1 (include).
+                    # This item matches an include regex, set its value to 1 (include).
                     action_value = 1
                 else:
                     # This is an action that doesn't make any sense.
@@ -2659,8 +2659,8 @@ def ProcessListFiltersInDict(name, the_dict):
 
                 for index, list_item in enumerate(the_list):
                     if list_actions[index] == action_value:
-                        # Even if the regex matches, nothing will change so continue (regex
-                        # searches are expensive).
+                        # Even if the regex matches, nothing will change so continue
+                        # (regex searches are expensive).
                         continue
                     if pattern_re.search(list_item):
                         # Regular expression match.

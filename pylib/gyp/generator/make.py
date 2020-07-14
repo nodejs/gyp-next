@@ -177,7 +177,7 @@ cmd_solink = $(LINK.$(TOOLSET)) -o $@ -shared $(GYP_LDFLAGS) $(LDFLAGS.$(TOOLSET
 
 quiet_cmd_solink_module = SOLINK_MODULE($(TOOLSET)) $@
 cmd_solink_module = $(LINK.$(TOOLSET)) -o $@ -shared $(GYP_LDFLAGS) $(LDFLAGS.$(TOOLSET)) -Wl,-soname=$(@F) -Wl,--start-group $(filter-out FORCE_DO_CMD, $^) -Wl,--end-group $(LIBS)
-"""
+"""  # noqa: E501
 
 LINK_COMMANDS_MAC = """\
 quiet_cmd_alink = LIBTOOL-STATIC $@
@@ -191,7 +191,7 @@ cmd_solink = $(LINK.$(TOOLSET)) -shared $(GYP_LDFLAGS) $(LDFLAGS.$(TOOLSET)) -o 
 
 quiet_cmd_solink_module = SOLINK_MODULE($(TOOLSET)) $@
 cmd_solink_module = $(LINK.$(TOOLSET)) -bundle $(GYP_LDFLAGS) $(LDFLAGS.$(TOOLSET)) -o $@ $(filter-out FORCE_DO_CMD, $^) $(LIBS)
-"""
+"""  # noqa: E501
 
 LINK_COMMANDS_ANDROID = """\
 quiet_cmd_alink = AR($(TOOLSET)) $@
@@ -218,7 +218,7 @@ quiet_cmd_solink_module = SOLINK_MODULE($(TOOLSET)) $@
 cmd_solink_module = $(LINK.$(TOOLSET)) -shared $(GYP_LDFLAGS) $(LDFLAGS.$(TOOLSET)) -Wl,-soname=$(@F) -o $@ -Wl,--start-group $(filter-out FORCE_DO_CMD, $^) -Wl,--end-group $(LIBS)
 quiet_cmd_solink_module_host = SOLINK_MODULE($(TOOLSET)) $@
 cmd_solink_module_host = $(LINK.$(TOOLSET)) -shared $(GYP_LDFLAGS) $(LDFLAGS.$(TOOLSET)) -Wl,-soname=$(@F) -o $@ $(filter-out FORCE_DO_CMD, $^) $(LIBS)
-"""
+"""  # noqa: E501
 
 
 LINK_COMMANDS_AIX = """\
@@ -236,7 +236,7 @@ cmd_solink = $(LINK.$(TOOLSET)) -shared $(GYP_LDFLAGS) $(LDFLAGS.$(TOOLSET)) -o 
 
 quiet_cmd_solink_module = SOLINK_MODULE($(TOOLSET)) $@
 cmd_solink_module = $(LINK.$(TOOLSET)) -shared $(GYP_LDFLAGS) $(LDFLAGS.$(TOOLSET)) -o $@ $(filter-out FORCE_DO_CMD, $^) $(LIBS)
-"""
+"""  # noqa: E501
 
 
 LINK_COMMANDS_OS390 = """\
@@ -254,8 +254,7 @@ cmd_solink = $(LINK.$(TOOLSET)) $(GYP_LDFLAGS) $(LDFLAGS.$(TOOLSET)) -o $@ $(LD_
 
 quiet_cmd_solink_module = SOLINK_MODULE($(TOOLSET)) $@
 cmd_solink_module = $(LINK.$(TOOLSET)) $(GYP_LDFLAGS) $(LDFLAGS.$(TOOLSET)) -o $@ $(filter-out FORCE_DO_CMD, $^) $(LIBS) -Wl,DLL
-
-"""
+"""  # noqa: E501
 
 
 # Header of toplevel Makefile.
@@ -404,7 +403,7 @@ quiet_cmd_copy = COPY $@
 cmd_copy = ln -f "$<" "$@" 2>/dev/null || (rm -rf "$@" && cp %(copy_archive_args)s "$<" "$@")
 
 %(link_commands)s
-"""
+"""  # noqa: E501
     r"""
 # Define an escape_quotes function to escape single quotes.
 # This allows us to handle quotes properly as long as we always use
@@ -503,7 +502,7 @@ endef
 .PHONY: FORCE_DO_CMD
 FORCE_DO_CMD:
 
-"""
+"""  # noqa: E501
 )
 
 SHARED_HEADER_MAC_COMMANDS = """
@@ -534,7 +533,7 @@ cmd_mac_package_framework = ./gyp-mac-tool package-framework "$@" $(4)
 
 quiet_cmd_infoplist = INFOPLIST $@
 cmd_infoplist = $(CC.$(TOOLSET)) -E -P -Wno-trigraphs -x c $(INFOPLIST_DEFINES) "$<" -o "$@"
-"""
+"""  # noqa: E501
 
 
 def WriteRootHeaderSuffixRules(writer):
@@ -1342,7 +1341,10 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
             )
 
             if self.flavor == "mac":
-                cflags = self.xcode_settings.GetCflags(configname, arch=config.get('xcode_configuration_platform'))
+                cflags = self.xcode_settings.GetCflags(
+                    configname,
+                    arch=config.get('xcode_configuration_platform')
+                )
                 cflags_c = self.xcode_settings.GetCflagsC(configname)
                 cflags_cc = self.xcode_settings.GetCflagsCC(configname)
                 cflags_objc = self.xcode_settings.GetCflagsObjC(configname)
@@ -1659,8 +1661,8 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
                     ldflags = config.get("ldflags", [])
                     # Compute an rpath for this output if needed.
                     if any(dep.endswith(".so") or ".so." in dep for dep in deps):
-                        # We want to get the literal string "$ORIGIN" into the link command,
-                        # so we need lots of escaping.
+                        # We want to get the literal string "$ORIGIN"
+                        # into the link command, so we need lots of escaping.
                         ldflags.append(r"-Wl,-rpath=\$$ORIGIN/lib.%s/" % self.toolset)
                         ldflags.append(
                             r"-Wl,-rpath-link=\$(builddir)/lib.%s/" % self.toolset

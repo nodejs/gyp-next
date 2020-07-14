@@ -1528,7 +1528,9 @@ def CLTVersion():
     #   volume: /
     #   location: /
     #   install-time: 1382544035
-    #   groups: com.apple.FindSystemFiles.pkg-group com.apple.DevToolsBoth.pkg-group com.apple.DevToolsNonRelocatableShared.pkg-group
+    #   groups: com.apple.FindSystemFiles.pkg-group
+    #           com.apple.DevToolsBoth.pkg-group
+    #           com.apple.DevToolsNonRelocatableShared.pkg-group
     STANDALONE_PKG_ID = "com.apple.pkg.DeveloperToolsCLILeo"
     FROM_XCODE_PKG_ID = "com.apple.pkg.DeveloperToolsCLI"
     MAVERICKS_PKG_ID = "com.apple.pkg.CLTools_Executables"
@@ -1732,7 +1734,8 @@ def _GetXcodeEnv(
         "BUILT_PRODUCTS_DIR": built_products_dir,
         "CONFIGURATION": configuration,
         "PRODUCT_NAME": xcode_settings.GetProductName(),
-        # See /Developer/Platforms/MacOSX.platform/Developer/Library/Xcode/Specifications/MacOSX\ Product\ Types.xcspec for FULL_PRODUCT_NAME
+        # For FULL_PRODUCT_NAME see:
+        # /Developer/Platforms/MacOSX.platform/Developer/Library/Xcode/Specifications/MacOSX\ Product\ Types.xcspec  # noqa: E501
         "SRCROOT": srcroot,
         "SOURCE_ROOT": "${SRCROOT}",
         # This is not true for static libraries, but currently the env is only
