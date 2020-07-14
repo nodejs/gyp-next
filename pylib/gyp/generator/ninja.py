@@ -90,7 +90,7 @@ def Define(d, flavor):
     """Takes a preprocessor define and returns a -D parameter that's ninja- and
   shell-escaped."""
     if flavor == "win":
-        # cl.exe replaces literal # characters with = in preprocesor definitions for
+        # cl.exe replaces literal # characters with = in preprocessor definitions for
         # some reason. Octal-encode to work around that.
         d = d.replace("#", "\\%03o" % ord("#"))
     return QuoteShellArgument(ninja_syntax.escape("-D" + d), flavor)

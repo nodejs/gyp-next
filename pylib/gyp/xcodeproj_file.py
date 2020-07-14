@@ -515,7 +515,7 @@ class XCObject(object):
         return None
 
     def _EncodeComment(self, comment):
-        """Encodes a comment to be placed in the project file output, mimicing
+        """Encodes a comment to be placed in the project file output, mimicking
     Xcode behavior.
     """
 
@@ -543,7 +543,7 @@ class XCObject(object):
         return self._encode_transforms[ord(char)]
 
     def _EncodeString(self, value):
-        """Encodes a string to be placed in the project file output, mimicing
+        """Encodes a string to be placed in the project file output, mimicking
     Xcode behavior.
     """
 
@@ -586,7 +586,7 @@ class XCObject(object):
 
     def _XCPrintableValue(self, tabs, value, flatten_list=False):
         """Returns a representation of value that may be printed in a project file,
-    mimicing Xcode's behavior.
+    mimicking Xcode's behavior.
 
     _XCPrintableValue can handle str and int values, XCObjects (which are
     made printable by returning their id property), and list and dict objects

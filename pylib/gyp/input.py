@@ -66,7 +66,7 @@ def IsPathSection(section):
     if section in path_sections:
         return True
 
-    # Sections mathing the regexp '_(dir|file|path)s?$' are also
+    # Sections matching the regexp '_(dir|file|path)s?$' are also
     # considered PathSections. Using manual string matching since that
     # is much faster than the regexp and this can be called hundreds of
     # thousands of times so micro performance matters.
@@ -2427,7 +2427,7 @@ def MergeDicts(to, fro, to_file, fro_file):
 def MergeConfigWithInheritance(
     new_configuration_dict, build_file, target_dict, configuration, visited
 ):
-    # Skip if previously visted.
+    # Skip if previously visited.
     if configuration in visited:
         return
 

@@ -846,7 +846,7 @@ def _EscapeCppDefineForMSVS(s):
     s = _EscapeEnvironmentVariableExpansion(s)
     s = _EscapeCommandLineArgumentForMSVS(s)
     s = _EscapeVCProjCommandLineArgListItem(s)
-    # cl.exe replaces literal # characters with = in preprocesor definitions for
+    # cl.exe replaces literal # characters with = in preprocessor definitions for
     # some reason. Octal-encode to work around that.
     s = s.replace("#", "\\%03o" % ord("#"))
     return s
@@ -885,7 +885,7 @@ def _EscapeCppDefineForMSBuild(s):
     s = _EscapeEnvironmentVariableExpansion(s)
     s = _EscapeCommandLineArgumentForMSBuild(s)
     s = _EscapeMSBuildSpecialCharacters(s)
-    # cl.exe replaces literal # characters with = in preprocesor definitions for
+    # cl.exe replaces literal # characters with = in preprocessor definitions for
     # some reason. Octal-encode to work around that.
     s = s.replace("#", "\\%03o" % ord("#"))
     return s
@@ -1415,7 +1415,7 @@ def _GetOutputTargetExt(spec):
 
 
 def _GetDefines(config):
-    """Returns the list of preprocessor definitions for this configuation.
+    """Returns the list of preprocessor definitions for this configuration.
 
   Arguments:
     config: The dictionary that defines the special processing to be done
@@ -2277,7 +2277,7 @@ def _AppendFiltersForMSBuild(
       sources: The hierarchy of filters and sources to process.
       extension_to_rule_name: A dictionary mapping file extensions to rules.
       filter_group: The list to which filter entries will be appended.
-      source_group: The list to which source entries will be appeneded.
+      source_group: The list to which source entries will be appended.
   """
     for source in sources:
         if isinstance(source, MSVSProject.Filter):
