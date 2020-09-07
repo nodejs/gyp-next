@@ -3618,7 +3618,7 @@ def _AddSources2(
                 if group == "compile":
                     # Always add an <ObjectFileName> value to support duplicate
                     # source file basenames.
-                    file_name = source
+                    file_name = os.path.splitext(source)[0] + ".obj"
                     if (file_name.startswith("..\\")):
                         file_name = re.sub(r"^(\.\.\\)+", "", file_name)
                     elif (file_name.startswith("$(")):
