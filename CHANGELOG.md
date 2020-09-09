@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+### Added
+- Extended compile_commands_json generator to consider more file extensions than
+  just `c` and `cc`. `cpp` and `cxx` are now supported.
+- Source files with duplicate basenames are now supported.
+
+### Removed
+- The `--no-duplicate-basename-check` option was removed.
+
 ## [0.4.0] - 2020-07-14
 
 ### Added
