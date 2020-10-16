@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.6.2](https://www.github.com/nodejs/gyp-next/compare/v0.6.1...v0.6.2) (2020-10-16)
+
+
+### Bug Fixes
+
+* do not rewrite absolute paths to avoid long paths ([#74](https://www.github.com/nodejs/gyp-next/issues/74)) ([c2ccc1a](https://www.github.com/nodejs/gyp-next/commit/c2ccc1a81f7f94433a94f4d01a2e820db4c4331a))
+* only include MARMASM when toolset is target ([5a2794a](https://www.github.com/nodejs/gyp-next/commit/5a2794aefb58f0c00404ff042b61740bc8b8d5cd))
+
 ### [0.6.1](https://github.com/nodejs/gyp-next/compare/v0.6.0...v0.6.1) (2020-10-14)
 
 
