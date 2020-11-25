@@ -41,7 +41,7 @@ import gyp.xcode_emulation
 try:
     # maketrans moved to str in python3.
     _maketrans = string.maketrans
-except NameError:
+except (NameError, AttributeError):
     _maketrans = str.maketrans
 
 generator_default_variables = {
