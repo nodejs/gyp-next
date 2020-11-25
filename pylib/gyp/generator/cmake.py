@@ -1047,7 +1047,7 @@ def WriteTarget(
 
         # XCode settings
         xcode_settings = config.get("xcode_settings", {})
-        for xcode_setting, xcode_value in xcode_settings.viewitems():
+        for xcode_setting, xcode_value in xcode_settings.items():
             SetTargetProperty(
                 output,
                 cmake_target_name,
