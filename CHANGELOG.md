@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.7.1](https://www.github.com/nodejs/gyp-next/compare/v0.7.0...v0.7.1) (2020-12-29)
+
+
+### Bug Fixes
+
+* revert posix build job ([#86](https://www.github.com/nodejs/gyp-next/issues/86)) ([39dc34f](https://www.github.com/nodejs/gyp-next/commit/39dc34f0799c074624005fb9bbccf6e028607f9d))
+
 ## [0.7.0](https://www.github.com/nodejs/gyp-next/compare/v0.6.2...v0.7.0) (2020-12-17)
 
 
