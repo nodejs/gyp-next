@@ -11,12 +11,9 @@ from operator import attrgetter
 
 import gyp.common
 
-try:
-    cmp
-except NameError:
 
-    def cmp(x, y):
-        return (x > y) - (x < y)
+def cmp(x, y):
+    return (x > y) - (x < y)
 
 
 # Initialize random number generator

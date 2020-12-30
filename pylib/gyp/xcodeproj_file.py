@@ -144,13 +144,9 @@ import re
 import struct
 import sys
 
-try:
-    basestring, cmp, unicode
-except NameError:  # Python 3
-    basestring = unicode = str
 
-    def cmp(x, y):
-        return (x > y) - (x < y)
+def cmp(x, y):
+    return (x > y) - (x < y)
 
 
 # See XCObject._EncodeString.  This pattern is used to determine when a string
@@ -325,7 +321,7 @@ class XCObject:
                     that._properties[key] = new_value
                 else:
                     that._properties[key] = value
-            elif isinstance(value, (basestring, int)):
+            elif isinstance(value, (str, int)):
                 that._properties[key] = value
             elif isinstance(value, list):
                 if is_strong:
@@ -616,7 +612,7 @@ class XCObject:
             comment = value.Comment()
         elif isinstance(value, str):
             printable += self._EncodeString(value)
-        elif isinstance(value, basestring):
+        elif isinstance(value, str):
             printable += self._EncodeString(value.encode("utf-8"))
         elif isinstance(value, int):
             printable += str(value)
@@ -791,7 +787,7 @@ class XCObject:
                     )
                 for item in value:
                     if not isinstance(item, property_type) and not (
-                        isinstance(item, basestring) and property_type == str
+                        isinstance(item, str) and property_type == str
                     ):
                         # Accept unicode where str is specified.  str is treated as
                         # UTF-8-encoded.
@@ -806,7 +802,7 @@ class XCObject:
                             + item.__class__.__name__
                         )
             elif not isinstance(value, property_type) and not (
-                isinstance(value, basestring) and property_type == str
+                isinstance(value, str) and property_type == str
             ):
                 # Accept unicode where str is specified.  str is treated as
                 # UTF-8-encoded.
@@ -827,7 +823,7 @@ class XCObject:
                         self._properties[property] = value.Copy()
                     else:
                         self._properties[property] = value
-                elif isinstance(value, (basestring, int)):
+                elif isinstance(value, (str, int)):
                     self._properties[property] = value
                 elif isinstance(value, list):
                     if is_strong:

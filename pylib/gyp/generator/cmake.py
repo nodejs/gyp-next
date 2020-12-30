@@ -37,11 +37,7 @@ import subprocess
 import gyp.common
 import gyp.xcode_emulation
 
-try:
-    # maketrans moved to str in python3.
-    _maketrans = string.maketrans
-except (NameError, AttributeError):
-    _maketrans = str.maketrans
+_maketrans = str.maketrans
 
 generator_default_variables = {
     "EXECUTABLE_PREFIX": "",
