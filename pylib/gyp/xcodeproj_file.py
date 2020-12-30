@@ -199,7 +199,7 @@ def ConvertVariablesToShellSyntax(input_string):
     return re.sub(r"\$\((.*?)\)", "${\\1}", input_string)
 
 
-class XCObject(object):
+class XCObject:
     """The abstract base of all class types used in Xcode project files.
 
   Class variables:
@@ -301,8 +301,8 @@ class XCObject(object):
         try:
             name = self.Name()
         except NotImplementedError:
-            return "<%s at 0x%x>" % (self.__class__.__name__, id(self))
-        return "<%s %r at 0x%x>" % (self.__class__.__name__, name, id(self))
+            return "<{} at 0x{:x}>".format(self.__class__.__name__, id(self))
+        return "<{} {!r} at 0x{:x}>".format(self.__class__.__name__, name, id(self))
 
     def Copy(self):
         """Make a copy of this object.
@@ -2185,7 +2185,7 @@ class PBXCopyFilesBuildPhase(XCBuildPhase):
             relative_path = path[1:]
         else:
             raise ValueError(
-                "Can't use path %s in a %s" % (path, self.__class__.__name__)
+                f"Can't use path {path} in a {self.__class__.__name__}"
             )
 
         self._properties["dstPath"] = relative_path
@@ -2250,8 +2250,8 @@ class PBXContainerItemProxy(XCObject):
 
     def __repr__(self):
         props = self._properties
-        name = "%s.gyp:%s" % (props["containerPortal"].Name(), props["remoteInfo"])
-        return "<%s %r at 0x%x>" % (self.__class__.__name__, name, id(self))
+        name = "{}.gyp:{}".format(props["containerPortal"].Name(), props["remoteInfo"])
+        return "<{} {!r} at 0x{:x}>".format(self.__class__.__name__, name, id(self))
 
     def Name(self):
         # Admittedly not the best name, but it's what Xcode uses.
@@ -2288,7 +2288,7 @@ class PBXTargetDependency(XCObject):
 
     def __repr__(self):
         name = self._properties.get("name") or self._properties["target"].Name()
-        return "<%s %r at 0x%x>" % (self.__class__.__name__, name, id(self))
+        return "<{} {!r} at 0x{:x}>".format(self.__class__.__name__, name, id(self))
 
     def Name(self):
         # Admittedly not the best name, but it's what Xcode uses.

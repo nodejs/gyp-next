@@ -12,7 +12,6 @@
    It outputs the resulting xml to stdout.
 """
 
-from __future__ import print_function
 
 import os
 import sys
@@ -34,14 +33,14 @@ REPLACEMENTS = dict()
 ARGUMENTS = None
 
 
-class CmpTuple(object):
+class CmpTuple:
     """Compare function between 2 tuple."""
 
     def __call__(self, x, y):
         return cmp(x[0], y[0])
 
 
-class CmpNode(object):
+class CmpNode:
     """Compare function between 2 xml nodes."""
 
     def __call__(self, x, y):
@@ -72,7 +71,7 @@ class CmpNode(object):
 def PrettyPrintNode(node, indent=0):
     if node.nodeType == Node.TEXT_NODE:
         if node.data.strip():
-            print("%s%s" % (" " * indent, node.data.strip()))
+            print("{}{}".format(" " * indent, node.data.strip()))
         return
 
     if node.childNodes:
@@ -84,23 +83,23 @@ def PrettyPrintNode(node, indent=0):
 
     # Print the main tag
     if attr_count == 0:
-        print("%s<%s>" % (" " * indent, node.nodeName))
+        print("{}<{}>".format(" " * indent, node.nodeName))
     else:
-        print("%s<%s" % (" " * indent, node.nodeName))
+        print("{}<{}".format(" " * indent, node.nodeName))
 
         all_attributes = []
         for (name, value) in node.attributes.items():
             all_attributes.append((name, value))
             all_attributes.sort(CmpTuple())
         for (name, value) in all_attributes:
-            print('%s  %s="%s"' % (" " * indent, name, value))
+            print('{}  {}="{}"'.format(" " * indent, name, value))
         print("%s>" % (" " * indent))
     if node.nodeValue:
-        print("%s  %s" % (" " * indent, node.nodeValue))
+        print("{}  {}".format(" " * indent, node.nodeValue))
 
     for sub_node in node.childNodes:
         PrettyPrintNode(sub_node, indent=indent + 2)
-    print("%s</%s>" % (" " * indent, node.nodeName))
+    print("{}</{}>".format(" " * indent, node.nodeName))
 
 
 def FlattenFilter(node):

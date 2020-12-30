@@ -14,7 +14,6 @@ The MSBuild schemas were also considered.  They are typically found in the
 MSBuild install directory, e.g. c:\Program Files (x86)\MSBuild
 """
 
-from __future__ import print_function
 
 from gyp import string_types
 
@@ -36,7 +35,7 @@ _msvs_to_msbuild_converters = {}
 _msbuild_name_of_tool = {}
 
 
-class _Tool(object):
+class _Tool:
     """Represents a tool used by MSVS or MSBuild.
 
   Attributes:
@@ -68,7 +67,7 @@ def _GetMSBuildToolSettings(msbuild_settings, tool):
     return msbuild_settings.setdefault(tool.msbuild_name, {})
 
 
-class _Type(object):
+class _Type:
     """Type of settings (Base class)."""
 
     def ValidateMSVS(self, value):
@@ -195,7 +194,7 @@ class _Enumeration(_Type):
     def __init__(self, label_list, new=None):
         _Type.__init__(self)
         self._label_list = label_list
-        self._msbuild_values = set(value for value in label_list if value is not None)
+        self._msbuild_values = {value for value in label_list if value is not None}
         if new is not None:
             self._msbuild_values.update(new)
 
@@ -342,7 +341,7 @@ def _ConvertedToAdditionalOption(tool, msvs_name, flag):
         if value == "true":
             tool_settings = _GetMSBuildToolSettings(msbuild_settings, tool)
             if "AdditionalOptions" in tool_settings:
-                new_flags = "%s %s" % (tool_settings["AdditionalOptions"], flag)
+                new_flags = "{} {}".format(tool_settings["AdditionalOptions"], flag)
             else:
                 new_flags = flag
             tool_settings["AdditionalOptions"] = new_flags
@@ -536,14 +535,14 @@ def _ValidateSettings(validators, settings, stderr):
                         tool_validators[setting](value)
                     except ValueError as e:
                         print(
-                            "Warning: for %s/%s, %s" % (tool_name, setting, e),
+                            f"Warning: for {tool_name}/{setting}, {e}",
                             file=stderr,
                         )
                 else:
                     _ValidateExclusionSetting(
                         setting,
                         tool_validators,
-                        ("Warning: unrecognized setting %s/%s" % (tool_name, setting)),
+                        (f"Warning: unrecognized setting {tool_name}/{setting}"),
                         stderr,
                     )
 
