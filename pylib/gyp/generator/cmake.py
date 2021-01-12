@@ -32,7 +32,6 @@ CMakeLists.txt file.
 import multiprocessing
 import os
 import signal
-import string
 import subprocess
 import gyp.common
 import gyp.xcode_emulation

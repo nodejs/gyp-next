@@ -27,6 +27,7 @@ REPLACEMENTS = dict()
 def cmp(x, y):
     return (x > y) - (x < y)
 
+
 class CmpTuple:
     """Compare function between 2 tuple."""
 
