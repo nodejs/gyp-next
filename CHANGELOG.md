@@ -5,7 +5,7 @@
 
 ### ⚠ BREAKING CHANGES
 
-* emove support for Python 2
+* remove support for Python 2
 
 ### Bug Fixes
 
