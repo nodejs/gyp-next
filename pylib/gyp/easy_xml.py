@@ -107,7 +107,7 @@ def _ConstructContentList(xml_parts, specification, pretty, level=0):
         xml_parts.append("/>%s" % new_line)
 
 
-def WriteXmlIfChanged(content, path, encoding="utf-8", pretty=False, win32=False):
+def WriteXmlIfChanged(content, path, encoding="utf-8", pretty=False, win32=(sys.platform == "win32")):
     """ Writes the XML content to disk, touching the file only if it has changed.
 
   Args:
@@ -122,7 +122,7 @@ def WriteXmlIfChanged(content, path, encoding="utf-8", pretty=False, win32=False
 
     default_encoding = locale.getdefaultlocale()[1]
     if default_encoding and default_encoding.upper() != encoding.upper():
-        if sys.platform == "win32" and sys.version_info < (3, 7):
+        if win32 and sys.version_info < (3, 7):
             xml_string = xml_string.decode("cp1251").encode(encoding)
         else:
             xml_string = xml_string.encode(encoding)
