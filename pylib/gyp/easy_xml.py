@@ -107,7 +107,8 @@ def _ConstructContentList(xml_parts, specification, pretty, level=0):
         xml_parts.append("/>%s" % new_line)
 
 
-def WriteXmlIfChanged(content, path, encoding="utf-8", pretty=False, win32=(sys.platform == "win32")):
+def WriteXmlIfChanged(content, path, encoding="utf-8", pretty=False,
+                      win32=(sys.platform == "win32")):
     """ Writes the XML content to disk, touching the file only if it has changed.
 
   Args:
