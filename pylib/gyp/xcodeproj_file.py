@@ -3122,7 +3122,8 @@ class PBXProject(XCContainerPortal):
             product_group = ref_dict["ProductGroup"]
             product_group._properties["children"] = sorted(
                 product_group._properties["children"],
-                key=cmp_to_key(lambda x, y, rp=remote_products: CompareProducts(x, y, rp)),
+                key=cmp_to_key(
+                    lambda x, y, rp=remote_products: CompareProducts(x, y, rp)),
             )
 
 
