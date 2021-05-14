@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.9.1](https://www.github.com/nodejs/gyp-next/compare/v0.9.0...v0.9.1) (2021-05-14)
+
+
+### Bug Fixes
+
+* py lint ([3b6a8ee](https://www.github.com/nodejs/gyp-next/commit/3b6a8ee7a66193a8a6867eba9e1d2b70bdf04402))
+
 ## [0.9.0](https://www.github.com/nodejs/gyp-next/compare/v0.8.1...v0.9.0) (2021-05-13)
 
 
