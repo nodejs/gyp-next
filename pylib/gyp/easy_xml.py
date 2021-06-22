@@ -85,7 +85,7 @@ def _ConstructContentList(xml_parts, specification, pretty, level=0):
     rest = specification[1:]
     if rest and isinstance(rest[0], dict):
         for at, val in sorted(rest[0].items()):
-            xml_parts.append(' {}="{}"'.format(at, _XmlEscape(val, attr=True)))
+            xml_parts.append(f' {at}="{_XmlEscape(val, attr=True)}"')
         rest = rest[1:]
     if rest:
         xml_parts.append(">")

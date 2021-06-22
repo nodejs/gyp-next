@@ -638,7 +638,7 @@ class NinjaWriter:
         if self.toolset != "target":
             verb += "(%s)" % self.toolset
         if message:
-            return "{} {}".format(verb, self.ExpandSpecial(message))
+            return f"{verb} {self.ExpandSpecial(message)}"
         else:
             return f"{verb} {self.name}: {fallback}"
 
