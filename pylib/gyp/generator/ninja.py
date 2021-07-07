@@ -2389,7 +2389,6 @@ def GenerateOutputForConfig(target_list, target_dicts, data, params, config_name
         )
         if flavor == "win":
             master_ninja.variable("ld_host", ld_host)
-            master_ninja.variable("ldxx_host", ldxx_host)
         else:
             master_ninja.variable(
                 "ld_host", CommandWithWrapper("LINK", wrappers, ld_host)
