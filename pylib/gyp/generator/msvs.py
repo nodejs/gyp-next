@@ -188,7 +188,7 @@ def _IsWindowsAbsPath(path):
     return path.startswith("c:") or path.startswith("C:")
 
 
-def _FixPaths(paths, separator):
+def _FixPaths(paths, separator = "\\"):
     """Fix each of the paths of the list."""
     return [_FixPath(i, separator) for i in paths]
 
