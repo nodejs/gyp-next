@@ -3440,6 +3440,24 @@ def _FinalizeMSBuildSettings(spec, configuration):
 
 
 def _GetValueFormattedForMSBuild(tool_name, name, value):
+    """
+    >>> _GetValueFormattedForMSBuild(
+    ...     tool_name="tool_name", name="name", value=[]
+    ... )
+    ''
+    >>> _GetValueFormattedForMSBuild(
+    ...     tool_name="tool_name", name="name", value=["DelayLoadDLLs"]
+    ... )
+    'DelayLoadDLLs'
+    >>> _GetValueFormattedForMSBuild(
+    ...     tool_name="Lib", name="AdditionalOptions", value=["DelayLoadDLLs"]
+    ... )
+    'DelayLoadDLLs %(AdditionalOptions)'
+    >>> _GetValueFormattedForMSBuild(
+    ...     tool_name="ClCompile", name="AdditionalOptions", value=["DelayLoadDLLs"]
+    ... )
+    'DelayLoadDLLs %(AdditionalOptions)'
+    """
     if type(value) == list:
         # For some settings, VS2010 does not automatically extends the settings
         # TODO(jeanluc) Is this what we want?
@@ -3466,6 +3484,8 @@ def _GetValueFormattedForMSBuild(tool_name, name, value):
         formatted_value = char.join(
             [MSVSSettings.ConvertVCMacrosToMSBuild(i) for i in value]
         )
+        if tool_name == "ClCompile" and name == "AdditionalOptions":
+            formatted_value += os.environ.get("CL", "").replace("#", "=")
     else:
         formatted_value = MSVSSettings.ConvertVCMacrosToMSBuild(value)
     return formatted_value
