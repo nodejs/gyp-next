@@ -1576,12 +1576,12 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
         return (gyp.common.uniquer(deps), gyp.common.uniquer(link_deps))
 
     def GetSharedObjectFromSidedeck(self, sidedeck):
-      """Return the shared object files based on sidedeck"""
-      return re.sub(r"\.x$", ".so", sidedeck)
+        """Return the shared object files based on sidedeck"""
+        return re.sub(r"\.x$", ".so", sidedeck)
 
     def GetUnversionedSidedeckFromSidedeck(self, sidedeck):
-      """Return the shared object files based on sidedeck"""
-      return re.sub(r"\.\d+\.x$", ".x", sidedeck)
+        """Return the shared object files based on sidedeck"""
+        return re.sub(r"\.\d+\.x$", ".x", sidedeck)
 
     def WriteDependencyOnExtraOutputs(self, target, extra_outputs):
         self.WriteMakeRule(
@@ -1824,8 +1824,8 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
             # z/OS has a .so target as well as a sidedeck .x target
             if self.flavor == "zos":
                 self.WriteLn('%s: %s' % (
-                        QuoteSpaces(self.GetSharedObjectFromSidedeck(self.output_binary)),
-                        QuoteSpaces(self.output_binary)))
+                    QuoteSpaces(self.GetSharedObjectFromSidedeck(self.output_binary)),
+                    QuoteSpaces(self.output_binary)))
         elif self.type == "loadable_module":
             for link_dep in link_deps:
                 assert " " not in link_dep, (
@@ -1916,16 +1916,17 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
                 # lib.target/libnode.so has a dependency on $(obj).target/libnode.so
                 self.WriteDoCmd([self.GetSharedObjectFromSidedeck(install_path)],
                                 [self.GetSharedObjectFromSidedeck(self.output)], 'copy',
-                                comment = 'Copy this to the %s output path.' %
+                                comment='Copy this to the %s output path.' %
                                 file_desc, part_of_all=part_of_all)
                 # Create a symlink of libnode.x to libnode.version.x
                 self.WriteDoCmd([self.GetUnversionedSidedeckFromSidedeck(install_path)],
                                 [install_path], 'symlink',
-                                comment = 'Symlnk this to the %s output path.' %
+                                comment='Symlnk this to the %s output path.' %
                                 file_desc, part_of_all=part_of_all)
                 # Place libnode.version.so and libnode.x symlink in lib.target dir
                 installable_deps.append(self.GetSharedObjectFromSidedeck(install_path))
-                installable_deps.append(self.GetUnversionedSidedeckFromSidedeck(install_path))
+                installable_deps.append(
+                    self.GetUnversionedSidedeckFromSidedeck(install_path))
             if self.output != self.alias and self.alias != self.target:
                 self.WriteMakeRule(
                     [self.alias],
@@ -1937,10 +1938,12 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
                 # Make sure that .x symlink target is run
                 self.WriteMakeRule(
                     ['all'],
-                    [self.GetUnversionedSidedeckFromSidedeck(install_path),
-                    self.GetSharedObjectFromSidedeck(install_path)],
-                    comment = 'Add %s to "all" target.' % file_desc,
-                    phony = True,
+                    [
+                        self.GetUnversionedSidedeckFromSidedeck(install_path),
+                        self.GetSharedObjectFromSidedeck(install_path)
+                    ],
+                    comment='Add %s to "all" target.' % file_desc,
+                    phony=True,
                 )
             elif part_of_all:
                 self.WriteMakeRule(
