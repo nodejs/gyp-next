@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.0](https://www.github.com/nodejs/gyp-next/compare/v0.11.0...v0.12.0) (2022-04-04)
+
+
+### Features
+
+* support building shared libraries on z/OS ([#137](https://www.github.com/nodejs/gyp-next/issues/137)) ([293bcfa](https://www.github.com/nodejs/gyp-next/commit/293bcfa4c25c6adb743377adafc45a80fee492c6))
+
 ## [0.11.0](https://www.github.com/nodejs/gyp-next/compare/v0.10.1...v0.11.0) (2022-03-04)
 
 
