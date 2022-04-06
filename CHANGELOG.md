@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.12.1](https://www.github.com/nodejs/gyp-next/compare/v0.12.0...v0.12.1) (2022-04-06)
+
+
+### Bug Fixes
+
+* **msvs:** avoid fixing path for arguments with "=" ([#143](https://www.github.com/nodejs/gyp-next/issues/143)) ([7e8f16e](https://www.github.com/nodejs/gyp-next/commit/7e8f16eb165e042e64bec98fa6c2a0232a42c26b))
+
 ## [0.12.0](https://www.github.com/nodejs/gyp-next/compare/v0.11.0...v0.12.0) (2022-04-04)
 
 
