@@ -1,0 +1,28 @@
+{
+  "name": "gyp-next",
+  "version": "0.12.1",
+  "description": "A fork of the GYP build system for use in the Node.js projects",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "rm -f package-lock.json"
+  },
+  "bin": {
+    "gyp": "npmlib/bin/gyp.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nodejs/gyp-next.git"
+  },
+  "keywords": [
+    "gyp-next"
+  ],
+  "author": "PLACEHOLDER",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nodejs/gyp-next/issues"
+  },
+  "homepage": "https://github.com/nodejs/gyp-next#readme",
+  "dependencies": {
+    "detect-python-interpreter": "^1.0.0"
+  }
+}
