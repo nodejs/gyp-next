@@ -158,12 +158,12 @@ cmd_link = $(LINK.$(TOOLSET)) -o $@ $(GYP_LDFLAGS) $(LDFLAGS.$(TOOLSET)) -Wl,--s
 
 # Note: this does not handle spaces in paths
 define xargs
-	$(1) $(word 1,$(2))
+  $(1) $(word 1,$(2))
 $(if $(word 2,$(2)),$(call xargs,$(1),$(wordlist 2,$(words $(2)),$(2))))
 endef
 
 define write-to-file
-	@: >$(1)
+  @: >$(1)
 $(call xargs,@printf "%s\\n" >>$(1),$(2))
 endef
 
@@ -227,12 +227,12 @@ cmd_alink_thin = rm -f $@ && $(AR.$(TOOLSET)) crsT $@ $(filter %.o,$^)
 
 # Note: this does not handle spaces in paths
 define xargs
-	$(1) $(word 1,$(2))
+  $(1) $(word 1,$(2))
 $(if $(word 2,$(2)),$(call xargs,$(1),$(wordlist 2,$(words $(2)),$(2))))
 endef
 
 define write-to-file
-	@: >$(1)
+  @: >$(1)
 $(call xargs,@printf "%s\\n" >>$(1),$(2))
 endef
 
