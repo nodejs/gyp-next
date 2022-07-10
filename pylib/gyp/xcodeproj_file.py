@@ -144,13 +144,9 @@ import re
 import struct
 import sys
 
-try:
-    basestring, cmp, unicode
-except NameError:  # Python 3
-    basestring = unicode = str
 
-    def cmp(x, y):
-        return (x > y) - (x < y)
+def cmp(x, y):
+    return (x > y) - (x < y)
 
 
 # See XCObject._EncodeString.  This pattern is used to determine when a string
@@ -199,7 +195,7 @@ def ConvertVariablesToShellSyntax(input_string):
     return re.sub(r"\$\((.*?)\)", "${\\1}", input_string)
 
 
-class XCObject(object):
+class XCObject:
     """The abstract base of all class types used in Xcode project files.
 
   Class variables:
@@ -301,8 +297,8 @@ class XCObject(object):
         try:
             name = self.Name()
         except NotImplementedError:
-            return "<%s at 0x%x>" % (self.__class__.__name__, id(self))
-        return "<%s %r at 0x%x>" % (self.__class__.__name__, name, id(self))
+            return "<{} at 0x{:x}>".format(self.__class__.__name__, id(self))
+        return "<{} {!r} at 0x{:x}>".format(self.__class__.__name__, name, id(self))
 
     def Copy(self):
         """Make a copy of this object.
@@ -325,7 +321,7 @@ class XCObject(object):
                     that._properties[key] = new_value
                 else:
                     that._properties[key] = value
-            elif isinstance(value, (basestring, int)):
+            elif isinstance(value, (str, int)):
                 that._properties[key] = value
             elif isinstance(value, list):
                 if is_strong:
@@ -515,7 +511,7 @@ class XCObject(object):
         return None
 
     def _EncodeComment(self, comment):
-        """Encodes a comment to be placed in the project file output, mimicing
+        """Encodes a comment to be placed in the project file output, mimicking
     Xcode behavior.
     """
 
@@ -543,7 +539,7 @@ class XCObject(object):
         return self._encode_transforms[ord(char)]
 
     def _EncodeString(self, value):
-        """Encodes a string to be placed in the project file output, mimicing
+        """Encodes a string to be placed in the project file output, mimicking
     Xcode behavior.
     """
 
@@ -586,7 +582,7 @@ class XCObject(object):
 
     def _XCPrintableValue(self, tabs, value, flatten_list=False):
         """Returns a representation of value that may be printed in a project file,
-    mimicing Xcode's behavior.
+    mimicking Xcode's behavior.
 
     _XCPrintableValue can handle str and int values, XCObjects (which are
     made printable by returning their id property), and list and dict objects
@@ -616,7 +612,7 @@ class XCObject(object):
             comment = value.Comment()
         elif isinstance(value, str):
             printable += self._EncodeString(value)
-        elif isinstance(value, basestring):
+        elif isinstance(value, str):
             printable += self._EncodeString(value.encode("utf-8"))
         elif isinstance(value, int):
             printable += str(value)
@@ -791,7 +787,7 @@ class XCObject(object):
                     )
                 for item in value:
                     if not isinstance(item, property_type) and not (
-                        isinstance(item, basestring) and property_type == str
+                        isinstance(item, str) and property_type == str
                     ):
                         # Accept unicode where str is specified.  str is treated as
                         # UTF-8-encoded.
@@ -806,7 +802,7 @@ class XCObject(object):
                             + item.__class__.__name__
                         )
             elif not isinstance(value, property_type) and not (
-                isinstance(value, basestring) and property_type == str
+                isinstance(value, str) and property_type == str
             ):
                 # Accept unicode where str is specified.  str is treated as
                 # UTF-8-encoded.
@@ -827,12 +823,12 @@ class XCObject(object):
                         self._properties[property] = value.Copy()
                     else:
                         self._properties[property] = value
-                elif isinstance(value, (basestring, int)):
+                elif isinstance(value, (str, int)):
                     self._properties[property] = value
                 elif isinstance(value, list):
                     if is_strong:
-                        # If is_strong is True, each element is an XCObject, so it's safe
-                        # to call Copy.
+                        # If is_strong is True, each element is an XCObject,
+                        # so it's safe to call Copy.
                         self._properties[property] = []
                         for item in value:
                             self._properties[property].append(item.Copy())
@@ -2132,9 +2128,10 @@ class PBXCopyFilesBuildPhase(XCBuildPhase):
                     # to the target. Xcode uses the dstSubfolderSpec value set here
                     # to determine the full path.
                     #
-                    # An alternative of xcode_emulation.py setting the values to absolute
-                    # paths when exporting these variables has been ruled out because
-                    # then the values would be different depending on the build tool.
+                    # An alternative of xcode_emulation.py setting the values to
+                    # absolute paths when exporting these variables has been
+                    # ruled out because then the values would be different
+                    # depending on the build tool.
                     #
                     # Another alternative is to invent new names for the variables used
                     # to match to the subfolder indices in the second table. .gyp files
@@ -2146,7 +2143,8 @@ class PBXCopyFilesBuildPhase(XCBuildPhase):
                     # Requiring prepending BUILT_PRODUCTS_DIR has been chosen because
                     # this same way could be used to specify destinations in .gyp files
                     # that pre-date this addition to GYP. However they would only work
-                    # with the Xcode generator. The previous version of xcode_emulation.py
+                    # with the Xcode generator.
+                    # The previous version of xcode_emulation.py
                     # does not export these variables. Such files will get the benefit
                     # of the Xcode UI showing the proper destination name simply by
                     # regenerating the projects with this version of GYP.
@@ -2183,7 +2181,7 @@ class PBXCopyFilesBuildPhase(XCBuildPhase):
             relative_path = path[1:]
         else:
             raise ValueError(
-                "Can't use path %s in a %s" % (path, self.__class__.__name__)
+                f"Can't use path {path} in a {self.__class__.__name__}"
             )
 
         self._properties["dstPath"] = relative_path
@@ -2248,8 +2246,8 @@ class PBXContainerItemProxy(XCObject):
 
     def __repr__(self):
         props = self._properties
-        name = "%s.gyp:%s" % (props["containerPortal"].Name(), props["remoteInfo"])
-        return "<%s %r at 0x%x>" % (self.__class__.__name__, name, id(self))
+        name = "{}.gyp:{}".format(props["containerPortal"].Name(), props["remoteInfo"])
+        return "<{} {!r} at 0x{:x}>".format(self.__class__.__name__, name, id(self))
 
     def Name(self):
         # Admittedly not the best name, but it's what Xcode uses.
@@ -2286,7 +2284,7 @@ class PBXTargetDependency(XCObject):
 
     def __repr__(self):
         name = self._properties.get("name") or self._properties["target"].Name()
-        return "<%s %r at 0x%x>" % (self.__class__.__name__, name, id(self))
+        return "<{} {!r} at 0x{:x}>".format(self.__class__.__name__, name, id(self))
 
     def Name(self):
         # Admittedly not the best name, but it's what Xcode uses.

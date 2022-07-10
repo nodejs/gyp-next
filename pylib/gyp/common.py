@@ -10,17 +10,12 @@ import tempfile
 import sys
 import subprocess
 
-try:
-    from collections.abc import MutableSet
-except ImportError:
-    from collections import MutableSet
-
-PY3 = bytes != str
+from collections.abc import MutableSet
 
 
 # A minimal memoizing decorator. It'll blow up if the args aren't immutable,
 # among other "problems".
-class memoize(object):
+class memoize:
     def __init__(self, func):
         self.func = func
         self.cache = {}
@@ -348,14 +343,18 @@ def WriteOnDiff(filename):
     the target if it differs (on close).
   """
 
-    class Writer(object):
+    class Writer:
         """Wrapper around file which only covers the target if it differs."""
 
         def __init__(self):
-            # On Cygwin remove the "dir" argument because `C:` prefixed paths are treated as relative,
-            # consequently ending up with current dir "/cygdrive/c/..." being prefixed to those, which was
-            # obviously a non-existent path, for example: "/cygdrive/c/<some folder>/C:\<my win style abs path>".
-            # See https://docs.python.org/2/library/tempfile.html#tempfile.mkstemp for more details
+            # On Cygwin remove the "dir" argument
+            # `C:` prefixed paths are treated as relative,
+            # consequently ending up with current dir "/cygdrive/c/..."
+            # being prefixed to those, which was
+            # obviously a non-existent path,
+            # for example: "/cygdrive/c/<some folder>/C:\<my win style abs path>".
+            # For more details see:
+            # https://docs.python.org/2/library/tempfile.html#tempfile.mkstemp
             base_temp_dir = "" if IsCygwin() else os.path.dirname(filename)
             # Pick temporary file.
             tmp_fd, self.tmp_path = tempfile.mkstemp(
@@ -364,7 +363,7 @@ def WriteOnDiff(filename):
                 dir=base_temp_dir,
             )
             try:
-                self.tmp_file = os.fdopen(tmp_fd, "w")
+                self.tmp_file = os.fdopen(tmp_fd, "wb")
             except Exception:
                 # Don't leave turds behind.
                 os.unlink(self.tmp_path)
@@ -391,13 +390,15 @@ def WriteOnDiff(filename):
                     # one.
                     os.unlink(self.tmp_path)
                 else:
-                    # The new file is different from the old one, or there is no old one.
+                    # The new file is different from the old one,
+                    # or there is no old one.
                     # Rename the new file to the permanent name.
                     #
                     # tempfile.mkstemp uses an overly restrictive mode, resulting in a
                     # file that can only be read by the owner, regardless of the umask.
-                    # There's no reason to not respect the umask here, which means that
-                    # an extra hoop is required to fetch it and reset the new file's mode.
+                    # There's no reason to not respect the umask here,
+                    # which means that an extra hoop is required
+                    # to fetch it and reset the new file's mode.
                     #
                     # No way to get the umask without setting a new one?  Set a safe one
                     # and then set it back to the old value.
@@ -406,8 +407,8 @@ def WriteOnDiff(filename):
                     os.chmod(self.tmp_path, 0o666 & ~umask)
                     if sys.platform == "win32" and os.path.exists(filename):
                         # NOTE: on windows (but not cygwin) rename will not replace an
-                        # existing file, so it must be preceded with a remove. Sadly there
-                        # is no way to make the switch atomic.
+                        # existing file, so it must be preceded with a remove.
+                        # Sadly there is no way to make the switch atomic.
                         os.remove(filename)
                     os.rename(self.tmp_path, filename)
             except Exception:
@@ -560,8 +561,8 @@ class OrderedSet(MutableSet):
 
     def __repr__(self):
         if not self:
-            return "%s()" % (self.__class__.__name__,)
-        return "%s(%r)" % (self.__class__.__name__, list(self))
+            return f"{self.__class__.__name__}()"
+        return "{}({!r})".format(self.__class__.__name__, list(self))
 
     def __eq__(self, other):
         if isinstance(other, OrderedSet):
@@ -647,9 +648,7 @@ def IsCygwin():
         out = subprocess.Popen(
             "uname", stdout=subprocess.PIPE, stderr=subprocess.STDOUT
         )
-        stdout, stderr = out.communicate()
-        if PY3:
-            stdout = stdout.decode("utf-8")
+        stdout = out.communicate()[0].decode("utf-8")
         return "CYGWIN" in str(stdout)
     except Exception:
         return False

@@ -7,7 +7,6 @@ This module contains classes that help to emulate xcodebuild behavior on top of
 other build systems, such as make and ninja.
 """
 
-from __future__ import print_function
 
 import copy
 import gyp.common
@@ -18,8 +17,6 @@ import shlex
 import subprocess
 import sys
 from gyp.common import GypError
-
-PY3 = bytes != str
 
 # Populated lazily by XcodeVersion, for efficiency, and to fix an issue when
 # "xcodebuild" is called too quickly (it has been found to return incorrect
@@ -40,7 +37,7 @@ def XcodeArchsVariableMapping(archs, archs_including_64_bit=None):
     return mapping
 
 
-class XcodeArchsDefault(object):
+class XcodeArchsDefault:
     """A class to resolve ARCHS variable from xcode_settings, resolving Xcode
   macros and implementing filtering by VALID_ARCHS. The expansion of macros
   depends on the SDKROOT used ("macosx", "iphoneos", "iphonesimulator") and
@@ -113,7 +110,7 @@ def GetXcodeArchsDefault():
   of $(ARCHS_STANDARD_INCLUDING_64_BIT) from Xcode 5.0. From Xcode 5.1, they
   are also part of $(ARCHS_STANDARD).
 
-  All thoses rules are coded in the construction of the |XcodeArchsDefault|
+  All these rules are coded in the construction of the |XcodeArchsDefault|
   object to use depending on the version of Xcode detected. The object is
   for performance reason."""
     global XCODE_ARCHS_DEFAULT_CACHE
@@ -148,7 +145,7 @@ def GetXcodeArchsDefault():
     return XCODE_ARCHS_DEFAULT_CACHE
 
 
-class XcodeSettings(object):
+class XcodeSettings:
     """A class that understands the gyp 'xcode_settings' object."""
 
     # Populated lazily by _SdkPath(). Shared by all XcodeSettings, so cached
@@ -281,7 +278,7 @@ class XcodeSettings(object):
             else:
                 return "." + self.spec.get("product_extension", "app")
         else:
-            assert False, "Don't know extension for '%s', target '%s'" % (
+            assert False, "Don't know extension for '{}', target '{}'".format(
                 self.spec["type"],
                 self.spec["target_name"],
             )
@@ -654,28 +651,32 @@ class XcodeSettings(object):
         self._WarnUnimplemented("MACH_O_TYPE")
         self._WarnUnimplemented("PRODUCT_TYPE")
 
-        if arch is not None:
-            archs = [arch]
-        else:
-            assert self.configname
-            archs = self.GetActiveArchs(self.configname)
-        if len(archs) != 1:
-            # TODO: Supporting fat binaries will be annoying.
-            self._WarnUnimplemented("ARCHS")
-            archs = ["i386"]
-        cflags.append("-arch " + archs[0])
+        # If GYP_CROSSCOMPILE (--cross-compiling), disable architecture-specific
+        # additions and assume these will be provided as required via CC_host,
+        # CXX_host, CC_target and CXX_target.
+        if not gyp.common.CrossCompileRequested():
+            if arch is not None:
+                archs = [arch]
+            else:
+                assert self.configname
+                archs = self.GetActiveArchs(self.configname)
+            if len(archs) != 1:
+                # TODO: Supporting fat binaries will be annoying.
+                self._WarnUnimplemented("ARCHS")
+                archs = ["i386"]
+            cflags.append("-arch " + archs[0])
 
-        if archs[0] in ("i386", "x86_64"):
-            if self._Test("GCC_ENABLE_SSE3_EXTENSIONS", "YES", default="NO"):
-                cflags.append("-msse3")
-            if self._Test(
-                "GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS", "YES", default="NO"
-            ):
-                cflags.append("-mssse3")  # Note 3rd 's'.
-            if self._Test("GCC_ENABLE_SSE41_EXTENSIONS", "YES", default="NO"):
-                cflags.append("-msse4.1")
-            if self._Test("GCC_ENABLE_SSE42_EXTENSIONS", "YES", default="NO"):
-                cflags.append("-msse4.2")
+            if archs[0] in ("i386", "x86_64"):
+                if self._Test("GCC_ENABLE_SSE3_EXTENSIONS", "YES", default="NO"):
+                    cflags.append("-msse3")
+                if self._Test(
+                    "GCC_ENABLE_SUPPLEMENTAL_SSE3_INSTRUCTIONS", "YES", default="NO"
+                ):
+                    cflags.append("-mssse3")  # Note 3rd 's'.
+                if self._Test("GCC_ENABLE_SSE41_EXTENSIONS", "YES", default="NO"):
+                    cflags.append("-msse4.1")
+                if self._Test("GCC_ENABLE_SSE42_EXTENSIONS", "YES", default="NO"):
+                    cflags.append("-msse4.2")
 
         cflags += self._Settings().get("WARNING_CFLAGS", [])
 
@@ -938,16 +939,17 @@ class XcodeSettings(object):
                 + gyp_to_build_path(self._Settings()["ORDER_FILE"])
             )
 
-        if arch is not None:
-            archs = [arch]
-        else:
-            assert self.configname
-            archs = self.GetActiveArchs(self.configname)
-        if len(archs) != 1:
-            # TODO: Supporting fat binaries will be annoying.
-            self._WarnUnimplemented("ARCHS")
-            archs = ["i386"]
-        ldflags.append("-arch " + archs[0])
+        if not gyp.common.CrossCompileRequested():
+            if arch is not None:
+                archs = [arch]
+            else:
+                assert self.configname
+                archs = self.GetActiveArchs(self.configname)
+            if len(archs) != 1:
+                # TODO: Supporting fat binaries will be annoying.
+                self._WarnUnimplemented("ARCHS")
+                archs = ["i386"]
+            ldflags.append("-arch " + archs[0])
 
         # Xcode adds the product directory by default.
         # Rewrite -L. to -L./ to work around http://www.openradar.me/25313838
@@ -1083,7 +1085,7 @@ class XcodeSettings(object):
 
             if not quiet:
                 result.append("echo STRIP\\(%s\\)" % self.spec["target_name"])
-            result.append("strip %s %s" % (strip_flags, output_binary))
+            result.append(f"strip {strip_flags} {output_binary}")
 
         self.configname = None
         return result
@@ -1105,7 +1107,7 @@ class XcodeSettings(object):
         ):
             if not quiet:
                 result.append("echo DSYMUTIL\\(%s\\)" % self.spec["target_name"])
-            result.append("dsymutil %s -o %s" % (output_binary, output + ".dSYM"))
+            result.append("dsymutil {} -o {}".format(output_binary, output + ".dSYM"))
 
         self.configname = None
         return result
@@ -1138,7 +1140,7 @@ class XcodeSettings(object):
             source = os.path.join("${BUILT_PRODUCTS_DIR}", product_name)
             test_host = os.path.dirname(settings.get("TEST_HOST"))
             xctest_destination = os.path.join(test_host, "PlugIns", product_name)
-            postbuilds.extend(["ditto %s %s" % (source, xctest_destination)])
+            postbuilds.extend([f"ditto {source} {xctest_destination}"])
 
         key = self._GetIOSCodeSignIdentityKey(settings)
         if not key:
@@ -1165,7 +1167,7 @@ class XcodeSettings(object):
             for framework in frameworks:
                 source = os.path.join(platform_root, framework)
                 destination = os.path.join(frameworks_dir, os.path.basename(framework))
-                postbuilds.extend(["ditto %s %s" % (source, destination)])
+                postbuilds.extend([f"ditto {source} {destination}"])
 
                 # Then re-sign everything with 'preserve=True'
                 postbuilds.extend(
@@ -1366,7 +1368,7 @@ class XcodeSettings(object):
         return ""
 
 
-class MacPrefixHeader(object):
+class MacPrefixHeader:
     """A class that helps with emulating Xcode's GCC_PREFIX_HEADER feature.
 
   This feature consists of several pieces:
@@ -1528,7 +1530,9 @@ def CLTVersion():
     #   volume: /
     #   location: /
     #   install-time: 1382544035
-    #   groups: com.apple.FindSystemFiles.pkg-group com.apple.DevToolsBoth.pkg-group com.apple.DevToolsNonRelocatableShared.pkg-group
+    #   groups: com.apple.FindSystemFiles.pkg-group
+    #           com.apple.DevToolsBoth.pkg-group
+    #           com.apple.DevToolsNonRelocatableShared.pkg-group
     STANDALONE_PKG_ID = "com.apple.pkg.DeveloperToolsCLILeo"
     FROM_XCODE_PKG_ID = "com.apple.pkg.DeveloperToolsCLI"
     MAVERICKS_PKG_ID = "com.apple.pkg.CLTools_Executables"
@@ -1541,15 +1545,20 @@ def CLTVersion():
         except GypError:
             continue
 
+    regex = re.compile(r'Command Line Tools for Xcode\s+(?P<version>\S+)')
+    try:
+        output = GetStdout(["/usr/sbin/softwareupdate", "--history"])
+        return re.search(regex, output).groupdict()["version"]
+    except GypError:
+        return None
+
 
 def GetStdoutQuiet(cmdlist):
     """Returns the content of standard output returned by invoking |cmdlist|.
   Ignores the stderr.
   Raises |GypError| if the command return with a non-zero return code."""
     job = subprocess.Popen(cmdlist, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    out = job.communicate()[0]
-    if PY3:
-        out = out.decode("utf-8")
+    out = job.communicate()[0].decode("utf-8")
     if job.returncode != 0:
         raise GypError("Error %d running %s" % (job.returncode, cmdlist[0]))
     return out.rstrip("\n")
@@ -1559,9 +1568,7 @@ def GetStdout(cmdlist):
     """Returns the content of standard output returned by invoking |cmdlist|.
   Raises |GypError| if the command return with a non-zero return code."""
     job = subprocess.Popen(cmdlist, stdout=subprocess.PIPE)
-    out = job.communicate()[0]
-    if PY3:
-        out = out.decode("utf-8")
+    out = job.communicate()[0].decode("utf-8")
     if job.returncode != 0:
         sys.stderr.write(out + "\n")
         raise GypError("Error %d running %s" % (job.returncode, cmdlist[0]))
@@ -1725,7 +1732,8 @@ def _GetXcodeEnv(
         "BUILT_PRODUCTS_DIR": built_products_dir,
         "CONFIGURATION": configuration,
         "PRODUCT_NAME": xcode_settings.GetProductName(),
-        # See /Developer/Platforms/MacOSX.platform/Developer/Library/Xcode/Specifications/MacOSX\ Product\ Types.xcspec for FULL_PRODUCT_NAME
+        # For FULL_PRODUCT_NAME see:
+        # /Developer/Platforms/MacOSX.platform/Developer/Library/Xcode/Specifications/MacOSX\ Product\ Types.xcspec  # noqa: E501
         "SRCROOT": srcroot,
         "SOURCE_ROOT": "${SRCROOT}",
         # This is not true for static libraries, but currently the env is only
@@ -1856,7 +1864,7 @@ def _TopologicallySortedEnvVarKeys(env):
         # definition contains all variables it references in a single string.
         # We can then reverse the result of the topological sort at the end.
         # Since: reverse(topsort(DAG)) = topsort(reverse_edges(DAG))
-        matches = set([v for v in regex.findall(env[node]) if v in env])
+        matches = {v for v in regex.findall(env[node]) if v in env}
         for dependee in matches:
             assert "${" not in dependee, "Nested variables not supported: " + dependee
         return matches

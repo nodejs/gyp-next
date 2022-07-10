@@ -1,10 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) 2012 Google Inc. All rights reserved.
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from __future__ import print_function
 
 import copy
 import gyp.input
@@ -15,13 +14,6 @@ import shlex
 import sys
 import traceback
 from gyp.common import GypError
-
-try:
-    # Python 2
-    string_types = basestring
-except NameError:
-    # Python 3
-    string_types = str
 
 # Default debug modes for GYP
 debug = {}
@@ -68,7 +60,6 @@ def Load(
     params=None,
     check=False,
     circular_check=True,
-    duplicate_basename_check=True,
 ):
     """
   Loads one or more specified build files.
@@ -156,7 +147,6 @@ def Load(
         generator_input_info,
         check,
         circular_check,
-        duplicate_basename_check,
         params["parallel"],
         params["root_targets"],
     )
@@ -195,7 +185,7 @@ def ShlexEnv(env_name):
 
 def FormatOpt(opt, value):
     if opt.startswith("--"):
-        return "%s=%s" % (opt, value)
+        return f"{opt}={value}"
     return opt + value
 
 
@@ -431,20 +421,6 @@ def gyp_main(args):
         regenerate=False,
         help="don't check for circular relationships between files",
     )
-    # --no-duplicate-basename-check disables the check for duplicate basenames
-    # in a static_library/shared_library project. Visual C++ 2008 generator
-    # doesn't support this configuration. Libtool on Mac also generates warnings
-    # when duplicate basenames are passed into Make generator on Mac.
-    # TODO(yukawa): Remove this option when these legacy generators are
-    # deprecated.
-    parser.add_argument(
-        "--no-duplicate-basename-check",
-        dest="duplicate_basename_check",
-        action="store_false",
-        default=True,
-        regenerate=False,
-        help="don't check for duplicate basenames",
-    )
     parser.add_argument(
         "--no-parallel",
         action="store_true",
@@ -540,7 +516,7 @@ def gyp_main(args):
         for option, value in sorted(options.__dict__.items()):
             if option[0] == "_":
                 continue
-            if isinstance(value, string_types):
+            if isinstance(value, str):
                 DebugOutput(DEBUG_GENERAL, "  %s: '%s'", option, value)
             else:
                 DebugOutput(DEBUG_GENERAL, "  %s: %s", option, value)
@@ -651,7 +627,6 @@ def gyp_main(args):
             params,
             options.check,
             options.circular_check,
-            options.duplicate_basename_check,
         )
 
         # TODO(mark): Pass |data| for now because the generator needs a list of
