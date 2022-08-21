@@ -3633,6 +3633,15 @@ def _AddSources2(
                     elif file_name.startswith("$("):
                         file_name = re.sub(r"^\$\([^)]+\)\\", "", file_name)
                     detail.append(["ObjectFileName", "$(IntDir)\\" + file_name])
+                if element == "MARMASM":
+                    # When compiling on VS2022+, compilation fails with a C1083 as
+                    # MARMASM tries to preprocess by default.
+                    # https://developercommunity.visualstudio.com/t/ARM64---fatal-error-C1083:-Cannot-open/10119540
+                    detail.append([
+                        "PreprocessWithCl",
+                        {"Condition": "'$(VisualStudioVersion)' >= '17.0'"},
+                        "false"
+                    ])
                 grouped_sources[group].append([element, {"Include": source}] + detail)
 
 
