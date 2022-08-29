@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.13.1](https://www.github.com/nodejs/gyp-next/compare/v0.13.0...v0.13.1) (2022-08-29)
+
+
+### Bug Fixes
+
+* lock windows env ([#163](https://www.github.com/nodejs/gyp-next/issues/163)) ([44bd0dd](https://www.github.com/nodejs/gyp-next/commit/44bd0ddc93ea0b5770a44dd326a2e4ae62c21442))
+
 ## [0.13.0](https://www.github.com/nodejs/gyp-next/compare/v0.12.1...v0.13.0) (2022-05-11)
 
 
