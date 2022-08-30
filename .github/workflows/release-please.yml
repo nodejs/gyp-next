@@ -14,3 +14,4 @@ jobs:
           release-type: python
           package-name: gyp-next
           bump-minor-pre-major: true
+          version-file: pylib/gyp/__init__.py
