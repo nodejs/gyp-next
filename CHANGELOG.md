@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.14.0](https://www.github.com/nodejs/gyp-next/compare/v0.13.0...v0.14.0) (2022-08-30)
+
+
+### Features
+
+* Add command line argument for `gyp --version` ([#164](https://www.github.com/nodejs/gyp-next/issues/164)) ([5c9f4d0](https://www.github.com/nodejs/gyp-next/commit/5c9f4d05678dd855e18ed2327219e5d18e5374db))
+
+
+### Bug Fixes
+
+* lock windows env ([#163](https://www.github.com/nodejs/gyp-next/issues/163)) ([44bd0dd](https://www.github.com/nodejs/gyp-next/commit/44bd0ddc93ea0b5770a44dd326a2e4ae62c21442))
+
 ## [0.13.0](https://www.github.com/nodejs/gyp-next/compare/v0.12.1...v0.13.0) (2022-05-11)
 
 
