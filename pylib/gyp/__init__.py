@@ -476,7 +476,8 @@ def gyp_main(args):
 
     options, build_files_arg = parser.parse_args(args)
     if options.version:
-        print(f"v{VERSION}")
+        import pkg_resources
+        print(f"v{pkg_resources.get_distribution('gyp-next').version}")
         return 0
     build_files = build_files_arg
 
