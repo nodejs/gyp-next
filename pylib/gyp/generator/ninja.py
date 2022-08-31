@@ -1583,7 +1583,7 @@ class NinjaWriter:
         elif spec["type"] == "static_library":
             self.target.binary = self.ComputeOutput(spec)
             if (
-                self.flavor not in ("mac", "openbsd", "netbsd", "win", "ios")
+                self.flavor not in ("ios", "mac", "netbsd", "openbsd", "win")
                 and not self.is_standalone_static_library
             ):
                 self.ninja.build(
