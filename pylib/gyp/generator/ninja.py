@@ -2496,7 +2496,7 @@ def GenerateOutputForConfig(target_list, target_dicts, data, params, config_name
             ),
         )
 
-    if flavor != "mac" and flavor != "win" and flavor != "ios":
+    if flavor not in ("ios", "mac", "win"):
         master_ninja.rule(
             "alink",
             description="AR $out",
