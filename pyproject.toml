@@ -31,10 +31,11 @@ classifiers = [
 dev = ["flake8", "pytest"]
 
 [project.scripts]
-gyp = "pylib.gyp:script_main"
+gyp = "gyp:script_main"
 
 [project.urls]
 "Homepage" = "https://github.com/nodejs/gyp-next"
 
 [tool.setuptools]
-packages = ["pylib.gyp", "pylib.gyp.generator"]
+package-dir = {"" = "pylib"}
+packages = ["gyp", "gyp.generator"]
