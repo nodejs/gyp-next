@@ -1,6 +1,11 @@
 name: Node.js Windows integration
 
-on: [push, pull_request]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build-windows:
