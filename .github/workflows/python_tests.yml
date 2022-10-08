@@ -27,6 +27,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip setuptools
           pip install --editable ".[dev]"
+      - run: ./gyp -V && ./gyp --version && gyp -V && gyp --version
       - name: Lint with flake8
         run: flake8 . --ignore=E203,W503  --max-complexity=101 --max-line-length=88 --show-source --statistics
       - name: Test with pytest

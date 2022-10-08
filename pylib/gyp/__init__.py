@@ -16,8 +16,6 @@ import traceback
 from gyp.common import GypError
 
 
-VERSION = "0.13.0"
-
 # Default debug modes for GYP
 debug = {}
 
