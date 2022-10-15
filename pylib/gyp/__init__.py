@@ -108,7 +108,9 @@ def Load(
     if default_variables["GENERATOR"] == "ninja":
         default_variables.setdefault(
             "PRODUCT_DIR_ABS",
-            os.path.join(output_dir, "out", default_variables["build_type"]),
+            os.path.join(
+                output_dir, "out", default_variables.get("build_type", "default")
+            ),
         )
     else:
         default_variables.setdefault(
