@@ -42,6 +42,10 @@ select = [
     "C9",
     "E",
     "F",
+    "PLC",
+    "PLE",
+    "PLW",
+    "Q",
     "W",
  ]
  target-version = "py37"
