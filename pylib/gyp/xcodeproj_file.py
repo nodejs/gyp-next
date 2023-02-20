@@ -2635,7 +2635,9 @@ class PBXNativeTarget(XCTarget):
             insert_at = len(self._properties["buildPhases"])
             for index, phase in enumerate(self._properties["buildPhases"]):
                 if (
-                    isinstance(phase, (PBXResourcesBuildPhase, PBXSourcesBuildPhase, PBXFrameworksBuildPhase))
+                    isinstance(phase, (PBXResourcesBuildPhase,
+                        PBXSourcesBuildPhase, PBXFrameworksBuildPhase)
+                    )
                 ):
                     insert_at = index
                     break
