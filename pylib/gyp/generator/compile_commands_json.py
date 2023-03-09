@@ -109,9 +109,9 @@ def GenerateOutput(target_list, target_dicts, data, params):
         AddCommandsForTarget(cwd, target, params, per_config_commands)
 
     try:
-          output_dir = params["options"].generator_output
+        output_dir = params["options"].generator_output
     except (AttributeError, KeyError):
-          output_dir = params["generator_flags"].get("output_dir", "out")
+        output_dir = params["generator_flags"].get("output_dir", "out")
     for configuration_name, commands in per_config_commands.items():
         filename = os.path.join(output_dir, configuration_name, "compile_commands.json")
         gyp.common.EnsureDirExists(filename)
