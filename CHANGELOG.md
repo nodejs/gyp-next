@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/nodejs/gyp-next/compare/v0.14.1...v0.15.0) (2023-03-30)
+
+
+### Features
+
+* **msvs:** add SpectreMitigation attribute ([#190](https://github.com/nodejs/gyp-next/issues/190)) ([853e464](https://github.com/nodejs/gyp-next/commit/853e4643b6737224a5aa0720a4108461a0230991))
+
 ## [0.14.1](https://github.com/nodejs/gyp-next/compare/v0.14.0...v0.14.1) (2023-02-19)
 
 
