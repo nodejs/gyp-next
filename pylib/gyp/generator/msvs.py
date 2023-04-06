@@ -753,7 +753,7 @@ def _EscapeEnvironmentVariableExpansion(s):
 
   Returns:
       The escaped string.
-  """  # noqa: E731,E123,E501
+  """
     s = s.replace("%", "%%")
     return s
 
