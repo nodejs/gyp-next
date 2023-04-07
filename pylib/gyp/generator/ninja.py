@@ -2530,7 +2530,7 @@ def GenerateOutputForConfig(target_list, target_dicts, data, params, config_name
             description="SOLINK $lib",
             restat=True,
             command=mtime_preserving_solink_base
-            % {"suffix": "@$link_file_list"},  # noqa: E501
+            % {"suffix": "@$link_file_list"},
             rspfile="$link_file_list",
             rspfile_content=(
                 "-Wl,--whole-archive $in $solibs -Wl," "--no-whole-archive $libs"
