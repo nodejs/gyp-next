@@ -87,8 +87,6 @@ select = [
   # "TRY",  # tryceratops
 ]
 ignore = [
-  "C408",
-  "C416",
   "PLC1901",
   "PLR0402",
   "PLR2004",

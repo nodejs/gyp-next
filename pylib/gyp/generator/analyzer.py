@@ -440,7 +440,7 @@ def _GetUnqualifiedToTargetMapping(all_targets, to_find):
             result[extracted[1]] = all_targets[target_name]
             if not to_find:
                 return result, []
-    return result, [x for x in to_find]
+    return result, list(to_find)
 
 
 def _DoesTargetDependOnMatchingTargets(target):
@@ -683,11 +683,9 @@ class TargetCalculator:
         )
         test_target_names_contains_all = "all" in self._test_target_names
         if test_target_names_contains_all:
-            test_targets = [
-                x for x in (set(test_targets_no_all) | set(self._root_targets))
-            ]
+            test_targets = list(set(test_targets_no_all) | set(self._root_targets))
         else:
-            test_targets = [x for x in test_targets_no_all]
+            test_targets = list(test_targets_no_all)
         print("supplied test_targets")
         for target_name in self._test_target_names:
             print("\t", target_name)
@@ -702,9 +700,9 @@ class TargetCalculator:
         if matching_test_targets_contains_all:
             # Remove any of the targets for all that were not explicitly supplied,
             # 'all' is subsequentely added to the matching names below.
-            matching_test_targets = [
-                x for x in (set(matching_test_targets) & set(test_targets_no_all))
-            ]
+            matching_test_targets = list(
+                set(matching_test_targets) & set(test_targets_no_all)
+            )
         print("matched test_targets")
         for target in matching_test_targets:
             print("\t", target.name)
@@ -729,9 +727,7 @@ class TargetCalculator:
             self._supplied_target_names_no_all(), self._unqualified_mapping
         )
         if "all" in self._supplied_target_names():
-            supplied_targets = [
-                x for x in (set(supplied_targets) | set(self._root_targets))
-            ]
+            supplied_targets = list(set(supplied_targets) | set(self._root_targets))
         print("Supplied test_targets & compile_targets")
         for target in supplied_targets:
             print("\t", target.name)
