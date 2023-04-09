@@ -281,7 +281,7 @@ def _ToolSetOrAppend(tools, tool_name, setting, value, only_if_unset=False):
         else:
             value = [i.replace("/", "\\") for i in value]
     if not tools.get(tool_name):
-        tools[tool_name] = dict()
+        tools[tool_name] = {}
     tool = tools[tool_name]
     if setting == "CompileAsWinRT":
         return
@@ -1186,7 +1186,7 @@ def _AddConfigurationToMSVSProject(p, spec, config_type, config_name, config):
     precompiled_header = config.get("msvs_precompiled_header")
 
     # Prepare the list of tools as a dictionary.
-    tools = dict()
+    tools = {}
     # Add in user specified msvs_settings.
     msvs_settings = config.get("msvs_settings", {})
     MSVSSettings.ValidateMSVSSettings(msvs_settings)
@@ -1810,7 +1810,7 @@ def _GetPathDict(root, path):
     parent, folder = os.path.split(path)
     parent_dict = _GetPathDict(root, parent)
     if folder not in parent_dict:
-        parent_dict[folder] = dict()
+        parent_dict[folder] = {}
     return parent_dict[folder]
 
 

@@ -93,7 +93,7 @@ def AddCommandsForTarget(cwd, target, params, per_config_commands):
                     gyp.common.EncodePOSIXShellArgument(file),
                 )
             )
-            commands.append(dict(command=command, directory=output_dir, file=file))
+            commands.append({"command": command, "directory": output_dir, "file": file})
 
 
 def GenerateOutput(target_list, target_dicts, data, params):
