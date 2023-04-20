@@ -351,7 +351,7 @@ class MSVSSolution:
 
         # Folder mappings
         # Omit this section if there are no folders
-        if any([e.entries for e in all_entries if isinstance(e, MSVSFolder)]):
+        if any(e.entries for e in all_entries if isinstance(e, MSVSFolder)):
             f.write("\tGlobalSection(NestedProjects) = preSolution\r\n")
             for e in all_entries:
                 if not isinstance(e, MSVSFolder):

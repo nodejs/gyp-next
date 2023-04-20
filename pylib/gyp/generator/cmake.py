@@ -103,7 +103,7 @@ def NormjoinPathForceCMakeSource(base_path, rel_path):
   """
     if os.path.isabs(rel_path):
         return rel_path
-    if any([rel_path.startswith(var) for var in FULL_PATH_VARS]):
+    if any(rel_path.startswith(var) for var in FULL_PATH_VARS):
         return rel_path
     # TODO: do we need to check base_path for absolute variables as well?
     return os.path.join(
@@ -328,7 +328,7 @@ def WriteActions(target_name, actions, extra_sources, extra_deps, path_to_gyp, o
 
 def NormjoinRulePathForceCMakeSource(base_path, rel_path, rule_source):
     if rel_path.startswith(("${RULE_INPUT_PATH}", "${RULE_INPUT_DIRNAME}")):
-        if any([rule_source.startswith(var) for var in FULL_PATH_VARS]):
+        if any(rule_source.startswith(var) for var in FULL_PATH_VARS):
             return rel_path
     return NormjoinPathForceCMakeSource(base_path, rel_path)
 
