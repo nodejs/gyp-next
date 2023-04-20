@@ -183,7 +183,7 @@ def ExtractSharedMSVSSystemIncludes(configs, generator_flags):
     expanded_system_includes = OrderedSet(
         [ExpandMacros(include, env) for include in all_system_includes]
     )
-    if any(["$" in include for include in expanded_system_includes]):
+    if any("$" in include for include in expanded_system_includes):
         # Some path relies on target-specific variables, bail.
         return None
 
@@ -959,7 +959,7 @@ class MsvsSettings:
     def _HasExplicitIdlActions(self, spec):
         """Determine if an action should not run midl for .idl files."""
         return any(
-            [action.get("explicit_idl_action", 0) for action in spec.get("actions", [])]
+            action.get("explicit_idl_action", 0) for action in spec.get("actions", [])
         )
 
     def HasExplicitIdlRulesOrActions(self, spec):
