@@ -684,7 +684,7 @@ def _GenerateExternalRules(rules, output_dir, spec, sources, options, actions_to
             all_outputs.update(OrderedSet(outputs))
             # Only use one target from each rule as the dependency for
             # 'all' so we don't try to build each rule multiple times.
-            first_outputs.append(list(outputs)[0])
+            first_outputs.append(next(iter(outputs)))
             # Get the unique output directories for this rule.
             output_dirs = [os.path.split(i)[0] for i in outputs]
             for od in output_dirs:

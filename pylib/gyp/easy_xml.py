@@ -121,10 +121,10 @@ def WriteXmlIfChanged(content, path, encoding="utf-8", pretty=False,
     if win32 and os.linesep != "\r\n":
         xml_string = xml_string.replace("\n", "\r\n")
 
-    if sys.version_info >= (3, 11):
-        default_encoding = locale.getencoding()
-    else:
+    try:  # getdefaultlocale() was removed in Python 3.11
         default_encoding = locale.getdefaultlocale()[1]
+    except AttributeError:
+        default_encoding = locale.getencoding()
 
     if default_encoding and default_encoding.upper() != encoding.upper():
         xml_string = xml_string.encode(encoding)
