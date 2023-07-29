@@ -12,6 +12,7 @@ description = "A fork of the GYP build system for use in the Node.js projects"
 readme = "README.md"
 license = { file="LICENSE" }
 requires-python = ">=3.8"
+dependencies = ["packaging>=23.1"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",
