@@ -30,7 +30,11 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python }}
-      - name: Install dependencies
+      - name: Install Python dependencies
+        run: |
+          cd gyp-next
+          python -m pip install --upgrade pip setuptools
+      - name: Install Node.js dependencies
         run: |
           cd node-gyp
           npm install --no-progress
