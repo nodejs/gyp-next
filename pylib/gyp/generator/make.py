@@ -1063,7 +1063,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
             # libraries, but until everything is made cross-compile safe, also use
             # target libraries.
             # TODO(piman): when everything is cross-compile safe, remove lib.target
-            if self.flavor == "zos" or self.flavor == "aix":
+            if self.flavor in {"zos", "aix"}:
                 self.WriteLn(
                     "cmd_%s = LIBPATH=$(builddir)/lib.host:"
                     "$(builddir)/lib.target:$$LIBPATH; "

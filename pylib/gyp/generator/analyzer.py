@@ -379,7 +379,7 @@ def _GenerateTargets(data, target_list, target_dicts, toplevel_dir, files, build
         target.is_executable = target_type == "executable"
         target.is_static_library = target_type == "static_library"
         target.is_or_has_linked_ancestor = (
-            target_type == "executable" or target_type == "shared_library"
+            target_type in {"executable", "shared_library"}
         )
 
         build_file = gyp.common.ParseQualifiedTarget(target_name)[0]
@@ -451,8 +451,8 @@ def _DoesTargetDependOnMatchingTargets(target):
     if target.match_status == MATCH_STATUS_DOESNT_MATCH:
         return False
     if (
-        target.match_status == MATCH_STATUS_MATCHES
-        or target.match_status == MATCH_STATUS_MATCHES_BY_DEPENDENCY
+        target.match_status in {MATCH_STATUS_MATCHES,
+                                MATCH_STATUS_MATCHES_BY_DEPENDENCY}
     ):
         return True
     for dep in target.deps:

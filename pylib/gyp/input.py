@@ -1576,14 +1576,12 @@ def ExpandWildcardDependencies(targets, data):
                         continue
                     dependency_target_name = dependency_target_dict["target_name"]
                     if (
-                        dependency_target != "*"
-                        and dependency_target != dependency_target_name
+                        dependency_target not in {"*", dependency_target_name}
                     ):
                         continue
                     dependency_target_toolset = dependency_target_dict["toolset"]
                     if (
-                        dependency_toolset != "*"
-                        and dependency_toolset != dependency_target_toolset
+                        dependency_toolset not in {"*", dependency_target_toolset}
                     ):
                         continue
                     dependency = gyp.common.QualifiedTarget(
@@ -2541,7 +2539,7 @@ def ProcessListFiltersInDict(name, the_dict):
     del_lists = []
     for key, value in the_dict.items():
         operation = key[-1]
-        if operation != "!" and operation != "/":
+        if operation not in {"!", "/"}:
             continue
 
         if type(value) is not list:
