@@ -54,9 +54,9 @@ jobs:
           npm test
       - name: Run tests (Windows)
         if: runner.os == 'Windows'
-        shell: pwsh
+        shell: cmd
         run: |
-          $env:NODE_GYP_FORCE_PYTHON = "${env:pythonLocation}"
-          Write-Output "Python is at ${env:NODE_GYP_FORCE_PYTHON}"
+          set NODE_GYP_FORCE_PYTHON=%pythonLocation%
+          echo Python is at %NODE_GYP_FORCE_PYTHON%
           cd node-gyp
-          npm test
+          npm run test
