@@ -46,6 +46,7 @@ select = [
   "ICN",  # flake8-import-conventions
   "INT",  # flake8-gettext
   "PL",   # Pylint
+  "PLR",  # Pylint
   "PYI",  # flake8-pyi
   "RSE",  # flake8-raise
   "RUF",  # Ruff-specific rules
