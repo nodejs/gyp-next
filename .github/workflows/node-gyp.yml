@@ -49,10 +49,10 @@ jobs:
         shell: bash
         run: |
           cd node-gyp
-          npm test --python="${pythonLocation}"
+          npm test --python="${pythonLocation}/python"
       - name: Run tests (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           cd node-gyp
-          npm run test --python="${env:pythonLocation}"
+          npm run test --python="${env:pythonLocation}\\python.exe"
