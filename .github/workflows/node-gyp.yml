@@ -44,11 +44,11 @@ jobs:
         run: |
           rm -rf node-gyp/gyp
           cp -r gyp-next node-gyp/gyp
-      - name: Run tests (POSIX)
+      - name: Run tests (macOS or Linux)
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          export NODE_GYP_FORCE_PYTHON="${pythonLocation}"
+          NODE_GYP_FORCE_PYTHON="${pythonLocation}"
           echo "Python is at ${pythonLocation}"
           cd node-gyp
           npm test
@@ -56,7 +56,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $env:NODE_GYP_FORCE_PYTHON = "$env:pythonLocation"
-          echo "Python is at ${env:NODE_GYP_FORCE_PYTHON}"
+          $env:NODE_GYP_FORCE_PYTHON = "${env:pythonLocation}"
+          Write-Output "Python is at ${env:NODE_GYP_FORCE_PYTHON}"
           cd node-gyp
           npm test
