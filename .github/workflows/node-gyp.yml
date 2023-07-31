@@ -48,15 +48,13 @@ jobs:
         if: runner.os != 'Windows'
         shell: bash
         run: |
-          NODE_GYP_FORCE_PYTHON="${pythonLocation}"
-          echo "Python is at ${pythonLocation}"
           cd node-gyp
+          npm config set python "${pythonLocation}"
           npm test
       - name: Run tests (Windows)
         if: runner.os == 'Windows'
-        shell: cmd
+        shell: pwsh
         run: |
-          set NODE_GYP_FORCE_PYTHON=%pythonLocation%
-          echo Python is at %NODE_GYP_FORCE_PYTHON%
           cd node-gyp
+          npm config set python "${env:pythonLocation}"
           npm run test
