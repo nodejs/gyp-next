@@ -907,7 +907,8 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
             self.WriteMacInfoPlist(mac_bundle_deps)
 
         # Sources.
-        all_sources = spec.get("sources", []) + extra_sources
+        sources = spec.get("sources",[])
+        all_sources = [sources] + extra_sources if isinstance(sources,str) else extra_sources + sources
         if all_sources:
             self.WriteSources(
                 configs,
