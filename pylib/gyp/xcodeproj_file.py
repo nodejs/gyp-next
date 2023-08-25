@@ -971,7 +971,7 @@ class XCHierarchicalElement(XCObject):
         if "path" in self._properties and "name" not in self._properties:
             path = self._properties["path"]
             name = posixpath.basename(path)
-            if name != "" and path != name:
+            if name not in {"", path}:
                 self.SetProperty("name", name)
 
         if "path" in self._properties and (
