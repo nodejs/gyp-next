@@ -2028,7 +2028,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
                 installable_deps.append(
                     self.GetUnversionedSidedeckFromSidedeck(install_path)
                 )
-            if self.output != self.alias and self.alias != self.target:
+            if self.alias not in (self.output, self.target):
                 self.WriteMakeRule(
                     [self.alias],
                     installable_deps,
