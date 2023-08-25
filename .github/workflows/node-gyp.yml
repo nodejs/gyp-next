@@ -35,7 +35,7 @@ jobs:
           cd gyp-next
           python -m pip install --upgrade pip setuptools
           pip install --editable .
-          pip uninstall gyp-next
+          pip uninstall -y gyp-next
       - name: Install Node.js dependencies
         run: |
           cd node-gyp
