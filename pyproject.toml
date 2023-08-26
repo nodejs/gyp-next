@@ -12,6 +12,7 @@ description = "A fork of the GYP build system for use in the Node.js projects"
 readme = "README.md"
 license = { file="LICENSE" }
 requires-python = ">=3.8"
+dependencies = ["packaging>=23.1"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",
@@ -86,12 +87,15 @@ select = [
   # "TRY",  # tryceratops
 ]
 ignore = [
+  "E721",
   "PLC1901",
   "PLR0402",
+  "PLR1714",
   "PLR2004",
   "PLR5501",
   "PLW0603",
   "PLW2901",
+  "PYI024",
   "RUF005",
   "RUF012",
   "UP031",
