@@ -1063,7 +1063,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
             # libraries, but until everything is made cross-compile safe, also use
             # target libraries.
             # TODO(piman): when everything is cross-compile safe, remove lib.target
-            if self.flavor == "zos" or self.flavor == "aix":
+            if self.flavor in {"zos", "aix"}:
                 self.WriteLn(
                     "cmd_%s = LIBPATH=$(builddir)/lib.host:"
                     "$(builddir)/lib.target:$$LIBPATH; "
@@ -2028,7 +2028,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
                 installable_deps.append(
                     self.GetUnversionedSidedeckFromSidedeck(install_path)
                 )
-            if self.output != self.alias and self.alias != self.target:
+            if self.alias not in (self.output, self.target):
                 self.WriteMakeRule(
                     [self.alias],
                     installable_deps,

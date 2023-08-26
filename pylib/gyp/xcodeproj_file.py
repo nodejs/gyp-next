@@ -971,7 +971,7 @@ class XCHierarchicalElement(XCObject):
         if "path" in self._properties and "name" not in self._properties:
             path = self._properties["path"]
             name = posixpath.basename(path)
-            if name != "" and path != name:
+            if name not in ("", path):
                 self.SetProperty("name", name)
 
         if "path" in self._properties and (
@@ -2546,10 +2546,10 @@ class PBXNativeTarget(XCTarget):
                         force_extension = suffix[1:]
 
                 if (
-                    self._properties["productType"]
-                    == "com.apple.product-type-bundle.unit.test"
-                    or self._properties["productType"]
-                    == "com.apple.product-type-bundle.ui-testing"
+                    self._properties["productType"] in {
+                        "com.apple.product-type-bundle.unit.test",
+                        "com.apple.product-type-bundle.ui-testing"
+                    }
                 ) and force_extension is None:
                     force_extension = suffix[1:]
 
@@ -2700,8 +2700,10 @@ class PBXNativeTarget(XCTarget):
                 other._properties["productType"] == static_library_type
                 or (
                     (
-                        other._properties["productType"] == shared_library_type
-                        or other._properties["productType"] == framework_type
+                        other._properties["productType"] in {
+                            shared_library_type,
+                            framework_type
+                        }
                     )
                     and (
                         (not other.HasBuildSetting("MACH_O_TYPE"))
