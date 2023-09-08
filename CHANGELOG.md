@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.15.1](https://github.com/nodejs/gyp-next/compare/v0.15.0...v0.15.1) (2023-09-08)
+
+
+### Bug Fixes
+
+* some Python lint issues ([#200](https://github.com/nodejs/gyp-next/issues/200)) ([d2dfe4e](https://github.com/nodejs/gyp-next/commit/d2dfe4e66b64c16b38bef984782db93d12674f05))
+* use generator_output as output_dir ([#191](https://github.com/nodejs/gyp-next/issues/191)) ([35ffeb1](https://github.com/nodejs/gyp-next/commit/35ffeb1da8ef3fc8311e2e812cff550568f7e8a2))
+
 ## [0.15.0](https://github.com/nodejs/gyp-next/compare/v0.14.1...v0.15.0) (2023-03-30)
 
 
