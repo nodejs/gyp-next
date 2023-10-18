@@ -21,9 +21,7 @@ jobs:
           repository: nodejs/node
           path: node
       - name: Install deps
-        run: |
-          python -m pip install packaging
-          choco install nasm
+        run: choco install nasm
       - name: Replace gyp in Node.js
         run: |
           rm -Recurse node/tools/gyp
