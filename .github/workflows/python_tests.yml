@@ -30,7 +30,7 @@ jobs:
           pip install --editable ".[dev]"
       - run: ./gyp -V && ./gyp --version && gyp -V && gyp --version
       - name: Lint with ruff  # See pyproject.toml for settings
-        run: ruff --format=github .
+        run: ruff --output-format=github .
       - name: Test with pytest  # See pyproject.toml for settings
         run: pytest
       # - name: Run doctests with pytest
