@@ -12,16 +12,18 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Clone gyp-next
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: gyp-next
       - name: Clone nodejs/node
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: nodejs/node
           path: node
       - name: Install deps
-        run: choco install nasm
+        run: |
+          python -m pip install packaging
+          choco install nasm
       - name: Replace gyp in Node.js
         run: |
           rm -Recurse node/tools/gyp
