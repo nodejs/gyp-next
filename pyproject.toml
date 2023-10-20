@@ -100,6 +100,7 @@ ignore = [
   "RUF012",
   "UP031",
 ]
+extend-exclude = ["pylib/packaging"]
 line-length = 88
 target-version = "py37"
 
