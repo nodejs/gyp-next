@@ -550,7 +550,7 @@ def gyp_main(args):
     if not build_files:
         build_files = FindBuildFiles()
     if not build_files:
-        raise GypError((usage + "\n\n%s: error: no build_file") % (my_name, my_name))
+        raise GypError((usage + "\n\n%(prog)s: error: no build_file") % {"prog": my_name, "prog": my_name})
 
     # TODO(mark): Chromium-specific hack!
     # For Chromium, the gyp "depth" variable should always be a relative path
