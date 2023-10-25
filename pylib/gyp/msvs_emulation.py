@@ -1116,6 +1116,7 @@ def _ExtractImportantEnvironment(output_of_set):
         "systemroot",
         "temp",
         "tmp",
+        "cl",
     )
     env = {}
     # This occasionally happens and leads to misleading SYSTEMROOT error messages
