@@ -859,7 +859,11 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
             self.output = self.ComputeMacBundleOutput(spec)
             self.output_binary = self.ComputeMacBundleBinaryOutput(spec)
         else:
-            self.output = self.output_binary = self.ComputeOutput(spec)
+            if self.flavor == "win":
+                # prevent from generating copy targets on Windows
+                self.output = self.output_binary = self.ComputeOutput(spec).replace('\\', '/')
+            else:
+                self.output = self.output_binary = self.ComputeOutput(spec)
 
         self.is_standalone_static_library = bool(
             spec.get("standalone_static_library", 0)
@@ -2441,13 +2445,17 @@ def GenerateOutput(target_list, target_dicts, data, params):
     flock_command = "flock"
     copy_archive_arguments = "-af"
     makedep_arguments = "-MMD"
+
+    # some linkers don't support --start-group/--end-group (e.g. wasm-ld)
+    link_commands = LINK_COMMANDS_LINUX.replace(' -Wl,--start-group', '').replace(' -Wl,--end-group', '') if gyp.common.CrossCompileRequested() else LINK_COMMANDS_LINUX
+
     header_params = {
         "default_target": default_target,
         "builddir": builddir_name,
         "default_configuration": default_configuration,
         "flock": flock_command,
         "flock_index": 1,
-        "link_commands": LINK_COMMANDS_LINUX,
+        "link_commands": link_commands,
         "extra_commands": "",
         "srcdir": srcdir,
         "copy_archive_args": copy_archive_arguments,
@@ -2463,7 +2471,8 @@ def GenerateOutput(target_list, target_dicts, data, params):
         "LINK.host": GetEnvironFallback(("LINK_host", "LINK"), "$(CXX.host)"),
         "PLI.host": GetEnvironFallback(("PLI_host", "PLI"), "pli"),
     }
-    if flavor == "mac":
+    # If cross-compiling, reserve linux link commands and do not use gyp-mac-tool
+    if flavor == "mac" and not gyp.common.CrossCompileRequested():
         flock_command = "./gyp-mac-tool flock"
         header_params.update(
             {
