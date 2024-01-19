@@ -861,7 +861,9 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
         else:
             if self.flavor == "win":
                 # prevent from generating copy targets on Windows
-                self.output = self.output_binary = self.ComputeOutput(spec).replace('\\', '/')
+                self.output = self.output_binary = self.ComputeOutput(spec).replace(
+                    '\\', '/'
+                )
             else:
                 self.output = self.output_binary = self.ComputeOutput(spec)
 
@@ -2447,7 +2449,9 @@ def GenerateOutput(target_list, target_dicts, data, params):
     makedep_arguments = "-MMD"
 
     # some linkers don't support --start-group/--end-group (e.g. wasm-ld)
-    link_commands = LINK_COMMANDS_LINUX.replace(' -Wl,--start-group', '').replace(' -Wl,--end-group', '') if gyp.common.CrossCompileRequested() else LINK_COMMANDS_LINUX
+    link_commands = LINK_COMMANDS_LINUX.replace(' -Wl,--start-group', '').replace(
+        ' -Wl,--end-group', ''
+    ) if gyp.common.CrossCompileRequested() else LINK_COMMANDS_LINUX
 
     header_params = {
         "default_target": default_target,
