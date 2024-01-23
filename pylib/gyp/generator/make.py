@@ -25,6 +25,7 @@
 import os
 import re
 import subprocess
+import sys
 import gyp
 import gyp.common
 import gyp.xcode_emulation
@@ -724,6 +725,10 @@ def QuoteIfNecessary(string):
         string = '"' + string.replace('"', '\\"') + '"'
     return string
 
+def ReplaceSep(string):
+    if sys.platform == 'win32':
+        string = string.replace('\\', '/')
+    return string
 
 def StringToMakefileVariable(string):
     """Convert a string to a value that is acceptable as a make variable name."""
@@ -2069,7 +2074,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
         """
         values = ""
         if value_list:
-            value_list = [quoter(prefix + value) for value in value_list]
+            value_list = [ReplaceSep(quoter(prefix + value)) for value in value_list]
             values = " \\\n\t" + " \\\n\t".join(value_list)
         self.fp.write(f"{variable} :={values}\n\n")
 
