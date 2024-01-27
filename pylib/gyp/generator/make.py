@@ -727,7 +727,7 @@ def QuoteIfNecessary(string):
 
 def replace_sep(string):
     if sys.platform == 'win32':
-        string = string.replace('\\', '/')
+        string = string.replace('\\\\', '/').replace('\\', '/')
     return string
 
 def StringToMakefileVariable(string):
@@ -864,13 +864,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
             self.output = self.ComputeMacBundleOutput(spec)
             self.output_binary = self.ComputeMacBundleBinaryOutput(spec)
         else:
-            if self.flavor == "win":
-                # prevent from generating copy targets on Windows
-                self.output = self.output_binary = self.ComputeOutput(spec).replace(
-                    '\\', '/'
-                )
-            else:
-                self.output = self.output_binary = self.ComputeOutput(spec)
+            self.output = self.output_binary = replace_sep(self.ComputeOutput(spec))
 
         self.is_standalone_static_library = bool(
             spec.get("standalone_static_library", 0)
@@ -996,7 +990,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
         # sub-project dir (see test/subdirectory/gyptest-subdir-all.py).
         self.WriteLn(
             "export builddir_name ?= %s"
-            % os.path.join(os.path.dirname(output_filename), build_dir)
+            % replace_sep(os.path.join(os.path.dirname(output_filename), build_dir))
         )
         self.WriteLn(".PHONY: all")
         self.WriteLn("all:")
@@ -2380,10 +2374,10 @@ def WriteAutoRegenerationRule(params, root_makefile, makefile_name, build_files)
         "\t$(call do_cmd,regen_makefile)\n\n"
         % {
             "makefile_name": makefile_name,
-            "deps": " ".join(SourceifyAndQuoteSpaces(bf) for bf in build_files),
-            "cmd": gyp.common.EncodePOSIXShellList(
+            "deps": replace_sep(" ".join(SourceifyAndQuoteSpaces(bf) for bf in build_files)),
+            "cmd": replace_sep(gyp.common.EncodePOSIXShellList(
                 [gyp_binary, "-fmake"] + gyp.RegenerateFlags(options) + build_files_args
-            ),
+            )),
         }
     )
 
