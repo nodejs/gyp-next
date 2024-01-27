@@ -2374,7 +2374,9 @@ def WriteAutoRegenerationRule(params, root_makefile, makefile_name, build_files)
         "\t$(call do_cmd,regen_makefile)\n\n"
         % {
             "makefile_name": makefile_name,
-            "deps": replace_sep(" ".join(SourceifyAndQuoteSpaces(bf) for bf in build_files)),
+            "deps": replace_sep(
+                " ".join(SourceifyAndQuoteSpaces(bf) for bf in build_files)
+            ),
             "cmd": replace_sep(gyp.common.EncodePOSIXShellList(
                 [gyp_binary, "-fmake"] + gyp.RegenerateFlags(options) + build_files_args
             )),
