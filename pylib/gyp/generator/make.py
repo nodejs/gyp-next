@@ -2442,7 +2442,7 @@ def GenerateOutput(target_list, target_dicts, data, params):
         makefile_path = os.path.join(
             options.toplevel_dir, options.generator_output, makefile_name
         )
-        srcdir = gyp.common.RelativePath(srcdir, options.generator_output)
+        srcdir = replace_sep(gyp.common.RelativePath(srcdir, options.generator_output))
         srcdir_prefix = "$(srcdir)/"
 
     flock_command = "flock"
@@ -2456,6 +2456,17 @@ def GenerateOutput(target_list, target_dicts, data, params):
             ' -Wl,--end-group', ''
         )
 
+    CC_target = replace_sep(GetEnvironFallback(("CC_target", "CC"), "$(CC)"))
+    AR_target = replace_sep(GetEnvironFallback(("AR_target", "AR"), "$(AR)"))
+    CXX_target = replace_sep(GetEnvironFallback(("CXX_target", "CXX"), "$(CXX)"))
+    LINK_target = replace_sep(GetEnvironFallback(("LINK_target", "LINK"), "$(LINK)"))
+    PLI_target = replace_sep(GetEnvironFallback(("PLI_target", "PLI"), "pli"))
+    CC_host = replace_sep(GetEnvironFallback(("CC_host", "CC"), "gcc"))
+    AR_host = replace_sep(GetEnvironFallback(("AR_host", "AR"), "ar"))
+    CXX_host = replace_sep(GetEnvironFallback(("CXX_host", "CXX"), "g++"))
+    LINK_host = replace_sep(GetEnvironFallback(("LINK_host", "LINK"), "$(CXX.host)"))
+    PLI_host = replace_sep(GetEnvironFallback(("PLI_host", "PLI"), "pli"))
+
     header_params = {
         "default_target": default_target,
         "builddir": builddir_name,
@@ -2467,16 +2478,16 @@ def GenerateOutput(target_list, target_dicts, data, params):
         "srcdir": srcdir,
         "copy_archive_args": copy_archive_arguments,
         "makedep_args": makedep_arguments,
-        "CC.target": GetEnvironFallback(("CC_target", "CC"), "$(CC)"),
-        "AR.target": GetEnvironFallback(("AR_target", "AR"), "$(AR)"),
-        "CXX.target": GetEnvironFallback(("CXX_target", "CXX"), "$(CXX)"),
-        "LINK.target": GetEnvironFallback(("LINK_target", "LINK"), "$(LINK)"),
-        "PLI.target": GetEnvironFallback(("PLI_target", "PLI"), "pli"),
-        "CC.host": GetEnvironFallback(("CC_host", "CC"), "gcc"),
-        "AR.host": GetEnvironFallback(("AR_host", "AR"), "ar"),
-        "CXX.host": GetEnvironFallback(("CXX_host", "CXX"), "g++"),
-        "LINK.host": GetEnvironFallback(("LINK_host", "LINK"), "$(CXX.host)"),
-        "PLI.host": GetEnvironFallback(("PLI_host", "PLI"), "pli"),
+        "CC.target": CC_target,
+        "AR.target": AR_target,
+        "CXX.target": CXX_target,
+        "LINK.target": LINK_target,
+        "PLI.target": PLI_target,
+        "CC.host": CC_host,
+        "AR.host": AR_host,
+        "CXX.host": CXX_host,
+        "LINK.host": LINK_host,
+        "PLI.host": PLI_host,
     }
     # If cross-compiling, reserve linux link commands and do not use gyp-mac-tool
     if flavor == "mac" and not gyp.common.CrossCompileRequested():
