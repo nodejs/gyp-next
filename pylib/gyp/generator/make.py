@@ -448,8 +448,12 @@ sed -e "s|^$(notdir $@)|$@|" $(depfile).raw >> $(depfile)
 # Add extra rules as in (2).
 # We remove slashes and replace spaces with new lines;
 # remove blank lines;
-# delete the first line and append a colon to the remaining lines.
-sed -e 's|\\||' -e 'y| |\n|' $(depfile).raw |\
+# delete the first line and append a colon to the remaining lines.""" +
+    (r"""
+sed -e 's|\\\\||' -e 'y| |\n|' $(depfile).raw |\\""" if sys.platform == 'win32'
+    else r"""
+sed -e 's|\\||' -e 'y| |\n|' $(depfile).raw |\\""") +
+    r"""
   grep -v '^$$'                             |\
   sed -e 1d -e 's|$$|:|'                     \
     >> $(depfile)
