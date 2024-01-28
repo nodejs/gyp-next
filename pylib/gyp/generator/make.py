@@ -443,14 +443,18 @@ DEPFLAGS = %(makedep_args)s -MF $(depfile).raw
 define fixup_dep
 # The depfile may not exist if the input file didn't have any #includes.
 touch $(depfile).raw
-# Fixup path as in (1).
-sed -e "s|^$(notdir $@)|$@|" $(depfile).raw >> $(depfile)
+# Fixup path as in (1).""" +
+    (r"""
+sed -e "s|^$(notdir $@)|$@|" -re 's/\\\\([^$$])/\/\1/g' $(depfile).raw >> $(depfile)""" if sys.platform == 'win32'
+    else r"""
+sed -e "s|^$(notdir $@)|$@|" $(depfile).raw >> $(depfile)""") +
+    r"""
 # Add extra rules as in (2).
 # We remove slashes and replace spaces with new lines;
 # remove blank lines;
 # delete the first line and append a colon to the remaining lines.""" +
     (r"""
-sed -e 's/\\\\$$//' -e 'y| |\n|' $(depfile).raw |\\""" if sys.platform == 'win32'
+sed -e 's/\\\\$$//' -e 's/\\\\/\//g' -e 'y| |\n|' $(depfile).raw |\\""" if sys.platform == 'win32'
     else r"""
 sed -e 's|\\||' -e 'y| |\n|' $(depfile).raw |\\""") +
     r"""
