@@ -455,8 +455,8 @@ sed -e "s|^$(notdir $@)|$@|" $(depfile).raw >> $(depfile)""") +
 # delete the first line and append a colon to the remaining lines.""" +
     (r"""
 sed -e 's/\\\\$$//' -e 's/\\\\/\//g' -e 'y| |\n|' $(depfile).raw |\\"""
-    if sys.platform == 'win32' else r"""
-sed -e 's|\\||' -e 'y| |\n|' $(depfile).raw |\\""") +
+    if sys.platform == 'win32' else """
+sed -e 's|\\\\||' -e 'y| |\\n|' $(depfile).raw |\\""") +
     r"""
   grep -v '^$$'                             |\
   sed -e 1d -e 's|$$|:|'                     \
