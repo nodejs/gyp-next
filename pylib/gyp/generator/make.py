@@ -2497,8 +2497,7 @@ def GenerateOutput(target_list, target_dicts, data, params):
         "LINK.host": LINK_host,
         "PLI.host": PLI_host,
     }
-    # If cross-compiling, reserve linux link commands and do not use gyp-mac-tool
-    if flavor == "mac" and not gyp.common.CrossCompileRequested():
+    if flavor == "mac":
         flock_command = "./gyp-mac-tool flock"
         header_params.update(
             {
