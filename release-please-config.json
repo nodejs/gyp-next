@@ -1,0 +1,5 @@
+{
+  "release-type": "python",
+  "package-name": "gyp-next",
+  "bump-minor-pre-major": true
+}
