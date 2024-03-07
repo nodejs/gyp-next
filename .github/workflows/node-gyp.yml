@@ -26,7 +26,7 @@ jobs:
           path: node-gyp
       - uses: actions/setup-node@v4
         with:
-          node-version: 18.x
+          node-version: 20.x
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python }}
