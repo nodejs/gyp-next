@@ -3,10 +3,15 @@
 """Unit tests for the xcode_emulation.py file."""
 
 from gyp.xcode_emulation import XcodeSettings
+import sys
 import unittest
 
 
 class TestXcodeSettings(unittest.TestCase):
+    def setUp(self):
+        if sys.platform != "darwin":
+            self.skipTest("This test only runs on macOS")
+
     def test_GetCflags(self):
         target = {
             "type": "static_library",
