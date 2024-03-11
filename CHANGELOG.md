@@ -1,5 +1,78 @@
 # Changelog
 
+## [0.17.0](https://github.com/nodejs/gyp-next/compare/gyp-next-v0.16.2...gyp-next-v0.17.0) (2024-03-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* emove support for Python 2
+* **msvs:** On Windows, arguments passed to the "action" commands are no longer transformed to replace slashes with backslashes.
+
+### gyp
+
+* Remove support for Python 2 ([#88](https://github.com/nodejs/gyp-next/issues/88)) ([22e4654](https://github.com/nodejs/gyp-next/commit/22e465426fd892403c95534229af819a99c3f8dc))
+
+
+### Features
+
+* Add command line argument for `gyp --version` ([#164](https://github.com/nodejs/gyp-next/issues/164)) ([5c9f4d0](https://github.com/nodejs/gyp-next/commit/5c9f4d05678dd855e18ed2327219e5d18e5374db))
+* add PRODUCT_DIR_ABS variable ([#151](https://github.com/nodejs/gyp-next/issues/151)) ([80d2626](https://github.com/nodejs/gyp-next/commit/80d26263581db829b61b312a7bdb5cc791df7824))
+* Add proper support for IBM i ([#140](https://github.com/nodejs/gyp-next/issues/140)) ([fdda4a3](https://github.com/nodejs/gyp-next/commit/fdda4a3038b8a7042ad960ce7a223687c24a21b1))
+* add VCToolsVersion for msvs ([#209](https://github.com/nodejs/gyp-next/issues/209)) ([0e35ab8](https://github.com/nodejs/gyp-next/commit/0e35ab812d890fb75cf89a19ea72bc93dd6ba186))
+* hoist shared libs to PRODUCT_DIR for all platforms ([1248a9d](https://github.com/nodejs/gyp-next/commit/1248a9dea3b49f47c236153bff76d89d6e7874f7))
+* **msvs:** add SpectreMitigation attribute ([#190](https://github.com/nodejs/gyp-next/issues/190)) ([853e464](https://github.com/nodejs/gyp-next/commit/853e4643b6737224a5aa0720a4108461a0230991))
+* **msvs:** add support for Visual Studio 2022 ([#124](https://github.com/nodejs/gyp-next/issues/124)) ([4bd9215](https://github.com/nodejs/gyp-next/commit/4bd9215c44d300f06e916aec1d6327c22b78272d))
+* ninja build for iOS ([#174](https://github.com/nodejs/gyp-next/issues/174)) ([b6f2714](https://github.com/nodejs/gyp-next/commit/b6f271424e0033d7ed54d437706695af2ba7a1bf))
+* port "add support for MSVC cross-compilation" from node ([72ea11b](https://github.com/nodejs/gyp-next/commit/72ea11b74407fcb2ffb41ec7d330008b2b5f6d81))
+* support building shared libraries on z/OS ([#137](https://github.com/nodejs/gyp-next/issues/137)) ([293bcfa](https://github.com/nodejs/gyp-next/commit/293bcfa4c25c6adb743377adafc45a80fee492c6))
+* support source files with duplicate basename ([#62](https://github.com/nodejs/gyp-next/issues/62)) ([72eddfe](https://github.com/nodejs/gyp-next/commit/72eddfe67f0216c3109f59efdb38dd9a2f8dddc5))
+* use LDFLAGS_host for host toolset ([#98](https://github.com/nodejs/gyp-next/issues/98)) ([bea5c7b](https://github.com/nodejs/gyp-next/commit/bea5c7bd67d6ad32acbdce79767a5481c70675a2))
+* **xcode:** --cross-compiling overrides arch-specific settings ([973bae0](https://github.com/nodejs/gyp-next/commit/973bae0b7b08be7b680ecae9565fbd04b3e0787d))
+* **zos:** support IBM Open XL C/C++ & PL/I compilers on z/OS ([#178](https://github.com/nodejs/gyp-next/issues/178)) ([43a7211](https://github.com/nodejs/gyp-next/commit/43a72110ae3fafb13c9625cc7a969624b27cda47))
+
+
+### Bug Fixes
+
+* .S is an extension for asm file on Windows ([#115](https://github.com/nodejs/gyp-next/issues/115)) ([d2fad44](https://github.com/nodejs/gyp-next/commit/d2fad44ef3a79ca8900f1307060153ded57053fc))
+* add python 3.6 to node-gyp integration test ([3462d4c](https://github.com/nodejs/gyp-next/commit/3462d4ce3c31cce747513dc7ca9760c81d57c60e))
+* add quotes for command in msvs generator ([#217](https://github.com/nodejs/gyp-next/issues/217)) ([d3b7bcd](https://github.com/nodejs/gyp-next/commit/d3b7bcdec90d6c1b1affc15ece706e63007b7264))
+* add support of utf8 encoding ([#105](https://github.com/nodejs/gyp-next/issues/105)) ([4d0f93c](https://github.com/nodejs/gyp-next/commit/4d0f93c249286d1f0c0f665f5fe7346119f98cf1))
+* align flake8 test ([#122](https://github.com/nodejs/gyp-next/issues/122)) ([f1faa8d](https://github.com/nodejs/gyp-next/commit/f1faa8d3081e1a47e917ff910892f00dff16cf8a))
+* avoid quoting cflag name and parameter with space separator ([#223](https://github.com/nodejs/gyp-next/issues/223)) ([2b9703d](https://github.com/nodejs/gyp-next/commit/2b9703dbd5b3b8a935faf257c6103033b47bf8bf))
+* build failure with ninja and Python 3 on Windows ([#113](https://github.com/nodejs/gyp-next/issues/113)) ([c172d10](https://github.com/nodejs/gyp-next/commit/c172d105deff5db4244e583942215918fa80dd3c))
+* cmake on python 3 ([fd61f5f](https://github.com/nodejs/gyp-next/commit/fd61f5faa5275ec8fc98e3c7868c0dd46f109540))
+* compile_commands.json generation ([#22](https://github.com/nodejs/gyp-next/issues/22)) ([afa06c4](https://github.com/nodejs/gyp-next/commit/afa06c4d2d612ef9cff86eedad53e7503d1453fb))
+* do not rewrite absolute paths to avoid long paths ([#74](https://github.com/nodejs/gyp-next/issues/74)) ([c2ccc1a](https://github.com/nodejs/gyp-next/commit/c2ccc1a81f7f94433a94f4d01a2e820db4c4331a))
+* execvp: printf: Argument list too long ([#147](https://github.com/nodejs/gyp-next/issues/147)) ([c4e14f3](https://github.com/nodejs/gyp-next/commit/c4e14f301673fadbac3ab7882d0b5f4d02530cb9))
+* flake8 extended-ignore ([#186](https://github.com/nodejs/gyp-next/issues/186)) ([c38493c](https://github.com/nodejs/gyp-next/commit/c38493c2556aa63b6dc40ab585c18aef5ca270d3))
+* lock windows env ([#163](https://github.com/nodejs/gyp-next/issues/163)) ([44bd0dd](https://github.com/nodejs/gyp-next/commit/44bd0ddc93ea0b5770a44dd326a2e4ae62c21442))
+* **make:** only generate makefile for multiple toolsets if requested ([#133](https://github.com/nodejs/gyp-next/issues/133)) ([f463a77](https://github.com/nodejs/gyp-next/commit/f463a77705973289ea38fec1b244c922ac438e26))
+* move configuration information into pyproject.toml ([#176](https://github.com/nodejs/gyp-next/issues/176)) ([d69d8ec](https://github.com/nodejs/gyp-next/commit/d69d8ece6dbff7af4f2ea073c9fd170baf8cb7f7))
+* msvs.py: remove overindentation ([#102](https://github.com/nodejs/gyp-next/issues/102)) ([3f83e99](https://github.com/nodejs/gyp-next/commit/3f83e99056d004d9579ceb786e06b624ddc36529))
+* **msvs:** avoid fixing path for arguments with "=" ([#143](https://github.com/nodejs/gyp-next/issues/143)) ([7e8f16e](https://github.com/nodejs/gyp-next/commit/7e8f16eb165e042e64bec98fa6c2a0232a42c26b))
+* **msvs:** correctly rename object files for absolute paths ([#71](https://github.com/nodejs/gyp-next/issues/71)) ([f2c7618](https://github.com/nodejs/gyp-next/commit/f2c761838babf11024a3e6fab96d1e5a9dc1f556))
+* **msvs:** do not fix paths in action command arguments ([fc22f83](https://github.com/nodejs/gyp-next/commit/fc22f8335e2016da4aae4f4233074bd651d2faea))
+* **msvs:** fix paths again in action command arguments ([#121](https://github.com/nodejs/gyp-next/issues/121)) ([7159dfb](https://github.com/nodejs/gyp-next/commit/7159dfbc5758c9ec717e215f2c36daf482c846a1))
+* No build_type in default_variables ([#183](https://github.com/nodejs/gyp-next/issues/183)) ([ac262fe](https://github.com/nodejs/gyp-next/commit/ac262fe82453c4e8dc47529338d157eb0b5ec0fb))
+* node.js debugger adds stderr (but exit code is 0) -&gt; shouldn't throw ([#179](https://github.com/nodejs/gyp-next/issues/179)) ([1a457d9](https://github.com/nodejs/gyp-next/commit/1a457d9ed08cfd30c9fa551bc5cf0d90fb583787))
+* only include MARMASM when toolset is target ([5a2794a](https://github.com/nodejs/gyp-next/commit/5a2794aefb58f0c00404ff042b61740bc8b8d5cd))
+* port ab4aca868d from upstream ([#11](https://github.com/nodejs/gyp-next/issues/11)) ([6f4834e](https://github.com/nodejs/gyp-next/commit/6f4834e9c38c91d5369b8c1e585e8fc8e58decb0))
+* py lint ([3b6a8ee](https://github.com/nodejs/gyp-next/commit/3b6a8ee7a66193a8a6867eba9e1d2b70bdf04402))
+* revert for windows compatibility ([d078e7d](https://github.com/nodejs/gyp-next/commit/d078e7d7ae080ddae243188f6415f940376a7368))
+* revert posix build job ([#86](https://github.com/nodejs/gyp-next/issues/86)) ([39dc34f](https://github.com/nodejs/gyp-next/commit/39dc34f0799c074624005fb9bbccf6e028607f9d))
+* some Python lint issues ([#200](https://github.com/nodejs/gyp-next/issues/200)) ([d2dfe4e](https://github.com/nodejs/gyp-next/commit/d2dfe4e66b64c16b38bef984782db93d12674f05))
+* support msvs_quote_cmd in ninja generator ([#117](https://github.com/nodejs/gyp-next/issues/117)) ([46486ac](https://github.com/nodejs/gyp-next/commit/46486ac6e9329529d51061e006a5b39631e46729))
+* update gyp.el to change case to cl-case ([#93](https://github.com/nodejs/gyp-next/issues/93)) ([13d5b66](https://github.com/nodejs/gyp-next/commit/13d5b66aab35985af9c2fb1174fdc6e1c1407ecc))
+* update shebang lines from python to python3 ([#94](https://github.com/nodejs/gyp-next/issues/94)) ([a1b0d41](https://github.com/nodejs/gyp-next/commit/a1b0d4171a8049a4ab7a614202063dec332f2df4))
+* upstream 50317c3 from nodejs/node ([1db1392](https://github.com/nodejs/gyp-next/commit/1db139210c8c60a1e32f636b6962c534f49dc502))
+* use generator_output as output_dir ([#191](https://github.com/nodejs/gyp-next/issues/191)) ([35ffeb1](https://github.com/nodejs/gyp-next/commit/35ffeb1da8ef3fc8311e2e812cff550568f7e8a2))
+* xcode cmake parsing ([eefe8d1](https://github.com/nodejs/gyp-next/commit/eefe8d10e99863bc4ac7e2ed32facd608d400d4b))
+
+
+### Documentation
+
+* README.md: Add pipx installation and run instructions ([#165](https://github.com/nodejs/gyp-next/issues/165)) ([4d28b15](https://github.com/nodejs/gyp-next/commit/4d28b155568dc35f11c7f86124d1dd42ba428bed))
+
 ## [0.16.2](https://github.com/nodejs/gyp-next/compare/v0.16.1...v0.16.2) (2024-03-07)
 
 
