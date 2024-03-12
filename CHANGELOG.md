@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.3](https://github.com/nodejs/gyp-next/compare/v0.16.2...v0.16.3) (2024-03-12)
+
+
+### Bug Fixes
+
+* update Ruff to 0.3.1 ([876ccaf](https://github.com/nodejs/gyp-next/commit/876ccaf5629e1b95e13aaa2b0eb6cbd08fa80593))
+
 ## [0.16.2](https://github.com/nodejs/gyp-next/compare/v0.16.1...v0.16.2) (2024-03-07)
 
 
