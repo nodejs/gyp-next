@@ -1174,8 +1174,9 @@ class XcodeSettings:
                 # Then re-sign everything with 'preserve=True'
                 postbuilds.extend(
                     [
-                        '%s code-sign-bundle "%s" "%s" "%s" "%s" %s'
+                        '%s %s code-sign-bundle "%s" "%s" "%s" "%s" %s'
                         % (
+                            sys.executable,
                             os.path.join("${TARGET_BUILD_DIR}", "gyp-mac-tool"),
                             key,
                             settings.get("CODE_SIGN_ENTITLEMENTS", ""),
@@ -1190,8 +1191,9 @@ class XcodeSettings:
             for target in targets:
                 postbuilds.extend(
                     [
-                        '%s code-sign-bundle "%s" "%s" "%s" "%s" %s'
+                        '%s %s code-sign-bundle "%s" "%s" "%s" "%s" %s'
                         % (
+                            sys.executable,
                             os.path.join("${TARGET_BUILD_DIR}", "gyp-mac-tool"),
                             key,
                             settings.get("CODE_SIGN_ENTITLEMENTS", ""),
@@ -1204,8 +1206,9 @@ class XcodeSettings:
 
         postbuilds.extend(
             [
-                '%s code-sign-bundle "%s" "%s" "%s" "%s" %s'
+                '%s %s code-sign-bundle "%s" "%s" "%s" "%s" %s'
                 % (
+                    sys.executable,
                     os.path.join("${TARGET_BUILD_DIR}", "gyp-mac-tool"),
                     key,
                     settings.get("CODE_SIGN_ENTITLEMENTS", ""),
