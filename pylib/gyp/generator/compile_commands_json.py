@@ -109,7 +109,8 @@ def GenerateOutput(target_list, target_dicts, data, params):
         AddCommandsForTarget(cwd, target, params, per_config_commands)
 
     try:
-        output_dir = params["options"].generator_output
+        # generator_output can be `None` on Windows machines
+        output_dir = params["options"].generator_output or os.getcwd()
     except (AttributeError, KeyError):
         output_dir = params["generator_flags"].get("output_dir", "out")
     for configuration_name, commands in per_config_commands.items():
