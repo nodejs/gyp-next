@@ -443,28 +443,32 @@ def GetCrossCompilerPredefines():  # -> dict
 
     if sys.platform == "win32":
         fd, input = tempfile.mkstemp(suffix=".c")
-        os.close(fd)
+        try:
+            os.close(fd)
+            out = subprocess.Popen(
+                [*cmd, "-dM", "-E", "-x", "c", input],
+                shell=True,
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+            )
+        finally:
+            os.unlink(input)
     else:
         input = "/dev/null"
-
-    try:
         out = subprocess.Popen(
             [*cmd, "-dM", "-E", "-x", "c", input],
-            shell=sys.platform == "win32",
+            shell=False,
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT
         )
-        lines = out.communicate()[0].decode("utf-8").replace(
-            "\r\n", "\n").split("\n")
-        for line in lines:
-            if not line:
-                continue
-            define_directive, key, *value = line.split(" ")
-            assert define_directive == "#define"
-            defines[key] = " ".join(value)
-        return defines
-    finally:
-        if sys.platform == "win32":
-            os.unlink(input)
+
+    lines = out.communicate()[0].decode("utf-8").replace(
+        "\r\n", "\n").split("\n")
+    for line in lines:
+        if not line:
+            continue
+        define_directive, key, *value = line.split(" ")
+        assert define_directive == "#define"
+        defines[key] = " ".join(value)
+    return defines
 
 def GetFlavorByPlatform():
     """Returns |params.flavor| if it's set, the system's default flavor else."""
