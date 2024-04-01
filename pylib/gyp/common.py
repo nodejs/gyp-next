@@ -423,23 +423,17 @@ def EnsureDirExists(path):
         pass
 
 def GetCrossCompilerPredefines():  # -> dict
-    CC = os.environ.get("CC_target") or os.environ.get("CC")
-    CFLAGS = os.environ.get("CFLAGS")
-    CXX = os.environ.get("CXX_target") or os.environ.get("CXX")
-    CXXFLAGS = os.environ.get("CXXFLAGS")
     cmd = []
-    defines = {}
-
-    if CC:
+    if CC := os.environ.get("CC_target") or os.environ.get("CC"):
         cmd += CC.split(" ")
-        if CFLAGS:
+        if CFLAGS := os.environ.get("CFLAGS"):
             cmd += CFLAGS.split(" ")
-    elif CXX:
+    elif CXX := os.environ.get("CXX_target") or os.environ.get("CXX"):
         cmd += CXX.split(" ")
-        if CXXFLAGS:
+        if CXXFLAGS := os.environ.get("CXXFLAGS"):
             cmd += CXXFLAGS.split(" ")
     else:
-        return defines
+        return {}
 
     if sys.platform == "win32":
         fd, input = tempfile.mkstemp(suffix=".c")
@@ -462,6 +456,7 @@ def GetCrossCompilerPredefines():  # -> dict
         )
         stdout = out.communicate()[0]
 
+    defines = {}
     lines = stdout.decode("utf-8").replace("\r\n", "\n").split("\n")
     for line in lines:
         if not line:
