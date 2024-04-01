@@ -9,7 +9,10 @@
 import gyp.common
 import unittest
 import sys
-
+import os
+import subprocess
+from unittest import mock
+from unittest.mock import patch, MagicMock
 
 class TestTopologicallySorted(unittest.TestCase):
     def test_Valid(self):
@@ -73,6 +76,62 @@ class TestGetFlavor(unittest.TestCase):
     def test_param(self):
         self.assertFlavor("foobar", "linux2", {"flavor": "foobar"})
 
+    class MockCommunicate:
+        def __init__(self, stdout):
+            self.stdout = stdout
+
+        def decode(self, encoding):
+            return self.stdout
+
+    @mock.patch("os.close")
+    @mock.patch("os.unlink")
+    @mock.patch("tempfile.mkstemp")
+    def test_GetCrossCompilerPredefines(self, mock_mkstemp, mock_unlink, mock_close):
+        mock_close.return_value = None
+        mock_unlink.return_value = None
+        mock_mkstemp.return_value = (0, "temp.c")
+
+        def mock_run(env, defines_stdout):
+            with mock.patch("subprocess.Popen") as mock_popen:
+                mock_process = MagicMock()
+                mock_process.communicate.return_value = (
+                    TestGetFlavor.MockCommunicate(defines_stdout), None)
+                mock_process.stdout = MagicMock()
+                mock_popen.return_value = mock_process
+                expected_input = "temp.c" if sys.platform == "win32" else "/dev/null"
+                with mock.patch.dict(os.environ, env):
+                    defines = gyp.common.GetCrossCompilerPredefines()
+                    flavor = gyp.common.GetFlavor({})
+                if env.get("CC_target"):
+                    mock_popen.assert_called_with(
+                        [env["CC_target"], "-dM", "-E", "-x", "c", expected_input],
+                        shell=sys.platform == "win32",
+                        stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                return [defines, flavor]
+
+        [defines1, _] = mock_run({}, "")
+        self.assertDictEqual({}, defines1)
+
+        [defines2, flavor2] = mock_run(
+            { "CC_target": "/opt/wasi-sdk/bin/clang" },
+            "#define __wasm__ 1\n#define __wasi__ 1\n"
+        )
+        self.assertDictEqual({ "__wasm__": "1", "__wasi__": "1" }, defines2)
+        self.assertEqual("wasi", flavor2)
+
+        [defines3, flavor3] = mock_run(
+            { "CC_target": "/opt/wasi-sdk/bin/clang" },
+            "#define __wasm__ 1\n"
+        )
+        self.assertDictEqual({ "__wasm__": "1" }, defines3)
+        self.assertEqual("wasm", flavor3)
+
+        [defines4, flavor4] = mock_run(
+            { "CC_target": "/emsdk/upstream/emscripten/emcc" },
+            "#define __EMSCRIPTEN__ 1\n"
+        )
+        self.assertDictEqual({ "__EMSCRIPTEN__": "1" }, defines4)
+        self.assertEqual("emscripten", flavor4)
 
 if __name__ == "__main__":
     unittest.main()
