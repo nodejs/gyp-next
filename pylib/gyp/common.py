@@ -422,6 +422,37 @@ def EnsureDirExists(path):
     except OSError:
         pass
 
+def GetCrossCompilerPredefines():
+    CC = os.environ.get("CC_target") or os.environ.get("CC")
+    CFLAGS = os.environ.get("CFLAGS")
+    CXX = os.environ.get("CXX_target") or os.environ.get("CXX")
+    CXXFLAGS = os.environ.get("CXXFLAGS")
+    cmd = []
+
+    if CC:
+        cmd += CC.split(" ")
+        if CFLAGS:
+            cmd += CFLAGS.split(" ")
+    elif CXX:
+        cmd += CXX.split(" ")
+        if CXXFLAGS:
+            cmd += CXXFLAGS.split(" ")
+    else:
+        return None
+
+    out = subprocess.Popen(
+        [*cmd, "-dM", "-E", "-x", "c", "/dev/null"],
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    )
+    lines = out.communicate()[0].decode("utf-8").split("\n")
+    defines = {}
+    for line in lines:
+        if not line:
+            continue
+        define_directive, key, *value = line.split(" ")
+        assert define_directive == "#define"
+        defines[key] = " ".join(value)
+    return defines
 
 def GetFlavor(params):
     """Returns |params.flavor| if it's set, the system's default flavor else."""
@@ -433,6 +464,19 @@ def GetFlavor(params):
 
     if "flavor" in params:
         return params["flavor"]
+
+    try:
+        defines = GetCrossCompilerPredefines()
+        if "__EMSCRIPTEN__" in defines:
+            return "emscripten"
+        if "__wasm__" in defines:
+            if "__wasi__" in defines:
+                return "wasi"
+            else:
+                return "wasm"
+    except Exception:
+        pass
+
     if sys.platform in flavors:
         return flavors[sys.platform]
     if sys.platform.startswith("sunos"):

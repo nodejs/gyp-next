@@ -2457,9 +2457,9 @@ def GenerateOutput(target_list, target_dicts, data, params):
     copy_archive_arguments = "-af"
     makedep_arguments = "-MMD"
 
-    # some linkers don't support --start-group/--end-group (e.g. wasm-ld)
+    # wasm-ld doesn't support --start-group/--end-group
     link_commands = LINK_COMMANDS_LINUX
-    if gyp.common.CrossCompileRequested():
+    if flavor in ["wasi", "wasm"]:
         link_commands = link_commands.replace(' -Wl,--start-group', '').replace(
             ' -Wl,--end-group', ''
         )
