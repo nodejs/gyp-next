@@ -450,6 +450,7 @@ def GetCrossCompilerPredefines():  # -> dict
                 shell=True,
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT
             )
+            stdout = out.communicate()[0]
         finally:
             os.unlink(input)
     else:
@@ -459,9 +460,9 @@ def GetCrossCompilerPredefines():  # -> dict
             shell=False,
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT
         )
+        stdout = out.communicate()[0]
 
-    lines = out.communicate()[0].decode("utf-8").replace(
-        "\r\n", "\n").split("\n")
+    lines = stdout.decode("utf-8").replace("\r\n", "\n").split("\n")
     for line in lines:
         if not line:
             continue
