@@ -440,19 +440,35 @@ def GetCrossCompilerPredefines():
     else:
         return None
 
-    out = subprocess.Popen(
-        [*cmd, "-dM", "-E", "-x", "c", "/dev/null"],
-        stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-    )
-    lines = out.communicate()[0].decode("utf-8").split("\n")
-    defines = {}
-    for line in lines:
-        if not line:
-            continue
-        define_directive, key, *value = line.split(" ")
-        assert define_directive == "#define"
-        defines[key] = " ".join(value)
-    return defines
+    if sys.platform == "win32":
+        fd, input = tempfile.mkstemp(suffix=".c")
+        try:
+            os.close(fd)
+        except Exception:
+            os.unlink(input)
+            raise
+    else:
+        input = "/dev/null"
+
+    try:
+        out = subprocess.Popen(
+            [*cmd, "-dM", "-E", "-x", "c", input],
+            shell=sys.platform == "win32",
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
+        lines = out.communicate()[0].decode("utf-8").replace(
+            "\r\n", "\n").split("\n")
+        defines = {}
+        for line in lines:
+            if not line:
+                continue
+            define_directive, key, *value = line.split(" ")
+            assert define_directive == "#define"
+            defines[key] = " ".join(value)
+        return defines
+    finally:
+        if sys.platform == "win32":
+            os.unlink(input)
 
 def GetFlavorByPlatform():
     """Returns |params.flavor| if it's set, the system's default flavor else."""
