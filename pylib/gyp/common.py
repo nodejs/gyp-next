@@ -454,28 +454,13 @@ def GetCrossCompilerPredefines():
         defines[key] = " ".join(value)
     return defines
 
-def GetFlavor(params):
+def GetFlavorByPlatform():
     """Returns |params.flavor| if it's set, the system's default flavor else."""
     flavors = {
         "cygwin": "win",
         "win32": "win",
         "darwin": "mac",
     }
-
-    if "flavor" in params:
-        return params["flavor"]
-
-    try:
-        defines = GetCrossCompilerPredefines()
-        if "__EMSCRIPTEN__" in defines:
-            return "emscripten"
-        if "__wasm__" in defines:
-            if "__wasi__" in defines:
-                return "wasi"
-            else:
-                return "wasm"
-    except Exception:
-        pass
 
     if sys.platform in flavors:
         return flavors[sys.platform]
@@ -495,6 +480,24 @@ def GetFlavor(params):
         return "os400"
 
     return "linux"
+
+def GetFlavor(params):
+    if "flavor" in params:
+        return params["flavor"]
+
+    try:
+        defines = GetCrossCompilerPredefines()
+        if "__EMSCRIPTEN__" in defines:
+            return "emscripten"
+        if "__wasm__" in defines:
+            if "__wasi__" in defines:
+                return "wasi"
+            else:
+                return "wasm"
+    except Exception:
+        pass
+
+    return GetFlavorByPlatform()
 
 
 def CopyTool(flavor, out_path, generator_flags={}):
