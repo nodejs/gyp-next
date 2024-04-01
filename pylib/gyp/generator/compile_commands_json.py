@@ -108,10 +108,13 @@ def GenerateOutput(target_list, target_dicts, data, params):
         cwd = os.path.dirname(build_file)
         AddCommandsForTarget(cwd, target, params, per_config_commands)
 
+    output_dir = None
     try:
-        # generator_output can be `None` on Windows machines
-        output_dir = params["options"].generator_output or os.getcwd()
+        # generator_output can be `None` on Windows machines, or even not defined in other cases
+        output_dir = params["options"].generator_output
     except (AttributeError, KeyError):
+        pass
+    if output_dir is None:
         output_dir = params["generator_flags"].get("output_dir", "out")
     for configuration_name, commands in per_config_commands.items():
         filename = os.path.join(output_dir, configuration_name, "compile_commands.json")
