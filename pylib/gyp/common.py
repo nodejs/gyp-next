@@ -422,7 +422,7 @@ def EnsureDirExists(path):
     except OSError:
         pass
 
-def GetCrossCompilerPredefines():
+def GetCrossCompilerPredefines():  # -> dict
     CC = os.environ.get("CC_target") or os.environ.get("CC")
     CFLAGS = os.environ.get("CFLAGS")
     CXX = os.environ.get("CXX_target") or os.environ.get("CXX")
@@ -443,11 +443,7 @@ def GetCrossCompilerPredefines():
 
     if sys.platform == "win32":
         fd, input = tempfile.mkstemp(suffix=".c")
-        try:
-            os.close(fd)
-        except Exception:
-            os.unlink(input)
-            raise
+        os.close(fd)
     else:
         input = "/dev/null"
 
@@ -501,17 +497,11 @@ def GetFlavor(params):
     if "flavor" in params:
         return params["flavor"]
 
-    try:
-        defines = GetCrossCompilerPredefines()
-        if "__EMSCRIPTEN__" in defines:
-            return "emscripten"
-        if "__wasm__" in defines:
-            if "__wasi__" in defines:
-                return "wasi"
-            else:
-                return "wasm"
-    except Exception:
-        pass
+    defines = GetCrossCompilerPredefines()
+    if "__EMSCRIPTEN__" in defines:
+        return "emscripten"
+    if "__wasm__" in defines:
+        return "wasi" if "__wasi__" in defines else "wasm"
 
     return GetFlavorByPlatform()
 
