@@ -11,7 +11,6 @@ import unittest
 import sys
 import os
 import subprocess
-from unittest import mock
 from unittest.mock import patch, MagicMock
 
 class TestTopologicallySorted(unittest.TestCase):
@@ -83,23 +82,23 @@ class TestGetFlavor(unittest.TestCase):
         def decode(self, encoding):
             return self.stdout
 
-    @mock.patch("os.close")
-    @mock.patch("os.unlink")
-    @mock.patch("tempfile.mkstemp")
+    @patch("os.close")
+    @patch("os.unlink")
+    @patch("tempfile.mkstemp")
     def test_GetCrossCompilerPredefines(self, mock_mkstemp, mock_unlink, mock_close):
         mock_close.return_value = None
         mock_unlink.return_value = None
         mock_mkstemp.return_value = (0, "temp.c")
 
         def mock_run(env, defines_stdout):
-            with mock.patch("subprocess.Popen") as mock_popen:
+            with patch("subprocess.Popen") as mock_popen:
                 mock_process = MagicMock()
                 mock_process.communicate.return_value = (
                     TestGetFlavor.MockCommunicate(defines_stdout), None)
                 mock_process.stdout = MagicMock()
                 mock_popen.return_value = mock_process
                 expected_input = "temp.c" if sys.platform == "win32" else "/dev/null"
-                with mock.patch.dict(os.environ, env):
+                with patch.dict(os.environ, env):
                     defines = gyp.common.GetCrossCompilerPredefines()
                     flavor = gyp.common.GetFlavor({})
                 if env.get("CC_target"):
