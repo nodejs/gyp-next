@@ -428,6 +428,7 @@ def GetCrossCompilerPredefines():
     CXX = os.environ.get("CXX_target") or os.environ.get("CXX")
     CXXFLAGS = os.environ.get("CXXFLAGS")
     cmd = []
+    defines = {}
 
     if CC:
         cmd += CC.split(" ")
@@ -438,7 +439,7 @@ def GetCrossCompilerPredefines():
         if CXXFLAGS:
             cmd += CXXFLAGS.split(" ")
     else:
-        return None
+        return defines
 
     if sys.platform == "win32":
         fd, input = tempfile.mkstemp(suffix=".c")
@@ -458,7 +459,6 @@ def GetCrossCompilerPredefines():
         )
         lines = out.communicate()[0].decode("utf-8").replace(
             "\r\n", "\n").split("\n")
-        defines = {}
         for line in lines:
             if not line:
                 continue
