@@ -11,6 +11,7 @@ import unittest
 import sys
 import os
 import subprocess
+import shlex
 from unittest.mock import patch, MagicMock
 
 class TestTopologicallySorted(unittest.TestCase):
@@ -103,7 +104,11 @@ class TestGetFlavor(unittest.TestCase):
                     flavor = gyp.common.GetFlavor({})
                 if env.get("CC_target"):
                     mock_popen.assert_called_with(
-                        [env["CC_target"], "-dM", "-E", "-x", "c", expected_input],
+                        [
+                            *shlex.split(env["CC_target"]),
+                            *(shlex.split(env["CFLAGS"]) if env.get("CFLAGS") else []),
+                            "-dM", "-E", "-x", "c", expected_input
+                        ],
                         shell=sys.platform == "win32",
                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 return [defines, flavor]
@@ -131,6 +136,21 @@ class TestGetFlavor(unittest.TestCase):
         )
         self.assertDictEqual({ "__EMSCRIPTEN__": "1" }, defines4)
         self.assertEqual("emscripten", flavor4)
+
+        # Test path which include white space
+        [defines5, flavor5] = mock_run(
+            {
+                "CC_target": "\"/Users/Toyo Li/wasi-sdk/bin/clang\"",
+                "CFLAGS": "--target=wasm32-wasi-threads -pthread"
+            },
+            "#define __wasm__ 1\n#define __wasi__ 1\n#define _REENTRANT 1\n"
+        )
+        self.assertDictEqual({
+            "__wasm__": "1",
+            "__wasi__": "1",
+            "_REENTRANT": "1"
+        }, defines5)
+        self.assertEqual("wasi", flavor5)
 
 if __name__ == "__main__":
     unittest.main()

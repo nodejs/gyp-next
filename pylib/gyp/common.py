@@ -9,6 +9,7 @@ import re
 import tempfile
 import sys
 import subprocess
+import shlex
 
 from collections.abc import MutableSet
 
@@ -425,13 +426,13 @@ def EnsureDirExists(path):
 def GetCrossCompilerPredefines():  # -> dict
     cmd = []
     if CC := os.environ.get("CC_target") or os.environ.get("CC"):
-        cmd += CC.split(" ")
+        cmd += shlex.split(CC)
         if CFLAGS := os.environ.get("CFLAGS"):
-            cmd += CFLAGS.split(" ")
+            cmd += shlex.split(CFLAGS)
     elif CXX := os.environ.get("CXX_target") or os.environ.get("CXX"):
-        cmd += CXX.split(" ")
+        cmd += shlex.split(CXX)
         if CXXFLAGS := os.environ.get("CXXFLAGS"):
-            cmd += CXXFLAGS.split(" ")
+            cmd += shlex.split(CXXFLAGS)
     else:
         return {}
 
