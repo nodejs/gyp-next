@@ -425,38 +425,48 @@ def EnsureDirExists(path):
 
 def GetCrossCompilerPredefines():  # -> dict
     cmd = []
+
+    # shlex.split() will eat '\' in posix mode
+    # but setting posix=False will preserve extra '"' cause CreateProcess fail on Windows
+    # this makes '\' in %CC_target% and %CFLAGS% work
+    replace_sep = lambda s : s.replace("\\", "/") if sys.platform == "win32" else s
+
     if CC := os.environ.get("CC_target") or os.environ.get("CC"):
-        cmd += shlex.split(CC)
+        cmd += shlex.split(replace_sep(CC))
         if CFLAGS := os.environ.get("CFLAGS"):
-            cmd += shlex.split(CFLAGS)
+            cmd += shlex.split(replace_sep(CFLAGS))
     elif CXX := os.environ.get("CXX_target") or os.environ.get("CXX"):
-        cmd += shlex.split(CXX)
+        cmd += shlex.split(replace_sep(CXX))
         if CXXFLAGS := os.environ.get("CXXFLAGS"):
-            cmd += shlex.split(CXXFLAGS)
+            cmd += shlex.split(replace_sep(CXXFLAGS))
     else:
         return {}
 
     if sys.platform == "win32":
         fd, input = tempfile.mkstemp(suffix=".c")
+        real_cmd = [*cmd, "-dM", "-E", "-x", "c", input]
         try:
             os.close(fd)
             out = subprocess.Popen(
-                [*cmd, "-dM", "-E", "-x", "c", input],
+                real_cmd,
                 shell=True,
                 stdout=subprocess.PIPE, stderr=subprocess.STDOUT
             )
-            stdout = out.communicate()[0]
+            stdout, stderr = out.communicate()
         finally:
             os.unlink(input)
     else:
         input = "/dev/null"
+        real_cmd = [*cmd, "-dM", "-E", "-x", "c", input]
         out = subprocess.Popen(
-            [*cmd, "-dM", "-E", "-x", "c", input],
+            real_cmd,
             shell=False,
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT
         )
-        stdout = out.communicate()[0]
+        stdout, stderr = out.communicate()
 
+    if out.returncode != 0:
+        raise subprocess.CalledProcessError(out.returncode, real_cmd, stdout, stderr)
     defines = {}
     lines = stdout.decode("utf-8").replace("\r\n", "\n").split("\n")
     for line in lines:

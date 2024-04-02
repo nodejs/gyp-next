@@ -91,11 +91,14 @@ class TestGetFlavor(unittest.TestCase):
         mock_unlink.return_value = None
         mock_mkstemp.return_value = (0, "temp.c")
 
-        def mock_run(env, defines_stdout):
+        def mock_run(env, defines_stdout, expected_cmd):
             with patch("subprocess.Popen") as mock_popen:
                 mock_process = MagicMock()
                 mock_process.communicate.return_value = (
-                    TestGetFlavor.MockCommunicate(defines_stdout), None)
+                    TestGetFlavor.MockCommunicate(defines_stdout),
+                    TestGetFlavor.MockCommunicate("")
+                )
+                mock_process.returncode = 0
                 mock_process.stdout = MagicMock()
                 mock_popen.return_value = mock_process
                 expected_input = "temp.c" if sys.platform == "win32" else "/dev/null"
@@ -105,34 +108,36 @@ class TestGetFlavor(unittest.TestCase):
                 if env.get("CC_target"):
                     mock_popen.assert_called_with(
                         [
-                            *shlex.split(env["CC_target"]),
-                            *(shlex.split(env["CFLAGS"]) if env.get("CFLAGS") else []),
+                            *expected_cmd,
                             "-dM", "-E", "-x", "c", expected_input
                         ],
                         shell=sys.platform == "win32",
                         stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 return [defines, flavor]
 
-        [defines1, _] = mock_run({}, "")
+        [defines1, _] = mock_run({}, "", [])
         self.assertDictEqual({}, defines1)
 
         [defines2, flavor2] = mock_run(
             { "CC_target": "/opt/wasi-sdk/bin/clang" },
-            "#define __wasm__ 1\n#define __wasi__ 1\n"
+            "#define __wasm__ 1\n#define __wasi__ 1\n",
+            ["/opt/wasi-sdk/bin/clang"]
         )
         self.assertDictEqual({ "__wasm__": "1", "__wasi__": "1" }, defines2)
         self.assertEqual("wasi", flavor2)
 
         [defines3, flavor3] = mock_run(
-            { "CC_target": "/opt/wasi-sdk/bin/clang" },
-            "#define __wasm__ 1\n"
+            { "CC_target": "/opt/wasi-sdk/bin/clang --target=wasm32" },
+            "#define __wasm__ 1\n",
+            ["/opt/wasi-sdk/bin/clang", "--target=wasm32"]
         )
         self.assertDictEqual({ "__wasm__": "1" }, defines3)
         self.assertEqual("wasm", flavor3)
 
         [defines4, flavor4] = mock_run(
             { "CC_target": "/emsdk/upstream/emscripten/emcc" },
-            "#define __EMSCRIPTEN__ 1\n"
+            "#define __EMSCRIPTEN__ 1\n",
+            ["/emsdk/upstream/emscripten/emcc"]
         )
         self.assertDictEqual({ "__EMSCRIPTEN__": "1" }, defines4)
         self.assertEqual("emscripten", flavor4)
@@ -140,10 +145,16 @@ class TestGetFlavor(unittest.TestCase):
         # Test path which include white space
         [defines5, flavor5] = mock_run(
             {
-                "CC_target": "\"/Users/Toyo Li/wasi-sdk/bin/clang\"",
+                "CC_target": "\"/Users/Toyo Li/wasi-sdk/bin/clang\" -O3",
                 "CFLAGS": "--target=wasm32-wasi-threads -pthread"
             },
-            "#define __wasm__ 1\n#define __wasi__ 1\n#define _REENTRANT 1\n"
+            "#define __wasm__ 1\n#define __wasi__ 1\n#define _REENTRANT 1\n",
+            [
+                "/Users/Toyo Li/wasi-sdk/bin/clang",
+                "-O3",
+                "--target=wasm32-wasi-threads",
+                "-pthread"
+            ]
         )
         self.assertDictEqual({
             "__wasm__": "1",
@@ -151,6 +162,17 @@ class TestGetFlavor(unittest.TestCase):
             "_REENTRANT": "1"
         }, defines5)
         self.assertEqual("wasi", flavor5)
+
+        original_platform = sys.platform
+        sys.platform = "win32"
+        [defines6, flavor6] = mock_run(
+            { "CC_target": "\"C:\\Program Files\\wasi-sdk\\clang.exe\"" },
+            "#define __wasm__ 1\n#define __wasi__ 1\n",
+            ["C:/Program Files/wasi-sdk/clang.exe"]
+        )
+        sys.platform = original_platform
+        self.assertDictEqual({ "__wasm__": "1", "__wasi__": "1" }, defines6)
+        self.assertEqual("wasi", flavor6)
 
 if __name__ == "__main__":
     unittest.main()
