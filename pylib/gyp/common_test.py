@@ -111,7 +111,7 @@ class TestGetFlavor(unittest.TestCase):
                             "-dM", "-E", "-x", "c", expected_input
                         ],
                         shell=sys.platform == "win32",
-                        stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 return [defines, flavor]
 
         [defines1, _] = mock_run({}, "", [])
