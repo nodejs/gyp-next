@@ -10,7 +10,6 @@ import gyp.common
 import unittest
 import sys
 import os
-import subprocess
 from unittest.mock import patch, MagicMock
 
 class TestTopologicallySorted(unittest.TestCase):
@@ -25,8 +24,9 @@ class TestTopologicallySorted(unittest.TestCase):
 
         def GetEdge(node):
             return tuple(graph[node])
-        
-        assert gyp.common.TopologicallySorted(graph.keys(), GetEdge) == ["a", "c", "d", "b"]
+
+        assert gyp.common.TopologicallySorted(
+            graph.keys(), GetEdge) == ["a", "c", "d", "b"]
 
     def test_Cycle(self):
         """Test that an exception is thrown on a cyclic graph."""
@@ -89,27 +89,23 @@ class TestGetFlavor(unittest.TestCase):
         mock_mkstemp.return_value = (0, "temp.c")
 
         def mock_run(env, defines_stdout, expected_cmd):
-            with patch("subprocess.Popen") as mock_popen:
+            with patch("subprocess.run") as mock_run:
                 mock_process = MagicMock()
-                mock_process.communicate.return_value = (
-                    TestGetFlavor.MockCommunicate(defines_stdout),
-                    TestGetFlavor.MockCommunicate("")
-                )
                 mock_process.returncode = 0
-                mock_process.stdout = MagicMock()
-                mock_popen.return_value = mock_process
+                mock_process.stdout = TestGetFlavor.MockCommunicate(defines_stdout)
+                mock_run.return_value = mock_process
                 expected_input = "temp.c" if sys.platform == "win32" else "/dev/null"
                 with patch.dict(os.environ, env):
                     defines = gyp.common.GetCrossCompilerPredefines()
                     flavor = gyp.common.GetFlavor({})
                 if env.get("CC_target"):
-                    mock_popen.assert_called_with(
+                    mock_run.assert_called_with(
                         [
                             *expected_cmd,
                             "-dM", "-E", "-x", "c", expected_input
                         ],
                         shell=sys.platform == "win32",
-                        stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                        capture_output=True, check=True)
                 return [defines, flavor]
 
         [defines1, _] = mock_run({}, "", [])

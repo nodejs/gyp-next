@@ -448,26 +448,20 @@ def GetCrossCompilerPredefines():  # -> dict
         real_cmd = [*cmd, "-dM", "-E", "-x", "c", input]
         try:
             os.close(fd)
-            out = subprocess.Popen(
-                real_cmd,
-                shell=True,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
-            stdout, stderr = out.communicate()
+            stdout = subprocess.run(
+                real_cmd, shell=True,
+                capture_output=True, check=True
+            ).stdout
         finally:
             os.unlink(input)
     else:
         input = "/dev/null"
         real_cmd = [*cmd, "-dM", "-E", "-x", "c", input]
-        out = subprocess.Popen(
-            real_cmd,
-            shell=False,
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
-        stdout, stderr = out.communicate()
+        stdout = subprocess.run(
+            real_cmd, shell=False,
+            capture_output=True, check=True
+        ).stdout
 
-    if out.returncode != 0:
-        raise subprocess.CalledProcessError(out.returncode, real_cmd, stdout, stderr)
     defines = {}
     lines = stdout.decode("utf-8").replace("\r\n", "\n").split("\n")
     for line in lines:
