@@ -110,7 +110,8 @@ def GenerateOutput(target_list, target_dicts, data, params):
 
     output_dir = None
     try:
-        # generator_output can be `None` on Windows machines, or even not defined in other cases
+        # generator_output can be `None` on Windows machines, or even not
+        # defined in other cases
         output_dir = params["options"].generator_output
     except (AttributeError, KeyError):
         pass
