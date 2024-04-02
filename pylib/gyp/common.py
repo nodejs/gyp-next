@@ -465,10 +465,9 @@ def GetCrossCompilerPredefines():  # -> dict
     defines = {}
     lines = stdout.decode("utf-8").replace("\r\n", "\n").split("\n")
     for line in lines:
-        if not line:
+        if not line or not line.startswith("#define "):
             continue
-        define_directive, key, *value = line.split(" ")
-        assert define_directive == "#define"
+        _, key, *value = line.split(" ")
         defines[key] = " ".join(value)
     return defines
 
