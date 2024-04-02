@@ -426,10 +426,11 @@ def EnsureDirExists(path):
 def GetCrossCompilerPredefines():  # -> dict
     cmd = []
 
-    # shlex.split() will eat '\' in posix mode
-    # but setting posix=False will preserve extra '"' cause CreateProcess fail on Windows
+    # shlex.split() will eat '\' in posix mode, but
+    # setting posix=False will preserve extra '"' cause CreateProcess fail on Windows
     # this makes '\' in %CC_target% and %CFLAGS% work
-    replace_sep = lambda s : s.replace("\\", "/") if sys.platform == "win32" else s
+    def replace_sep(s):
+        return s.replace("\\", "/") if sys.platform == "win32" else s
 
     if CC := os.environ.get("CC_target") or os.environ.get("CC"):
         cmd += shlex.split(replace_sep(CC))

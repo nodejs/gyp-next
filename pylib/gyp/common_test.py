@@ -11,7 +11,6 @@ import unittest
 import sys
 import os
 import subprocess
-import shlex
 from unittest.mock import patch, MagicMock
 
 class TestTopologicallySorted(unittest.TestCase):
