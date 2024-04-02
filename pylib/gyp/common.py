@@ -422,8 +422,51 @@ def EnsureDirExists(path):
     except OSError:
         pass
 
+def GetCrossCompilerPredefines():  # -> dict
+    cmd = []
+    if CC := os.environ.get("CC_target") or os.environ.get("CC"):
+        cmd += CC.split(" ")
+        if CFLAGS := os.environ.get("CFLAGS"):
+            cmd += CFLAGS.split(" ")
+    elif CXX := os.environ.get("CXX_target") or os.environ.get("CXX"):
+        cmd += CXX.split(" ")
+        if CXXFLAGS := os.environ.get("CXXFLAGS"):
+            cmd += CXXFLAGS.split(" ")
+    else:
+        return {}
 
-def GetFlavor(params):
+    if sys.platform == "win32":
+        fd, input = tempfile.mkstemp(suffix=".c")
+        try:
+            os.close(fd)
+            out = subprocess.Popen(
+                [*cmd, "-dM", "-E", "-x", "c", input],
+                shell=True,
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+            )
+            stdout = out.communicate()[0]
+        finally:
+            os.unlink(input)
+    else:
+        input = "/dev/null"
+        out = subprocess.Popen(
+            [*cmd, "-dM", "-E", "-x", "c", input],
+            shell=False,
+            stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+        )
+        stdout = out.communicate()[0]
+
+    defines = {}
+    lines = stdout.decode("utf-8").replace("\r\n", "\n").split("\n")
+    for line in lines:
+        if not line:
+            continue
+        define_directive, key, *value = line.split(" ")
+        assert define_directive == "#define"
+        defines[key] = " ".join(value)
+    return defines
+
+def GetFlavorByPlatform():
     """Returns |params.flavor| if it's set, the system's default flavor else."""
     flavors = {
         "cygwin": "win",
@@ -431,8 +474,6 @@ def GetFlavor(params):
         "darwin": "mac",
     }
 
-    if "flavor" in params:
-        return params["flavor"]
     if sys.platform in flavors:
         return flavors[sys.platform]
     if sys.platform.startswith("sunos"):
@@ -451,6 +492,18 @@ def GetFlavor(params):
         return "os400"
 
     return "linux"
+
+def GetFlavor(params):
+    if "flavor" in params:
+        return params["flavor"]
+
+    defines = GetCrossCompilerPredefines()
+    if "__EMSCRIPTEN__" in defines:
+        return "emscripten"
+    if "__wasm__" in defines:
+        return "wasi" if "__wasi__" in defines else "wasm"
+
+    return GetFlavorByPlatform()
 
 
 def CopyTool(flavor, out_path, generator_flags={}):
