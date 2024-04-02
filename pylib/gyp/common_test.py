@@ -25,10 +25,8 @@ class TestTopologicallySorted(unittest.TestCase):
 
         def GetEdge(node):
             return tuple(graph[node])
-
-        self.assertEqual(
-            gyp.common.TopologicallySorted(graph.keys(), GetEdge), ["a", "c", "d", "b"]
-        )
+        
+        assert gyp.common.TopologicallySorted(graph.keys(), GetEdge) == ["a", "c", "d", "b"]
 
     def test_Cycle(self):
         """Test that an exception is thrown on a cyclic graph."""
@@ -60,7 +58,7 @@ class TestGetFlavor(unittest.TestCase):
 
     def assertFlavor(self, expected, argument, param):
         sys.platform = argument
-        self.assertEqual(expected, gyp.common.GetFlavor(param))
+        assert expected == gyp.common.GetFlavor(param)
 
     def test_platform_default(self):
         self.assertFlavor("freebsd", "freebsd9", {})
@@ -115,31 +113,31 @@ class TestGetFlavor(unittest.TestCase):
                 return [defines, flavor]
 
         [defines1, _] = mock_run({}, "", [])
-        self.assertDictEqual({}, defines1)
+        assert {} == defines1
 
         [defines2, flavor2] = mock_run(
             { "CC_target": "/opt/wasi-sdk/bin/clang" },
             "#define __wasm__ 1\n#define __wasi__ 1\n",
             ["/opt/wasi-sdk/bin/clang"]
         )
-        self.assertDictEqual({ "__wasm__": "1", "__wasi__": "1" }, defines2)
-        self.assertEqual("wasi", flavor2)
+        assert { "__wasm__": "1", "__wasi__": "1" } == defines2
+        assert "wasi" == flavor2
 
         [defines3, flavor3] = mock_run(
             { "CC_target": "/opt/wasi-sdk/bin/clang --target=wasm32" },
             "#define __wasm__ 1\n",
             ["/opt/wasi-sdk/bin/clang", "--target=wasm32"]
         )
-        self.assertDictEqual({ "__wasm__": "1" }, defines3)
-        self.assertEqual("wasm", flavor3)
+        assert { "__wasm__": "1" } == defines3
+        assert "wasm" == flavor3
 
         [defines4, flavor4] = mock_run(
             { "CC_target": "/emsdk/upstream/emscripten/emcc" },
             "#define __EMSCRIPTEN__ 1\n",
             ["/emsdk/upstream/emscripten/emcc"]
         )
-        self.assertDictEqual({ "__EMSCRIPTEN__": "1" }, defines4)
-        self.assertEqual("emscripten", flavor4)
+        assert { "__EMSCRIPTEN__": "1" } == defines4
+        assert "emscripten" == flavor4
 
         # Test path which include white space
         [defines5, flavor5] = mock_run(
@@ -155,12 +153,12 @@ class TestGetFlavor(unittest.TestCase):
                 "-pthread"
             ]
         )
-        self.assertDictEqual({
+        assert {
             "__wasm__": "1",
             "__wasi__": "1",
             "_REENTRANT": "1"
-        }, defines5)
-        self.assertEqual("wasi", flavor5)
+        } == defines5
+        assert "wasi" == flavor5
 
         original_platform = os.sep
         os.sep = "\\"
@@ -170,8 +168,8 @@ class TestGetFlavor(unittest.TestCase):
             ["C:/Program Files/wasi-sdk/clang.exe"]
         )
         os.sep = original_platform
-        self.assertDictEqual({ "__wasm__": "1", "__wasi__": "1" }, defines6)
-        self.assertEqual("wasi", flavor6)
+        assert { "__wasm__": "1", "__wasi__": "1" } == defines6
+        assert "wasi" == flavor6
 
 if __name__ == "__main__":
     unittest.main()
