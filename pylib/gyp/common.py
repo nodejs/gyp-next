@@ -430,7 +430,7 @@ def GetCrossCompilerPredefines():  # -> dict
     # setting posix=False will preserve extra '"' cause CreateProcess fail on Windows
     # this makes '\' in %CC_target% and %CFLAGS% work
     def replace_sep(s):
-        return s.replace("\\", "/") if sys.platform == "win32" else s
+        return s.replace(os.sep, "/") if os.sep != "/" else s
 
     if CC := os.environ.get("CC_target") or os.environ.get("CC"):
         cmd += shlex.split(replace_sep(CC))

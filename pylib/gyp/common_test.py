@@ -162,14 +162,14 @@ class TestGetFlavor(unittest.TestCase):
         }, defines5)
         self.assertEqual("wasi", flavor5)
 
-        original_platform = sys.platform
-        sys.platform = "win32"
+        original_platform = os.sep
+        os.sep = "\\"
         [defines6, flavor6] = mock_run(
             { "CC_target": "\"C:\\Program Files\\wasi-sdk\\clang.exe\"" },
             "#define __wasm__ 1\n#define __wasi__ 1\n",
             ["C:/Program Files/wasi-sdk/clang.exe"]
         )
-        sys.platform = original_platform
+        os.sep = original_platform
         self.assertDictEqual({ "__wasm__": "1", "__wasi__": "1" }, defines6)
         self.assertEqual("wasi", flavor6)
 
