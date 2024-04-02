@@ -117,7 +117,7 @@ class TestGetFlavor(unittest.TestCase):
             ["/opt/wasi-sdk/bin/clang"]
         )
         assert { "__wasm__": "1", "__wasi__": "1" } == defines2
-        assert "wasi" == flavor2
+        assert flavor2 == "wasi"
 
         [defines3, flavor3] = mock_run(
             { "CC_target": "/opt/wasi-sdk/bin/clang --target=wasm32" },
@@ -125,7 +125,7 @@ class TestGetFlavor(unittest.TestCase):
             ["/opt/wasi-sdk/bin/clang", "--target=wasm32"]
         )
         assert { "__wasm__": "1" } == defines3
-        assert "wasm" == flavor3
+        assert flavor3 == "wasm"
 
         [defines4, flavor4] = mock_run(
             { "CC_target": "/emsdk/upstream/emscripten/emcc" },
@@ -133,7 +133,7 @@ class TestGetFlavor(unittest.TestCase):
             ["/emsdk/upstream/emscripten/emcc"]
         )
         assert { "__EMSCRIPTEN__": "1" } == defines4
-        assert "emscripten" == flavor4
+        assert flavor4 == "emscripten"
 
         # Test path which include white space
         [defines5, flavor5] = mock_run(
@@ -154,18 +154,18 @@ class TestGetFlavor(unittest.TestCase):
             "__wasi__": "1",
             "_REENTRANT": "1"
         } == defines5
-        assert "wasi" == flavor5
+        assert flavor5 == "wasi"
 
-        original_platform = os.sep
+        original_sep = os.sep
         os.sep = "\\"
         [defines6, flavor6] = mock_run(
             { "CC_target": "\"C:\\Program Files\\wasi-sdk\\clang.exe\"" },
             "#define __wasm__ 1\n#define __wasi__ 1\n",
             ["C:/Program Files/wasi-sdk/clang.exe"]
         )
-        os.sep = original_platform
+        os.sep = original_sep
         assert { "__wasm__": "1", "__wasi__": "1" } == defines6
-        assert "wasi" == flavor6
+        assert flavor6 == "wasi"
 
 if __name__ == "__main__":
     unittest.main()
