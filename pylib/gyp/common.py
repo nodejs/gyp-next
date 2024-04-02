@@ -451,7 +451,7 @@ def GetCrossCompilerPredefines():  # -> dict
             out = subprocess.Popen(
                 real_cmd,
                 shell=True,
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+                stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
             stdout, stderr = out.communicate()
         finally:
@@ -462,7 +462,7 @@ def GetCrossCompilerPredefines():  # -> dict
         out = subprocess.Popen(
             real_cmd,
             shell=False,
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         stdout, stderr = out.communicate()
 
