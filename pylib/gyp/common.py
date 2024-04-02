@@ -465,10 +465,10 @@ def GetCrossCompilerPredefines():  # -> dict
     defines = {}
     lines = stdout.decode("utf-8").replace("\r\n", "\n").split("\n")
     for line in lines:
-        if not line or not line.startswith("#define "):
+        if (line or "").startswith("#define "):
+            _, key, *value = line.split(" ")
+            defines[key] = " ".join(value)
             continue
-        _, key, *value = line.split(" ")
-        defines[key] = " ".join(value)
     return defines
 
 def GetFlavorByPlatform():
