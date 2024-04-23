@@ -9,6 +9,7 @@ import re
 import tempfile
 import sys
 import subprocess
+import shlex
 
 from collections.abc import MutableSet
 
@@ -424,46 +425,49 @@ def EnsureDirExists(path):
 
 def GetCrossCompilerPredefines():  # -> dict
     cmd = []
+
+    # shlex.split() will eat '\' in posix mode, but
+    # setting posix=False will preserve extra '"' cause CreateProcess fail on Windows
+    # this makes '\' in %CC_target% and %CFLAGS% work
+    def replace_sep(s):
+        return s.replace(os.sep, "/") if os.sep != "/" else s
+
     if CC := os.environ.get("CC_target") or os.environ.get("CC"):
-        cmd += CC.split(" ")
+        cmd += shlex.split(replace_sep(CC))
         if CFLAGS := os.environ.get("CFLAGS"):
-            cmd += CFLAGS.split(" ")
+            cmd += shlex.split(replace_sep(CFLAGS))
     elif CXX := os.environ.get("CXX_target") or os.environ.get("CXX"):
-        cmd += CXX.split(" ")
+        cmd += shlex.split(replace_sep(CXX))
         if CXXFLAGS := os.environ.get("CXXFLAGS"):
-            cmd += CXXFLAGS.split(" ")
+            cmd += shlex.split(replace_sep(CXXFLAGS))
     else:
         return {}
 
     if sys.platform == "win32":
         fd, input = tempfile.mkstemp(suffix=".c")
+        real_cmd = [*cmd, "-dM", "-E", "-x", "c", input]
         try:
             os.close(fd)
-            out = subprocess.Popen(
-                [*cmd, "-dM", "-E", "-x", "c", input],
-                shell=True,
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-            )
-            stdout = out.communicate()[0]
+            stdout = subprocess.run(
+                real_cmd, shell=True,
+                capture_output=True, check=True
+            ).stdout
         finally:
             os.unlink(input)
     else:
         input = "/dev/null"
-        out = subprocess.Popen(
-            [*cmd, "-dM", "-E", "-x", "c", input],
-            shell=False,
-            stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-        )
-        stdout = out.communicate()[0]
+        real_cmd = [*cmd, "-dM", "-E", "-x", "c", input]
+        stdout = subprocess.run(
+            real_cmd, shell=False,
+            capture_output=True, check=True
+        ).stdout
 
     defines = {}
     lines = stdout.decode("utf-8").replace("\r\n", "\n").split("\n")
     for line in lines:
-        if not line:
-            continue
-        define_directive, key, *value = line.split(" ")
-        assert define_directive == "#define"
-        defines[key] = " ".join(value)
+        if (line or "").startswith("#define "):
+            _, key, *value = line.split(" ")
+            defines[key] = " ".join(value)
     return defines
 
 def GetFlavorByPlatform():
