@@ -2536,7 +2536,7 @@ def ProcessListFiltersInDict(name, the_dict):
     lists = []
     del_lists = []
     for key, value in the_dict.items():
-        if key == "":
+        if not key:
             continue
         operation = key[-1]
         if operation not in {"!", "/"}:
