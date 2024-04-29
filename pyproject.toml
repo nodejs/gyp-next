@@ -29,7 +29,7 @@ classifiers = [
 ]
 
 [project.optional-dependencies]
-dev = ["flake8", "ruff == 0.4.1", "pytest"]
+dev = ["flake8", "ruff == 0.4.2", "pytest"]
 
 [project.scripts]
 gyp = "gyp:script_main"
