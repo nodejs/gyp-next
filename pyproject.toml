@@ -118,4 +118,4 @@ max-statements = 286
 
 [tool.setuptools]
 package-dir = {"" = "pylib"}
-packages = ["gyp", "gyp.generator"]
+packages = ["gyp", "gyp.generator", "packaging"]
