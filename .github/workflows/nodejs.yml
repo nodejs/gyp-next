@@ -1,0 +1,60 @@
+name: Node.js integration
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  integration:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-13, macos-latest, ubuntu-latest, windows-latest]
+        python: ["3.8", "3.10", "3.12", "3.13"]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Clone gyp-next
+        uses: actions/checkout@v4
+        with:
+          path: gyp-next
+      - name: Clone nodejs/node
+        uses: actions/checkout@v4
+        with:
+          repository: nodejs/node
+          path: node
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          allow-prereleases: true
+
+      # macOS and Linux
+      - name: Replace gyp in Node.js
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          rm -rf node/tools/gyp
+          cp -r gyp-next node/tools/gyp
+      - name: Run configure
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          cd node
+          ./configure
+
+      # Windows
+      - name: Install deps
+        if: runner.os == 'Windows'
+        run: choco install nasm
+      - name: Replace gyp in Node.js
+        if: runner.os == 'Windows'
+        run: |
+          rm -Recurse node/tools/gyp
+          cp -Recurse gyp-next node/tools/gyp
+      - name: Run configure
+        if: runner.os == 'Windows'
+        run: |
+          cd node
+          ./vcbuild.bat nobuild
