@@ -1,19 +1,27 @@
-on: push
+on:
+  push:
+    branches:
+      - main
 
 name: release-please
 jobs:
   release-please:
-    if: github.ref == 'refs/heads/main'  # only generate release-please on the main branch
     runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     permissions:
       contents: write
       pull-requests: write
     steps:
       - uses: google-github-actions/release-please-action@v4
+        id: release
 
   build:
     name: Build distribution
-    if: startsWith(github.ref, 'refs/tags/')  # only publish on tag pushes
+    needs:
+      - release-please
+    if: ${{ needs.release-please.outputs.release_created }}  # only publish on release
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -35,9 +43,10 @@ jobs:
   publish-to-pypi:
     name: >-
       Publish Python distribution to PyPI
-    if: startsWith(github.ref, 'refs/tags/')  # only publish on tag pushes
     needs:
-    - build
+      - release-please
+      - build
+    if: ${{ needs.release-please.outputs.release_created }}  # only publish on release
     runs-on: ubuntu-latest
     environment:
       name: pypi
@@ -56,9 +65,10 @@ jobs:
   github-release:
     name: >-
       Publish Python distribution to GitHub Release
-    if: startsWith(github.ref, 'refs/tags/')  # only publish on tag pushes
     needs:
-    - build
+      - release-please
+      - build
+    if: ${{ needs.release-please.outputs.release_created }}  # only publish on release
     runs-on: ubuntu-latest
     permissions:
       contents: write # IMPORTANT: mandatory for making GitHub Releases
@@ -75,14 +85,6 @@ jobs:
         inputs: >-
           ./dist/*.tar.gz
           ./dist/*.whl
-    - name: Create GitHub Release
-      env:
-        GITHUB_TOKEN: ${{ github.token }}
-      run: >-
-        gh release create
-        '${{ github.ref_name }}'
-        --repo '${{ github.repository }}'
-        --notes ""
     - name: Upload artifact signatures to GitHub Release
       env:
         GITHUB_TOKEN: ${{ github.token }}
@@ -91,5 +93,5 @@ jobs:
       # sigstore-produced signatures and certificates.
       run: >-
         gh release upload
-        '${{ github.ref_name }}' dist/**
+        ${{ needs.release-please.outputs.tag_name }} dist/**
         --repo '${{ github.repository }}'
