@@ -41,3 +41,7 @@ jobs:
         run: pytest
       # - name: Run doctests with pytest
       #   run: pytest --doctest-modules
+      - name: Test CLI commands on a pipx install
+        run: |
+          pipx run --no-cache --spec ./ gyp --help
+          pipx run --no-cache --spec ./ gyp --version
