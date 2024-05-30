@@ -29,17 +29,15 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
           allow-prereleases: true
-
-      # macOS and Linux
       - name: Replace gyp in Node.js
-        if: runner.os != 'Windows'
         shell: bash
         run: |
           rm -rf node/tools/gyp
           cp -r gyp-next node/tools/gyp
+
+      # macOS and Linux
       - name: Run configure
         if: runner.os != 'Windows'
-        shell: bash
         run: |
           cd node
           ./configure
@@ -48,11 +46,6 @@ jobs:
       - name: Install deps
         if: runner.os == 'Windows'
         run: choco install nasm
-      - name: Replace gyp in Node.js
-        if: runner.os == 'Windows'
-        run: |
-          rm -Recurse node/tools/gyp
-          cp -Recurse gyp-next node/tools/gyp
       - name: Run configure
         if: runner.os == 'Windows'
         run: |
