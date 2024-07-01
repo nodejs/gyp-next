@@ -781,7 +781,7 @@ class XCObject:
             # Make sure the property conforms to the schema.
             (is_list, property_type, is_strong) = self._schema[property][0:3]
             if is_list:
-                if value.__class__ != list:
+                if not isinstance(value.__class__, list):
                     raise TypeError(
                         property
                         + " of "
@@ -791,7 +791,7 @@ class XCObject:
                     )
                 for item in value:
                     if not isinstance(item, property_type) and not (
-                        isinstance(item, str) and property_type == str
+                        isinstance(item, str) and isinstance(property_type, str)
                     ):
                         # Accept unicode where str is specified.  str is treated as
                         # UTF-8-encoded.
@@ -806,7 +806,7 @@ class XCObject:
                             + item.__class__.__name__
                         )
             elif not isinstance(value, property_type) and not (
-                isinstance(value, str) and property_type == str
+                isinstance(value, str) and isinstance(property_type, str)
             ):
                 # Accept unicode where str is specified.  str is treated as
                 # UTF-8-encoded.
