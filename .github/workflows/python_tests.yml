@@ -4,10 +4,9 @@
 name: Python_tests
 on:
   push:
-    branches: [ main ]
   pull_request:
-    branches: [ main ]
   workflow_dispatch:
+
 jobs:
   Python_tests:
     runs-on: ${{ matrix.os }}

@@ -781,7 +781,7 @@ class XCObject:
             # Make sure the property conforms to the schema.
             (is_list, property_type, is_strong) = self._schema[property][0:3]
             if is_list:
-                if not isinstance(value.__class__, list):
+                if not isinstance(value, list):
                     raise TypeError(
                         property
                         + " of "
