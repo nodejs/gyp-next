@@ -1240,7 +1240,7 @@ def ProcessConditionsInDict(the_dict, phase, variables, build_file):
         )
 
         if merge_dict is not None:
-            # Expand variables and nested conditinals in the merge_dict before
+            # Expand variables and nested conditionals in the merge_dict before
             # merging it.
             ProcessVariablesAndConditionsInDict(
                 merge_dict, phase, variables, build_file

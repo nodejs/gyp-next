@@ -1834,7 +1834,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
             # Since this target depends on binary and resources which are in
             # nested subfolders, the framework directory will be older than
             # its dependencies usually. To prevent this rule from executing
-            # on every build (expensive, especially with postbuilds), expliclity
+            # on every build (expensive, especially with postbuilds), explicitly
             # update the time on the framework directory.
             self.WriteLn("\t@touch -c %s" % QuoteSpaces(self.output))
 
