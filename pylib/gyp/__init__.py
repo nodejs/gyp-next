@@ -253,7 +253,7 @@ def RegenerateFlags(options):
     for name, metadata in options._regeneration_metadata.items():
         opt = metadata["opt"]
         value = getattr(options, name)
-        value_predicate = metadata["type"] == "path" and FixPath or Noop
+        value_predicate = (metadata["type"] == "path" and FixPath) or Noop
         action = metadata["action"]
         env_name = metadata["env_name"]
         if action == "append":
