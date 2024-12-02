@@ -24,6 +24,17 @@ DEBUG_GENERAL = "general"
 DEBUG_VARIABLES = "variables"
 DEBUG_INCLUDES = "includes"
 
+def EscapeForCString(string):
+    if isinstance(string, str):
+        string = string.encode(encoding='utf8')
+
+    result = ''
+    for char in string:
+        if not (32 <= char < 127) or char in (ord('\\'), ord('"')):
+            result += '\\%03o' % char
+        else:
+            result += chr(char)
+    return result
 
 def DebugOutput(mode, message, *args):
     if "all" in gyp.debug or mode in gyp.debug:
@@ -106,17 +117,18 @@ def Load(
 
     output_dir = params["options"].generator_output or params["options"].toplevel_dir
     if default_variables["GENERATOR"] == "ninja":
-        default_variables.setdefault(
-            "PRODUCT_DIR_ABS",
-            os.path.join(
-                output_dir, "out", default_variables.get("build_type", "default")
-            ),
+        product_dir_abs = os.path.join(
+            output_dir, "out", default_variables.get("build_type", "default")
         )
     else:
-        default_variables.setdefault(
-            "PRODUCT_DIR_ABS",
-            os.path.join(output_dir, default_variables["CONFIGURATION_NAME"]),
+        product_dir_abs = os.path.join(
+            output_dir, default_variables["CONFIGURATION_NAME"]
         )
+
+    default_variables.setdefault("PRODUCT_DIR_ABS", product_dir_abs)
+    default_variables.setdefault(
+        "PRODUCT_DIR_ABS_CSTR", EscapeForCString(product_dir_abs)
+    )
 
     # Give the generator the opportunity to set additional variables based on
     # the params it will receive in the output phase.
