@@ -24,13 +24,14 @@ DEBUG_GENERAL = "general"
 DEBUG_VARIABLES = "variables"
 DEBUG_INCLUDES = "includes"
 
-def EscapeForCString(string):
+def EscapeForCString(string: bytes | str) -> str:
     if isinstance(string, str):
         string = string.encode(encoding='utf8')
 
-    result = ''
+    backslash_or_double_quote = {ord('\\'), ord('"')}
+    result = []
     for char in string:
-        if not (32 <= char < 127) or char in (ord('\\'), ord('"')):
+        if char in backslash_or_double_quote or not 32 <= char < 127:
             result += '\\%03o' % char
         else:
             result += chr(char)
