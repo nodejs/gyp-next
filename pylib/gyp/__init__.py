@@ -696,7 +696,7 @@ def main(args):
         return 1
 
 
-# NOTE: setuptools generated console_scripts calls function with no arguments
+# NOTE: console_scripts calls this function with no arguments
 def script_main():
     return main(sys.argv[1:])
 

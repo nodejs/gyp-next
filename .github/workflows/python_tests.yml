@@ -26,7 +26,7 @@ jobs:
       - uses: seanmiddleditch/gha-setup-ninja@v5
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip setuptools
+          python -m pip install --upgrade pip
           pip install --editable ".[dev]"
       - run: ./gyp -V && ./gyp --version && gyp -V && gyp --version
       - name: Lint with ruff  # See pyproject.toml for settings
