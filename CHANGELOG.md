@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.2](https://github.com/nodejs/gyp-next/compare/v0.19.1...v0.19.2) (2024-12-29)
+
+
+### Bug Fixes
+
+* remove explicit installation of setuptools ([#278](https://github.com/nodejs/gyp-next/issues/278)) ([e476778](https://github.com/nodejs/gyp-next/commit/e4767782c70ca8427184694589d9f0ded5eeed22))
+
 ## [0.19.1](https://github.com/nodejs/gyp-next/compare/v0.19.0...v0.19.1) (2024-12-09)
 
 
