@@ -120,9 +120,9 @@ class TestGetFlavor(unittest.TestCase):
         assert flavor2 == "wasi"
 
         [defines3, flavor3] = mock_run(
-            { "CC_target": "/opt/wasi-sdk/bin/clang --target=wasm32" },
+            { "CC_target": "/opt/wasi-sdk/bin/clang --target=wasi-sdk" },
             "#define __wasm__ 1\n",
-            ["/opt/wasi-sdk/bin/clang", "--target=wasm32"]
+            ["/opt/wasi-sdk/bin/clang", "--target=wasi-sdk"]
         )
         assert { "__wasm__": "1" } == defines3
         assert flavor3 == "wasm"
