@@ -205,8 +205,7 @@ def NameValueListToDict(name_value_list):
 
 
 def ShlexEnv(env_name):
-    flags = os.environ.get(env_name, [])
-    if flags:
+    if flags := os.environ.get(env_name) or []:
         flags = shlex.split(flags)
     return flags
 
@@ -525,7 +524,7 @@ def gyp_main(args):
         # If no format was given on the command line, then check the env variable.
         generate_formats = []
         if options.use_environment:
-            generate_formats = os.environ.get("GYP_GENERATORS", [])
+            generate_formats = os.environ.get("GYP_GENERATORS") or []
         if generate_formats:
             generate_formats = re.split(r"[\s,]", generate_formats)
         if generate_formats:
