@@ -61,7 +61,7 @@ LDFLAGS_Default := \
 	-arch \
 	x86_64 \
 	-L$(builddir) \
-	-Lmylib
+	-L$(srcdir)/mylib
 
 LIBTOOLFLAGS_Default :=
 

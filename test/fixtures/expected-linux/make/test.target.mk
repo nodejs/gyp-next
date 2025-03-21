@@ -44,7 +44,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%.o: $(obj)/%.cc FORCE_DO_CMD
 # End of this set of suffix rules
 ### Rules for final target.
 LDFLAGS_Default := \
-	-Lmylib
+	-L$(srcdir)/mylib
 
 LIBS :=
 
