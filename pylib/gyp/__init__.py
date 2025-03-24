@@ -5,16 +5,17 @@
 # found in the LICENSE file.
 
 from __future__ import annotations
-import copy
-import gyp.input
+
 import argparse
+import copy
 import os.path
 import re
 import shlex
 import sys
 import traceback
-from gyp.common import GypError
 
+import gyp.input
+from gyp.common import GypError
 
 # Default debug modes for GYP
 debug = {}
@@ -360,7 +361,7 @@ def gyp_main(args):
         action="store",
         env_name="GYP_CONFIG_DIR",
         default=None,
-        help="The location for configuration files like " "include.gypi.",
+        help="The location for configuration files like include.gypi.",
     )
     parser.add_argument(
         "-d",
@@ -529,14 +530,13 @@ def gyp_main(args):
             generate_formats = re.split(r"[\s,]", generate_formats)
         if generate_formats:
             options.formats = generate_formats
+        # Nothing in the variable, default based on platform.
+        elif sys.platform == "darwin":
+            options.formats = ["xcode"]
+        elif sys.platform in ("win32", "cygwin"):
+            options.formats = ["msvs"]
         else:
-            # Nothing in the variable, default based on platform.
-            if sys.platform == "darwin":
-                options.formats = ["xcode"]
-            elif sys.platform in ("win32", "cygwin"):
-                options.formats = ["msvs"]
-            else:
-                options.formats = ["make"]
+            options.formats = ["make"]
 
     if not options.generator_output and options.use_environment:
         g_o = os.environ.get("GYP_GENERATOR_OUTPUT")
