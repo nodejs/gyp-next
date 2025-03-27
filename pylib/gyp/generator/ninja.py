@@ -10,20 +10,18 @@ import json
 import multiprocessing
 import os.path
 import re
-import signal
 import shutil
+import signal
 import subprocess
 import sys
+from io import StringIO
+
 import gyp
 import gyp.common
 import gyp.msvs_emulation
-import gyp.MSVSUtil as MSVSUtil
 import gyp.xcode_emulation
-
-from io import StringIO
-
+from gyp import MSVSUtil, ninja_syntax
 from gyp.common import GetEnvironFallback
-import gyp.ninja_syntax as ninja_syntax
 
 generator_default_variables = {
     "EXECUTABLE_PREFIX": "",
@@ -2535,7 +2533,7 @@ def GenerateOutputForConfig(target_list, target_dicts, data, params, config_name
             % {"suffix": "@$link_file_list"},
             rspfile="$link_file_list",
             rspfile_content=(
-                "-Wl,--whole-archive $in $solibs -Wl," "--no-whole-archive $libs"
+                "-Wl,--whole-archive $in $solibs -Wl,--no-whole-archive $libs"
             ),
             pool="link_pool",
         )
@@ -2684,7 +2682,7 @@ def GenerateOutputForConfig(target_list, target_dicts, data, params, config_name
         master_ninja.rule(
             "link",
             description="LINK $out, POSTBUILDS",
-            command=("$ld $ldflags -o $out " "$in $solibs $libs$postbuilds"),
+            command=("$ld $ldflags -o $out $in $solibs $libs$postbuilds"),
             pool="link_pool",
         )
         master_ninja.rule(
