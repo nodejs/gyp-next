@@ -1430,7 +1430,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
                 self.WriteList(cflags_objcc, "CFLAGS_OBJCC_%s" % configname)
             includes = config.get("include_dirs")
             if includes:
-                includes = [Sourceify(self.Absolutify(i)) for i in includes]
+                includes = [SourceifyAndQuoteSpaces(self.Absolutify(i)) for i in includes]
             self.WriteList(includes, "INCS_%s" % configname, prefix="-I")
 
         compilable = list(filter(Compilable, sources))
