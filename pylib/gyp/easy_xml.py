@@ -127,7 +127,10 @@ def WriteXmlIfChanged(content, path, encoding="utf-8", pretty=False,
         default_encoding = locale.getencoding()
 
     if default_encoding and default_encoding.upper() != encoding.upper():
-        xml_string = xml_string.encode(encoding)
+        if sys.platform == "win32":
+            if isinstance(xml_string, str):
+                xml_string = xml_string.decode("cp1251")  # str --> bytes
+            xml_string = xml_string.encode(encoding)  # bytes --> str
 
     # Get the old content
     try:
