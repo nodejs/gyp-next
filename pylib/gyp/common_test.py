@@ -85,7 +85,7 @@ class TestGetFlavor(unittest.TestCase):
     @patch("os.close")
     @patch("os.unlink")
     @patch("tempfile.mkstemp")
-    def test_GetCrossCompilerPredefines(self, mock_mkstemp, mock_unlink, mock_close):
+    def test_GetCompilerPredefines(self, mock_mkstemp, mock_unlink, mock_close):
         mock_close.return_value = None
         mock_unlink.return_value = None
         mock_mkstemp.return_value = (0, "temp.c")
@@ -98,7 +98,7 @@ class TestGetFlavor(unittest.TestCase):
                 mock_run.return_value = mock_process
                 expected_input = "temp.c" if sys.platform == "win32" else "/dev/null"
                 with patch.dict(os.environ, env):
-                    defines = gyp.common.GetCrossCompilerPredefines()
+                    defines = gyp.common.GetCompilerPredefines()
                     flavor = gyp.common.GetFlavor({})
                 if env.get("CC_target"):
                     mock_run.assert_called_with(
