@@ -39,7 +39,6 @@ gyp = "gyp:script_main"
 [tool.ruff]
 extend-exclude = ["pylib/packaging"]
 line-length = 88
-target-version = "py37"
 
 [tool.ruff.lint]
 select = [
