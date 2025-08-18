@@ -1354,7 +1354,7 @@ class XcodeSettings:
             return default_sdk_root
         try:
             all_sdks = GetStdout(["xcodebuild", "-showsdks"])
-        except (GypError, FileNotFoundError):
+        except (GypError, OSError):
             # If xcodebuild fails, there will be no valid SDKs
             return ""
         for line in all_sdks.splitlines():
@@ -1508,7 +1508,7 @@ def XcodeVersion():
             raise GypError("xcodebuild returned unexpected results")
         version = version_list[0].split()[-1]  # Last word on first line
         build = version_list[-1].split()[-1]  # Last word on last line
-    except (GypError, FileNotFoundError):
+    except (GypError, OSError):
         # Xcode not installed so look for XCode Command Line Tools
         version = CLTVersion()  # macOS Catalina returns 11.0.0.0.1.1567737322
         if not version:
