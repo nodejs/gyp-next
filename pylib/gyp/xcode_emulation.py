@@ -1508,7 +1508,8 @@ def XcodeVersion():
             raise GypError("xcodebuild returned unexpected results")
         version = version_list[0].split()[-1]  # Last word on first line
         build = version_list[-1].split()[-1]  # Last word on last line
-    except (GypError, FileNotFoundError):  # Xcode not installed so look for XCode Command Line Tools
+    except (GypError, FileNotFoundError):
+      # Xcode not installed so look for XCode Command Line Tools
         version = CLTVersion()  # macOS Catalina returns 11.0.0.0.1.1567737322
         if not version:
             raise GypError("No Xcode or CLT version detected!")
