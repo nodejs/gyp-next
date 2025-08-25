@@ -345,7 +345,7 @@ class RegeneratableOptionParser(argparse.ArgumentParser):
 
 def gyp_main(args):
     my_name = os.path.basename(sys.argv[0])
-    usage = "usage: %(prog)s [options ...] [build_file ...]"
+    usage = "%(prog)s [options ...] [build_file ...]"
 
     parser = RegeneratableOptionParser(usage=usage.replace("%s", "%(prog)s"))
     parser.add_argument(
