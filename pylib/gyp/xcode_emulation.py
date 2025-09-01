@@ -1538,8 +1538,7 @@ def CLTVersion():
     for key in [MAVERICKS_PKG_ID, STANDALONE_PKG_ID, FROM_XCODE_PKG_ID]:
         try:
             output = GetStdout(["/usr/sbin/pkgutil", "--pkg-info", key])
-            m = re.search(regex, output)
-            if m:
+            if m := re.search(regex, output):
                 return m.groupdict()["version"]
         except (GypError, OSError):
             continue
@@ -1547,8 +1546,7 @@ def CLTVersion():
     regex = re.compile(r"Command Line Tools for Xcode\s+(?P<version>\S+)")
     try:
         output = GetStdout(["/usr/sbin/softwareupdate", "--history"])
-        m = re.search(regex, output)
-        if m:
+        if m := re.search(regex, output):
             return m.groupdict()["version"]
     except (GypError, OSError):
         return None
