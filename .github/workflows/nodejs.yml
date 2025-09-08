@@ -30,7 +30,7 @@ jobs:
         with:
           repository: nodejs/node
           path: node
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python }}
           allow-prereleases: true
