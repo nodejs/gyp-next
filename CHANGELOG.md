@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.5](https://github.com/nodejs/gyp-next/compare/v0.20.4...v0.20.5) (2025-09-14)
+
+
+### Bug Fixes
+
+* handle `None` case in xcode_emulation regexes ([#311](https://github.com/nodejs/gyp-next/issues/311)) ([b21ee31](https://github.com/nodejs/gyp-next/commit/b21ee3150eea9fc1a8811e910e5ba64f42e1fb77))
+
 ## [0.20.4](https://github.com/nodejs/gyp-next/compare/v0.20.3...v0.20.4) (2025-08-25)
 
 
