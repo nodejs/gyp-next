@@ -36,7 +36,7 @@ jobs:
         uses: astral-sh/ruff-action@v3
       - run: ruff format --check --diff
       - name: Test with pytest
-        run: pytest --iterations=8 --parallel-threads=auto
+        run: pytest --parallel-threads=auto
       # - name: Run doctests with pytest
       #   run: pytest --doctest-modules
       - name: Test CLI commands on a pipx install
