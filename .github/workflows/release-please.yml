@@ -24,7 +24,7 @@ jobs:
     if: ${{ needs.release-please.outputs.release_created }}  # only publish on release
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - name: Build a binary wheel and a source tarball
       run: pipx run build
     - name: Store the distribution packages

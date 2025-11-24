@@ -27,11 +27,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Clone gyp-next
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           path: gyp-next
       - name: Clone nodejs/node-gyp
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: nodejs/node-gyp
           path: node-gyp
