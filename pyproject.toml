@@ -10,14 +10,14 @@ authors = [
 ]
 description = "A fork of the GYP build system for use in the Node.js projects"
 readme = "README.md"
-license = { file="LICENSE" }
+license = "BSD-3-Clause"
+license-files = ["LICENSE"]
 requires-python = ">=3.8"
-dependencies = ["packaging>=24.0", "setuptools>=69.5.1"]
+dependencies = ["packaging>=24.0", "setuptools>=77.0.3"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Console",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: BSD License",
     "Natural Language :: English",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
@@ -32,6 +32,10 @@ dev = ["pytest", "ruff"]
 
 [project.scripts]
 gyp = "gyp:script_main"
+# TODO(cclauss): Enable these tools
+# graphviz = "tools.graphviz:main"
+# pretty_sln = "tools.pretty_sln:main"
+# pretty_vcproj = "tools.pretty_vcproj:main"
 
 [project.urls]
 "Homepage" = "https://github.com/nodejs/gyp-next"
