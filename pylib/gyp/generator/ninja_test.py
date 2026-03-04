@@ -35,15 +35,12 @@ class TestPrefixesAndSuffixes(unittest.TestCase):
             "foo", "wee", ".", ".", "build.ninja", ".", "build.ninja", "win"
         )
         spec = {"target_name": "wee"}
-        self.assertTrue(
-            writer.ComputeOutputFileName(spec, "executable").endswith(".exe")
-        )
-        self.assertTrue(
-            writer.ComputeOutputFileName(spec, "shared_library").endswith(".dll")
-        )
-        self.assertTrue(
-            writer.ComputeOutputFileName(spec, "static_library").endswith(".lib")
-        )
+        for key, ext in {
+            "executable": ".exe",
+            "shared_library": ".dll",
+            "static_library": ".lib",
+        }:
+            self.assertTrue(writer.ComputeOutputFileName(spec, key).endswith(ext))
 
     def test_BinaryNamesLinux(self):
         writer = ninja.NinjaWriter(
