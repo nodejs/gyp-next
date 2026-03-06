@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.21.2](https://github.com/nodejs/gyp-next/compare/v0.21.1...v0.21.2) (2026-03-06)
+
+
+### Bug Fixes
+
+* drop deprecated Python module pkg_resources ([#333](https://github.com/nodejs/gyp-next/issues/333)) ([5b180d5](https://github.com/nodejs/gyp-next/commit/5b180d52d03aff062bdea1ad0209b82271c7eb4a))
+
 ## [0.21.1](https://github.com/nodejs/gyp-next/compare/v0.21.0...v0.21.1) (2026-01-24)
 
 
