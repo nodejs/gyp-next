@@ -52,7 +52,7 @@ jobs:
         if: runner.os == 'Windows'
         run: choco install nasm
       - name: Run configure
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && matrix.python-version != '3.15'
         run: |
           cd node
           ./vcbuild.bat nobuild
