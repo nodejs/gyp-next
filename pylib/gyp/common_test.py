@@ -76,6 +76,7 @@ class TestGetFlavor(unittest.TestCase):
         self.assertFlavor("linux", "linux2", {})
         self.assertFlavor("linux", "linux3", {})
         self.assertFlavor("linux", "linux", {})
+        self.assertFlavor("hurd", "gnu0", {})
 
     def test_param(self):
         self.assertFlavor("foobar", "linux2", {"flavor": "foobar"})
