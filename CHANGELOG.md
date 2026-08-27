@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.22.3](https://github.com/nodejs/gyp-next/compare/v0.22.2...v0.22.3) (2026-08-27)
+
+
+### Bug Fixes
+
+* add Python 3.15 beta to the testing ([#344](https://github.com/nodejs/gyp-next/issues/344)) ([bb6522f](https://github.com/nodejs/gyp-next/commit/bb6522fbacc620da2cc382484d75c75ee35d780c))
+* **ci:** add zizmor security linter for github actions ([#358](https://github.com/nodejs/gyp-next/issues/358)) ([3d4c42b](https://github.com/nodejs/gyp-next/commit/3d4c42b386582df54368c29fcd7c3121737451a2))
+* **ci:** update ruff github aactio to v4.0.0 ([#348](https://github.com/nodejs/gyp-next/issues/348)) ([8d213cd](https://github.com/nodejs/gyp-next/commit/8d213cd35cec96e91dc98359ccd247404f71f27b))
+* write pch cflags as a list instead of a map object ([#355](https://github.com/nodejs/gyp-next/issues/355)) ([fe8188c](https://github.com/nodejs/gyp-next/commit/fe8188c6af0cf53488960b0ec655b1dcc01a7c94))
+
 ## [0.22.2](https://github.com/nodejs/gyp-next/compare/v0.22.1...v0.22.2) (2026-04-22)
 
 
