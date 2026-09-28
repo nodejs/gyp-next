@@ -773,8 +773,10 @@ def WriteTarget(
         other_sources_name = cmake_target_name + "__other_srcs"
         SetVariableList(output, other_sources_name, other_sources)
 
-    # CMake gets upset when executable targets provide no sources.
+    # CMake gets upset when executable or library targets provide no sources.
     # http://www.cmake.org/pipermail/cmake/2010-July/038461.html
+    # Libraries without sources are used to aggregate dependencies; build an
+    # empty library for them, as the make generator does.
     dummy_sources_name = None
     has_sources = (
         s_sources_name
@@ -783,7 +785,7 @@ def WriteTarget(
         or linkable_sources_name
         or other_sources_name
     )
-    if target_type == "executable" and not has_sources:
+    if target_type != "none" and not has_sources:
         dummy_sources_name = cmake_target_name + "__dummy_srcs"
         SetVariable(
             output, dummy_sources_name, "${obj}.${TOOLSET}/${TARGET}/genc/dummy.c"
