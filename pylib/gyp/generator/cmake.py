@@ -304,12 +304,9 @@ def WriteActions(target_name, actions, extra_sources, extra_deps, path_to_gyp, o
         output.write(path_to_gyp)
         output.write("\n")
 
-        output.write("  COMMENT ")
-        if "message" in action:
-            output.write(action["message"])
-        else:
-            output.write(action_target_name)
-        output.write("\n")
+        output.write('  COMMENT "')
+        output.write(CMakeStringEscape(action.get("message", action_target_name)))
+        output.write('"\n')
 
         output.write("  VERBATIM\n")
         output.write(")\n")
@@ -415,12 +412,9 @@ def WriteRules(target_name, rules, extra_sources, extra_deps, path_to_gyp, outpu
             output.write(path_to_gyp)
             output.write("\n")
 
-            output.write("  COMMENT ")
-            if "message" in rule:
-                output.write(rule["message"])
-            else:
-                output.write(action_name)
-            output.write("\n")
+            output.write('  COMMENT "')
+            output.write(CMakeStringEscape(rule.get("message", action_name)))
+            output.write('"\n')
 
             output.write("  VERBATIM\n")
             output.write(")\n")
@@ -537,9 +531,9 @@ def WriteCopies(target_name, copies, extra_deps, path_to_gyp, output):
     output.write(path_to_gyp)
     output.write("\n")
 
-    output.write("COMMENT Copying for ")
-    output.write(target_name)
-    output.write("\n")
+    output.write('COMMENT "Copying for ')
+    output.write(CMakeStringEscape(target_name))
+    output.write('"\n')
 
     output.write("VERBATIM\n")
     output.write(")\n")
@@ -1160,8 +1154,7 @@ def GenerateOutputForConfig(target_list, target_dicts, data, params, config_to_u
     gyp.common.EnsureDirExists(output_file)
 
     output = open(output_file, "w")
-    output.write("cmake_minimum_required(VERSION 2.8.8 FATAL_ERROR)\n")
-    output.write("cmake_policy(VERSION 2.8.8)\n")
+    output.write("cmake_minimum_required(VERSION 3.10)\n")
 
     gyp_file, project_target, _ = gyp.common.ParseQualifiedTarget(target_list[-1])
     output.write("project(")
