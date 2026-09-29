@@ -13,6 +13,7 @@ import gyp
 fixture_dir = os.path.join(os.path.dirname(__file__), "fixtures")
 gyp_file = os.path.join(fixture_dir, "integration.gyp")
 pch_gyp_file = os.path.join(fixture_dir, "pch.gyp")
+pch_prefix_gyp_file = os.path.join(fixture_dir, "pch_prefix.gyp")
 
 if sys.platform == "win32":
     sysname = sys.platform
@@ -78,6 +79,36 @@ class TestGypUnix(unittest.TestCase):
         assert rc == 0
 
         assert_file(self, "out/Default/CMakeLists.txt", "cmake/CMakeLists.txt")
+
+
+class TestGypMac(unittest.TestCase):
+    def setUp(self) -> None:
+        if sysname != "darwin":
+            self.skipTest("macOS-only test")
+        shutil.rmtree(os.path.join(fixture_dir, "out"), ignore_errors=True)
+
+    def test_make_prefix_header_waits_for_generated_inputs(self) -> None:
+        rc = gyp.main(
+            [
+                "-f",
+                "make",
+                "--depth",
+                fixture_dir,
+                "--generator-output",
+                "out",
+                pch_prefix_gyp_file,
+            ]
+        )
+        assert rc == 0
+
+        with open(os.path.join(fixture_dir, "out/pch_prefix.target.mk")) as in_file:
+            mk = in_file.read()
+
+        gch = "$(obj).target/$(TARGET)/pch-cc/pch.h.gch"
+        assert f"$(obj).target/$(TARGET)/pch.o: {gch}" in mk
+        # A prefix header may include generated headers, so the .gch must carry
+        # the same order-only prerequisites the objects carry.
+        self.assertRegex(mk, re.escape(f"{gch}: |") + r".*make_header")
 
 
 class TestGypWindows(unittest.TestCase):
