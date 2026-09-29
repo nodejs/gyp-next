@@ -128,6 +128,7 @@ def main(argv=None):
             # https://bugs.chromium.org/p/gyp/issues/detail?id=530
             # 'darwin':   ['make', 'ninja', 'xcode', 'xcode-ninja'],
             "darwin": ["make", "ninja", "xcode"],
+            "gnu0": ["make", "ninja"],
         }[sys.platform]
 
     gyp_options = []
