@@ -157,8 +157,8 @@ def RelativePath(path, relative_to, follow_path_symlink=True):
     path_split = path.split(os.path.sep)
     relative_to_split = relative_to.split(os.path.sep)
 
-    # Determine how much of the prefix the two paths share.
-    prefix_len = len(os.path.commonprefix([path_split, relative_to_split]))
+    # Determine how much of the path prefix the two paths share.
+    prefix_len = len(os.path.commonpath([path, relative_to]).split(os.path.sep))
 
     # Put enough ".." components to back up out of relative_to to the common
     # prefix, and then append the part of path_split after the common prefix.
