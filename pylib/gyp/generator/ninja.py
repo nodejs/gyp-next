@@ -1274,13 +1274,17 @@ class NinjaWriter:
                 ],
             )
 
-        self.WritePchTargets(ninja_file, pch_commands)
+        self.WritePchTargets(ninja_file, pch_commands, predepends)
 
         ninja_file.newline()
         return outputs
 
-    def WritePchTargets(self, ninja_file, pch_commands):
-        """Writes ninja rules to compile prefix headers."""
+    def WritePchTargets(self, ninja_file, pch_commands, predepends):
+        """Writes ninja rules to compile prefix headers.
+
+        A prefix header may include generated headers, so like the object files,
+        the gch files are built after |predepends|.
+        """
         if not pch_commands:
             return
 
@@ -1299,7 +1303,13 @@ class NinjaWriter:
                 "mm": "objcxx",
             }
             cmd = map.get(lang)
-            ninja_file.build(gch, cmd, input, variables=[(var_name, lang_flag)])
+            ninja_file.build(
+                gch,
+                cmd,
+                input,
+                order_only=predepends,
+                variables=[(var_name, lang_flag)],
+            )
 
     def WriteLink(self, spec, config_name, config, link_deps, compile_deps):
         """Write out a link step. Fills out target.binary."""

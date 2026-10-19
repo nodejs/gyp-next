@@ -1477,27 +1477,6 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
                 self.WriteLn(f"{obj}: {gch}")
             self.WriteLn("# End precompiled header dependencies")
 
-            # A prefix header may include generated headers, so the .gch has to
-            # wait for the same generated inputs the objects wait for. The rules
-            # above give the objects these as order-only prerequisites; without
-            # the same rules here the .gch races code generation, and a clean
-            # build fails on a missing generated header.
-            gchs = sorted({gch for _, _, gch in pchdeps})
-            if deps:
-                self.WriteMakeRule(
-                    gchs,
-                    deps,
-                    comment="Make sure our dependencies are built before the pch.",
-                    order_only=True,
-                )
-            if extra_outputs:
-                self.WriteMakeRule(
-                    gchs,
-                    extra_outputs,
-                    comment="Make sure our actions/rules run before the pch.",
-                    order_only=True,
-                )
-
         if objs:
             extra_link_deps.append("$(OBJS)")
             self.WriteLn(
@@ -1542,7 +1521,9 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
                     "$(CFLAGS_OBJCC_$(BUILDTYPE))"
                 )
 
-        self.WritePchTargets(precompiled_header.GetPchBuildCommands())
+        self.WritePchTargets(
+            precompiled_header.GetPchBuildCommands(), deps + extra_outputs
+        )
 
         # If there are any object files in our input file list, link them into our
         # output.
@@ -1550,8 +1531,13 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
 
         self.WriteLn()
 
-    def WritePchTargets(self, pch_commands):
-        """Writes make rules to compile prefix headers."""
+    def WritePchTargets(self, pch_commands, order_only_deps):
+        """Writes make rules to compile prefix headers.
+
+        A prefix header may include generated headers, so like the object files,
+        the gch files are built after |order_only_deps|: the target's dependencies
+        and the outputs of its actions and rules.
+        """
         if not pch_commands:
             return
 
@@ -1568,6 +1554,9 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
                 "m": "GYP_PCH_OBJCFLAGS",
                 "mm": "GYP_PCH_OBJCXXFLAGS",
             }[lang]
+            if order_only_deps:
+                self.WriteMakeRule([gch], order_only_deps, order_only=True)
+            self.WriteLn(f"{gch}: TOOLSET := $(TOOLSET)")
             self.WriteLn(
                 f"{gch}: {var_name} := {lang_flag} " + "$(DEFS_$(BUILDTYPE)) "
                 "$(INCS_$(BUILDTYPE)) "
