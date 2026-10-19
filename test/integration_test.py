@@ -108,11 +108,15 @@ class TestGypMac(unittest.TestCase):
         )
         assert rc == 0
 
+        # CXXFLAGS that a C compile rejects check the C gch doesn't get them.
+        env = {**os.environ, "CXXFLAGS": "-std=c++17"}
         for target in self.pch_targets:
             for lang in self.pch_langs:
                 gch = f"out/Default/obj.target/{target}/pch-{lang}/{target}.h.gch"
                 subprocess.run(
-                    ["make", "-C", os.path.join(fixture_dir, "out"), gch], check=True
+                    ["make", "-C", os.path.join(fixture_dir, "out"), gch],
+                    env=env,
+                    check=True,
                 )
 
     def test_ninja_precompiled_prefix_header(self) -> None:
