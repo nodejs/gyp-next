@@ -1253,6 +1253,12 @@ class NinjaWriter:
                     cflags_cc,
                     self.ExpandSpecial,
                 )
+            elif ext in ("s", "S") and precompiled_header.compile_headers:
+                # Assembly gets $cflags_pch_c too, but without a gch for it, the
+                # -include of the C one fails.
+                variables = [
+                    ("cflags_pch_c", precompiled_header.GetInclude("asm", arch))
+                ]
             ninja_file.build(
                 output,
                 command,

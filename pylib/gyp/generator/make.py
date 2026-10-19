@@ -1485,13 +1485,29 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
 # See "Target-specific Variable Values" in the GNU Make manual."""
             )
             self.WriteLn("$(OBJS): TOOLSET := $(TOOLSET)")
-            self.WriteLn(
-                "$(OBJS): GYP_CFLAGS := "
+            gyp_cflags = (
                 "$(DEFS_$(BUILDTYPE)) "
                 "$(INCS_$(BUILDTYPE)) "
-                "%s " % precompiled_header.GetInclude("c") + "$(CFLAGS_$(BUILDTYPE)) "
+                "%s "
+                "$(CFLAGS_$(BUILDTYPE)) "
                 "$(CFLAGS_C_$(BUILDTYPE))"
             )
+            self.WriteLn(
+                "$(OBJS): GYP_CFLAGS := "
+                + gyp_cflags % precompiled_header.GetInclude("c")
+            )
+            asm_objs = [
+                obj
+                for source, obj in zip(compilable, objs)
+                if source.endswith((".s", ".S"))
+            ]
+            if asm_objs and precompiled_header.compile_headers:
+                # Assembly is compiled with GYP_CFLAGS too, but without a gch
+                # for it, the -include of the C one fails.
+                self.WriteLn(
+                    "%s: GYP_CFLAGS := " % " ".join(asm_objs)
+                    + gyp_cflags % precompiled_header.GetInclude("asm")
+                )
             self.WriteLn(
                 "$(OBJS): GYP_CXXFLAGS := "
                 "$(DEFS_$(BUILDTYPE)) "
