@@ -510,6 +510,8 @@ def GetFlavorByPlatform():
         return "zos"
     if sys.platform == "os400":
         return "os400"
+    if re.fullmatch("gnu\\d+", sys.platform):
+        return "hurd"
 
     return "linux"
 
