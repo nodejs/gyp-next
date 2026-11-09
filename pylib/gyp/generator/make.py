@@ -2174,6 +2174,7 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
         if actions:
             self.WriteLn("%s: TOOLSET := $(TOOLSET)" % outputs[0])
         force_append = " FORCE_DO_CMD" if force else ""
+        stamp_deps = None
 
         if order_only:
             # Order only rule: Just write a simple rule.
@@ -2188,7 +2189,8 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
             # Regular rule, more than one output: Multiple outputs are tricky in
             # make. We will write three rules:
             # - All outputs depend on an intermediate file.
-            # - Make .INTERMEDIATE depend on the intermediate.
+            # - Make .INTERMEDIATE (or .SECONDARY for do_cmd rules) depend on
+            #   the intermediate.
             # - The intermediate file depends on the inputs and executes the
             #   actual command.
             # - The intermediate recipe will 'touch' the intermediate file.
@@ -2201,15 +2203,36 @@ $(obj).$(TOOLSET)/$(TARGET)/%%.o: $(obj)/%%%s FORCE_DO_CMD
             intermediate = "%s.intermediate" % cmddigest
             self.WriteLn("{}: {}".format(" ".join(outputs), intermediate))
             self.WriteLn("\t%s" % "@:")
-            self.WriteLn("{}: {}".format(".INTERMEDIATE", intermediate))
-            self.WriteLn(
-                "{}: {}{}".format(intermediate, " ".join(inputs), force_append)
-            )
-            actions.insert(0, "$(call do_cmd,touch)")
+            if force and command:
+                # A do_cmd recipe always runs and decides for itself whether
+                # the command is stale. For that to work across builds the
+                # intermediate must persist (.SECONDARY), its depfile must be
+                # read, and it must only be touched when the command runs.
+                # If an output is missing, deleting the intermediate makes
+                # every input count as changed so the command runs again.
+                all_outputs = " ".join(outputs)
+                missing = f"$(filter-out $(wildcard {all_outputs}),{all_outputs})"
+                self.WriteLn(f".SECONDARY: {intermediate}")
+                self.WriteLn(f"$(if {missing},$(shell rm -f {intermediate}))")
+                self.WriteLn(f"{intermediate}: {' '.join(inputs)}{force_append}")
+                actions.insert(
+                    0,
+                    f"@$(if $(or $(call command_changed,{command}),"
+                    "$(prereq_changed)),touch $@,:)",
+                )
+                stamp_deps = intermediate
+            else:
+                self.WriteLn("{}: {}".format(".INTERMEDIATE", intermediate))
+                self.WriteLn(
+                    "{}: {}{}".format(intermediate, " ".join(inputs), force_append)
+                )
+                actions.insert(0, "$(call do_cmd,touch)")
 
         if actions:
             for action in actions:
                 self.WriteLn("\t%s" % action)
+        if stamp_deps:
+            self.WriteLn("all_deps += %s" % stamp_deps)
         self.WriteLn()
 
     def WriteAndroidNdkModuleRule(self, module_name, all_sources, link_deps):

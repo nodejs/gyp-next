@@ -7,6 +7,8 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
+import time
 import unittest
 
 import gyp
@@ -130,6 +132,68 @@ class TestGypMac(unittest.TestCase):
             for output in [*gchs, f"obj/{target}.pch_asm.o"]:
                 subprocess.run(["ninja", "-C", build_dir, "-t", "clean"], check=True)
                 subprocess.run(["ninja", "-C", build_dir, output], check=True)
+
+
+class TestMakeMultipleOutputs(unittest.TestCase):
+    def setUp(self) -> None:
+        if sysname not in TestGypUnix.supported_sysnames:
+            self.skipTest(f"Unsupported system: {sysname}")
+        if shutil.which("make") is None:
+            self.skipTest("make is not installed")
+        self.tempdir = tempfile.TemporaryDirectory()
+        self.project = os.path.join(self.tempdir.name, "project")
+        shutil.copytree(os.path.join(fixture_dir, "multiple_outputs"), self.project)
+        self.generate()
+        self.gen = os.path.join(self.project, "out", "Default", "obj", "gen")
+
+    def tearDown(self) -> None:
+        self.tempdir.cleanup()
+
+    def generate(self, *defines: str) -> None:
+        rc = gyp.main(
+            [
+                "-f",
+                "make",
+                "--depth",
+                self.project,
+                f"-Dpython={sys.executable}",
+                *(f"-D{define}" for define in defines),
+                os.path.join(self.project, "multiple_outputs.gyp"),
+            ]
+        )
+        assert rc == 0
+
+    def make(self) -> int:
+        subprocess.run(
+            ["make", "-C", self.project], check=True, stdout=subprocess.DEVNULL
+        )
+        with open(os.path.join(self.gen, "runs.log")) as log:
+            return len(log.readlines())
+
+    def test_up_to_date_outputs_are_not_regenerated(self) -> None:
+        assert self.make() == 1
+        assert self.make() == 1
+
+    def test_changed_input_regenerates(self) -> None:
+        assert self.make() == 1
+        past = time.time() - 10
+        for root, _, files in os.walk(self.project):
+            for name in files:
+                os.utime(os.path.join(root, name), (past, past))
+        os.utime(os.path.join(self.project, "input.txt"))
+        assert self.make() == 2
+
+    def test_missing_output_regenerates(self) -> None:
+        assert self.make() == 1
+        os.remove(os.path.join(self.gen, "second.txt"))
+        assert self.make() == 2
+        assert os.path.exists(os.path.join(self.gen, "second.txt"))
+
+    def test_changed_command_regenerates(self) -> None:
+        assert self.make() == 1
+        self.generate("mode=changed")
+        assert self.make() == 2
+        assert self.make() == 2
 
 
 class TestGypWindows(unittest.TestCase):
